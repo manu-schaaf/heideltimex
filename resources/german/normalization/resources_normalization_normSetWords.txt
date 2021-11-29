@@ -11,5 +11,15 @@
 "monatlich","P1M"
 "Täglich","P1D"
 "täglich","P1D"
+// BIOFid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-28
 "Wöchentlich","P1W"
 "wöchentlich","P1W"
+"Stündlich","P1H"
+"stündlich","P1H"
+"Minütlich","P1M"
+"minütlich","P1M"
+"Sekündlich","P1S"
+"sekündlich","P1S"

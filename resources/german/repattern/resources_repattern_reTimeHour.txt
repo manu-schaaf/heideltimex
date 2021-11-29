@@ -27,4 +27,19 @@
 7
 8
 9
+// BIOfid extension: variant for one-digit numbers
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-11-23
+00
+01
+02
+03
+04
+05
+06
+07
+08
+08
+// remainder:
 0

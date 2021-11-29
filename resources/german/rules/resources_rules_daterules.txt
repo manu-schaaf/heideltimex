@@ -135,7 +135,11 @@ RULENAME="date_r8a",EXTRACTION="%reDateWord",NORM_VALUE="%normDateWord(group(1))
 
 // date_r9
 // EXAMPLE r9a_1: Montag
-RULENAME="date_r9a",EXTRACTION="%reWeekday",NORM_VALUE="UNDEF-day-%normWeekday(group(1))"
+// BIOfid extension: "-s" and "-e" alternation
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-22
+RULENAME="date_r9a",EXTRACTION="%reWeekday(e|s)?",NORM_VALUE="UNDEF-day-%normWeekday(group(1))"
 
 ///////////////////////
 // Month Granularity //
@@ -343,3 +347,101 @@ RULENAME="date_r3c_negative",EXTRACTION="(von|um) (%reYear4Digit|[\d]+) (auf) (%
 // EXAMPLE r4a_negative: UN Resolution 1441
 RULENAME="date_r4a_negative",EXTRACTION="([Rr]esolution|[Ee]ntschließung) %reYear4Digit",NORM_VALUE="REMOVE"
 
+
+// BIOfid extensions
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2020-10-20
+//////////////////////////////////////////////////
+// COMPOUNDS WITH "-zeit" ////////////////////////
+// Lexicalized in repattern_reSeason.txt /////////
+// for proper interplay with other season rules //
+//////////////////////////////////////////////////
+// Example biofid_zeit_r1: Sommerzeit
+// RULENAME="biofid_zeit_r1",EXTRACTION="%reSeason(s)?+zeit",NORM_VALUE="UNDEF-year-%normSeason(group(1))"
+// Example biofid_zeit_r1: Mittagszeit
+// RULENAME="biofid_zeit_r2",EXTRACTION="%rePartOfDay(s)?+zeit",NORM_VALUE="UNDEF-this-dayT%normPartOfDay(group(1))"
+
+// BIOfid extensions
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-27
+//////////////////////
+// Adjectival units //
+//////////////////////
+// Example biofid_adjunit_r1: diesjährig
+RULENAME="biofid_adjunit_r1",EXTRACTION="%reThisNextLastSuffix+%reUnitAdj",NORM_VALUE="UNDEF-%normThisNextLastSuffix(group(1))-%normUnitAdj(group(2))"
+
+// BIOfid extensions
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-25
+///////////////////////////
+// COMPOUNDS WITH "Vor-" //
+///////////////////////////
+// Example biofid_vor_r1: Vorjahre
+RULENAME="biofid_vor_r1",EXTRACTION="([Vv]or)+%reUnit",NORM_VALUE="UNDEF-last-%normUnit(group(2))"
+
+// BIOfid extensions
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-25 / 2021-10-28
+////////////////////////////
+// COMPOUND FOR VACATIONS //
+////////////////////////////
+// Example biofid_ferien_r1: Herbstferien, Sommer-Ferien
+RULENAME="biofid_ferien_r1_a",EXTRACTION="%reSeason-?[Ff]erien",NORM_VALUE="UNDEF-year-%normSeason(group(1))"
+RULENAME="biofid_ferien_r1_b",EXTRACTION="%reSeason-?[Ff]erien( des Jahres | )%reYear4Digit",NORM_VALUE="group(3)-%normSeason(group(1))"
+RULENAME="biofid_ferien_r1_c",EXTRACTION="%reSeason-?[Ff]erien( des Jahres | )%reYear2Digit",NORM_VALUE="UNDEF-centurygroup(3)-%normSeason(group(1))"
+RULENAME="biofid_ferien_r2_a",EXTRACTION="%reSeason-?[Uu]rlaube?s?",NORM_VALUE="UNDEF-year-%normSeason(group(1))"
+RULENAME="biofid_ferien_r2_b",EXTRACTION="%reSeason-?[Uu]rlaube?s?( des Jahres | )%reYear4Digit",NORM_VALUE="group(3)-%normSeason(group(1))"
+RULENAME="biofid_ferien_r2_c",EXTRACTION="%reSeason-?[Uu]rlaube?s?( des Jahres | )%reYear2Digit",NORM_VALUE="UNDEF-centurygroup(3)-%normSeason(group(1))"
+
+
+// BIOfid extensions
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-28
+///////////////////////////////////////////
+// NEGATIVE RULE FOR "MR. or MS. SEASON" //
+///////////////////////////////////////////
+RULENAME="season_pn_negative_1",EXTRACTION="(Herr|Frau|Hr.|Fr.|Ehepaar|Onkel|Tante|Sohn|Tochter|Name|Doktor|Dr.|Familie) %reSeason",NORM_VALUE="REMOVE"
+// date:   2021-11-26
+RULENAME="season_pn_negative_2",EXTRACTION="(Hallo| HGut) %reSeason",NORM_VALUE="REMOVE"
+
+
+// BIOfid extensions
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-28
+////////////////////
+// RELATIVE UNITS //
+////////////////////
+// Example biofid_relyear_r1: ein Jahr zuvor
+// Example biofid_relyear_r2: 13 Jahre später
+RULENAME="biofid_relyear_r1_a",EXTRACTION="(%reApproximate )?(%reNumWord1D|%reNumWord2D) Jahre? (vorher|zuvor|eher|früher)",NORM_VALUE="UNDEF-this-year-MINUS-%normDurationNumber(group(3))"
+RULENAME="biofid_relyear_r1_b",EXTRACTION="(%reApproximate )?([\d]+) Jahre?( vorher| zuvor| eher| früher)",NORM_VALUE="UNDEF-this-year-MINUS-group(2)"
+RULENAME="biofid_relyear_r2_a",EXTRACTION="(%reApproximate )?(%reNumWord1D|%reNumWord2D) Jahre? (später|danach)",NORM_VALUE="UNDEF-this-year-PLUS-%normDurationNumber(group(3))"
+RULENAME="biofid_relyear_r2_b",EXTRACTION="(%reApproximate )?([\d]+) Jahre? (später|danach)",NORM_VALUE="UNDEF-this-year-PLUS-group(2)"
+
+// date:   2021-10-29
+// Example biofid_relyear_r3: vor drei/3 Jahren
+RULENAME="biofid_relyear_r3_a",EXTRACTION="[Vv]or (%reApproximate )?(%reNumWord1D|%reNumWord2D) Jahre?n?",NORM_VALUE="UNDEF-this-year-MINUS-%normDurationNumber(group(3))"
+RULENAME="biofid_relyear_r3_b",EXTRACTION="[Vv]or (%reApproximate )?([\d]+) Jahre?n?",NORM_VALUE="UNDEF-this-year-MINUS-group(3)"
+
+// date:   2021-10-29
+// Example biofid_endof_r1: das Jahresende
+RULENAME="biofid_endof_r1",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?%reUnit+s?ende",NORM_VALUE="UNDEF-this-%normUnit(group(2))"
+
+// date:   2021-10-29
+// Example biofid_endof_r1: das laufende Quartal
+RULENAME="biofid_current_r1",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?([Aa]ktuelle?r?s?n?m? |[Ll]aufende?s?r?n?m? |[Gg]engenwärtige?s?n?r?m? )%reUnit",NORM_VALUE="UNDEF-this-%normUnit(group(3))"
+
+// date:   2021-10-29
+// Example biofid_prevunit_r1: Vorjahreszeitraum, Vorjahresquartal
+// CAUTION: Vorjahres-UNIT != LAST UNIT, rather UNIT of last year, partition units, resolving needs to resolve both year and unit.
+RULENAME="biofid_prevunit_r1_a",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?[Vv]orjahre?s-?%reUnitMonth",NORM_VALUE="UNDEF-last-year-%normUnit(group(3))"
+RULENAME="biofid_prevunit_r1_b",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?[Vv]orjahre?s-?%reUnitWeek",NORM_VALUE="pass"
+RULENAME="biofid_prevunit_r1_c",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?[Vv]orjahre?s-?%reUnitYear",NORM_VALUE="UNDEF-last-year"
+RULENAME="biofid_prevunit_r1_d",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?[Vv]orjahre?s-?%reUnitQuartal",NORM_VALUE="UNDEF-last-year-QX"
+RULENAME="biofid_prevunit_r1_e",EXTRACTION="([Dd]er |[Dd]em |[Dd]en )?[Vv]orjahre?szeitraum",NORM_VALUE="UNDEF-last-year"

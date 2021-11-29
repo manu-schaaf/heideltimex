@@ -93,3 +93,19 @@
 "vergangenes","last"
 "vergangenen","last"
 "vergangenem","last"
+// BIOFid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2020-10-20
+"Demselben","this"
+"Derselben","this"
+"Dieselbe","this"
+"demselben","this"
+"derselben","this"
+"dieselbe","this"
+"Dem selben","this"
+"Der selben","this"
+"Die selbe","this"
+"dem selben","this"
+"der selben","this"
+"die selbe","this"

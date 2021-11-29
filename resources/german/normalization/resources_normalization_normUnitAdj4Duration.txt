@@ -1,0 +1,18 @@
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-27 / 2021-20-28
+// This file contains adjectival "unit words" and their normalized expressions.
+// FORMAT: "adj-unit-word","normalized-unit-word"
+"jährig","Y"
+"wöchig","W"
+"tägig","D"
+"minütig","M"
+"sekündig","S"
+"stündig","H"
+"Jährig","Y"
+"Wöchig","W"
+"Tägig","D"
+"Minütig","M"
+"Sekündig","S"
+"Stündig","H"

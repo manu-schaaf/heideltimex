@@ -30,7 +30,11 @@ RULENAME="time_r1e",EXTRACTION="(%reMonthNumber/%reDayNumber/%reYear4Digit) %reT
 // EXAMPLE r2c_1: midnight today
 // EXAMPLE r2d_1: yesterday morning
 RULENAME="time_r2a",EXTRACTION="%rePartOfDay %reWeekday",NORM_VALUE="UNDEF-day-%normWeekday(group(2))T%normPartOfDay(group(1))"
-RULENAME="time_r2b1",EXTRACTION="%reWeekday %rePartOfDay",NORM_VALUE="UNDEF-day-%normWeekday(group(1))T%normPartOfDay(group(2))"
+// BIOfid extension: "-s" alternation, caution: adds a group!
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-22
+RULENAME="time_r2b1",EXTRACTION="%reWeekday(e|s)? %rePartOfDay(s)?",NORM_VALUE="UNDEF-day-%normWeekday(group(1))T%normPartOfDay(group(3))"
 RULENAME="time_r2b2",EXTRACTION="%reWeekday%rePartOfDay",NORM_VALUE="UNDEF-day-%normWeekday(group(1))T%normPartOfDay(group(2))"
 RULENAME="time_r2c",EXTRACTION="%rePartOfDay %reDateWord",NORM_VALUE="%normDateWord(group(2))T%normPartOfDay(group(1))"
 RULENAME="time_r2d",EXTRACTION="%reDateWord %rePartOfDay",NORM_VALUE="%normDateWord(group(1))T%normPartOfDay(group(2))"
@@ -45,6 +49,14 @@ RULENAME="time_r2d",EXTRACTION="%reDateWord %rePartOfDay",NORM_VALUE="%normDateW
 RULENAME="time_r3a",EXTRACTION="(%reApproximate )?%reTimeHour:%reTimeMinute( Uhr)?",NORM_VALUE="UNDEF-this-dayT%normDay(group(3)):group(4)"
 RULENAME="time_r3b",EXTRACTION="(%reApproximate )?%reTimeHour (Uhr) %reTimeMinute",NORM_VALUE="UNDEF-this-dayT%normDay(group(3)):group(5)"
 RULENAME="time_r3c",EXTRACTION="(%reApproximate )?%reTimeHour Uhr",NORM_VALUE="UNDEF-this-dayT%normDay(group(3)):00"
+// BIOfid extension: timepoint variant
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-11-23
+// Example: time_r3a_2: 21.30 Uhr
+// Example: time_r3a_2: 19,30 Uhr
+RULENAME="time_r3a_2",EXTRACTION="(%reApproximate )?%reTimeHour.%reTimeMinute( Uhr)?",NORM_VALUE="UNDEF-this-dayT%normDay(group(3)):group(4)"
+RULENAME="time_r3a_3",EXTRACTION="(%reApproximate )?%reTimeHour,%reTimeMinute( Uhr)?",NORM_VALUE="UNDEF-this-dayT%normDay(group(3)):group(4)"
 
 RULENAME="time_r3d1",EXTRACTION="(%reApproximate )?%reTimeHourWord Uhr( morgens)?",NORM_VALUE="UNDEF-this-dayT%normDay(group(3)):00"
 RULENAME="time_r3d2",EXTRACTION="(%reApproximate )?%reTimeHourWord Uhr (abends|nachmittags)",NORM_VALUE="UNDEF-this-dayT%SUM%(%normDay(group(3)),12):00"
@@ -58,6 +70,7 @@ RULENAME="time_r3d3",EXTRACTION="(%reApproximate )?%reTimeHourWordAll Uhr",NORM_
 RULENAME="time_r4a",EXTRACTION="(%reApproximate )?%rePartOfDay (des) (%reDayNumber)([\.]? |[\.])(%reMonthLong|%reMonthShort|%reMonthNumber[\.]?),? %reYear4Digit",NORM_VALUE="group(12)-%normMonth(group(8))-%normDay(group(5))T%normPartOfDay(group(3))"
 RULENAME="time_r4b",EXTRACTION="(%reApproximate )?%rePartOfDay (des) (%reDayNumber)([\.]? |[\.])(%reMonthLong|%reMonthShort|%reMonthNumber[\.]?)",NORM_VALUE="UNDEF-year-%normMonth(group(8))-%normDay(group(5))T%normPartOfDay(group(3))"
 
+
 // time_r5
 // EXAMPLE r5a-1: (am) Morgen 
 // EXAMPLE r5b-1: nächsten Morgen
@@ -66,4 +79,24 @@ RULENAME="time_r5a",EXTRACTION="(\b[Aa]m) %rePartOfDay",NORM_VALUE="UNDEF-this-d
 RULENAME="time_r5b",EXTRACTION="%reThisNextLast %rePartOfDay",NORM_VALUE="UNDEF-%normThisNextLast(group(1))-dayT%normPartOfDay(group(2))"
 RULENAME="time_r5c",EXTRACTION="(de[rm]selben?) %rePartOfDay",NORM_VALUE="UNDEF-REF-day-PLUS-0T%normPartOfDay(group(2))"
 RULENAME="time_r5d",EXTRACTION="%rePartOfDay (desselben|dieses) (Tages)",NORM_VALUE="UNDEF-REF-day-PLUS-0T%normPartOfDay(group(1))"
+
+// BIOfid extensions
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2020-10-20
+///////////////
+// Adverbien //
+///////////////
+// Example biofid_time_r1: abends, morgens, ...
+RULENAME="biofid_time_r1",EXTRACTION="%rePartOfDay+s",NORM_VALUE="UNDEF-this-dayT%normPartOfDay(group(1))"
+
+// BIOfid extensions
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2020-10-26
+/////////////////////////////
+// NEGATIVE RULE FOR "nun" //
+/////////////////////////////
+// Example biofid_dateword_negative_r1: *nun gut
+RULENAME="biofid_dateword_negative_r1",EXTRACTION="%reDateWord (denn|gut)",NORM_VALUE="REMOVE"
 

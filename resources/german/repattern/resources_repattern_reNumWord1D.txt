@@ -4,6 +4,11 @@
 // This file contains regular expression patterns for number word 1 digit.
 // FORMAT: one line is one disjunction of the pattern
 [Ee]ins
+// BIOfid extension: added "[Ee]in" for composing with "-einhalb"
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-11-23
+[Ee]in
 [Zz]wei
 [Dd]rei
 [Vv]ier

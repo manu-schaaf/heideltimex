@@ -1,0 +1,12 @@
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-20-26
+[Ee]inige?r?s?n?m?
+[Ww]enige?r?s?n?m?
+[Vv]iele?r?s?n?m?
+[Aa]lle?r?s?n?m?
+[Mm]eiste?r?s?n?m?
+// date:   2021-10-28
+paar
+[Mm]ehrerer?n?

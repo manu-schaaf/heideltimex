@@ -5,15 +5,19 @@
 // according to TIMEX3 format.
 // For example, the normalized value of "Erstes Quartal" is "Q1"
 // FORMAT: "parts-of-year-word","normalized-parts-of-year-word"
-"[Ee]rste[ns]? Quartals?","Q1"
-"[Zz]weite[ns]? Quartals?","Q2"
-"[Dd]ritte[ns]? Quartals?","Q3"
-"[Vv]ierte[ns]? Quartals?","Q4"
-"[Ll]etzte[ns]? Quartals?","Q4"
-"1\. Quartals?","Q1"
-"2\. Quartals?","Q2"
-"3\. Quartals?","Q3"
-"4\. Quartals?","Q4"
+// BIOfid extension: allowing for lowercase "quartal"
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-11-23
+"[Ee]rste[ns]? [Qq]uartals?","Q1"
+"[Zz]weite[ns]? [Qq]uartals?","Q2"
+"[Dd]ritte[ns]? [Qq]uartals?","Q3"
+"[Vv]ierte[ns]? [Qq]uartals?","Q4"
+"[Ll]etzte[ns]? [Qq]uartals?","Q4"
+"1\. [Qq]uartals?","Q1"
+"2\. [Qq]uartals?","Q2"
+"3\. [Qq]uartals?","Q3"
+"4\. [Qq]uartals?","Q4"
 // Jahreshälften
 "[Ee]rste[ns]? Hälfte","H1"
 "[Zz]weite[ns]? Hälfte","H2"

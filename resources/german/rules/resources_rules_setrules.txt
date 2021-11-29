@@ -30,3 +30,39 @@ RULENAME="set_r2a",EXTRACTION="%reSetWords",NORM_VALUE="%normSetWords(group(1))"
 RULENAME="set_r3a",EXTRACTION="%reWeekday[ ]?%rePartOfDay[s]",NORM_VALUE="XXXX-WXX-%normDayInWeek(group(1))T%normPartOfDay(group(2))",NORM_FREQ="1W"
 RULENAME="set_r3b",EXTRACTION="%reWeekday (und|oder) %reWeekday %rePartOfDay[s]",NORM_VALUE="XXXX-WXX-%normDayInWeek(group(1))T%normPartOfDay(group(4))",NORM_FREQ="1W",OFFSET="group(1)-group(1)"
 
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-25
+/////////////
+// "beide" //
+/////////////
+// Example biofid_beide_r1: beide Jahre
+RULENAME="biofid_beide_r1_a",EXTRACTION="(beide[rsnm]?) %reUnit",NORM_VALUE="P1%UPPERCASE%(%SUBSTRING%(%normUnit(group(2)),0,1))",NORM_QUANT="TWO"
+RULENAME="biofid_beide_r1_b",EXTRACTION="(beide[rsnm]?) %reSeason(e?)[ns]",NORM_VALUE="P1%UPPERCASE%(%SUBSTRING%(%normSeason(group(2)),0,2))",NORM_QUANT="TWO"
+
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-25 / 2021-10-28
+///////////////////////////////
+// "Turnus"-LIKE EXPRESSIONS //
+///////////////////////////////
+// Example biofid_turnus_r1: monatlichem Rhythmus
+// Example biofid_turnus_r2_a: zweijähriger Turnus
+// Example biofid_turnus_r2_a: dreizehnmonatiger Turnus
+// Example biofid_turnus_r3: 13-Monatiger Turnus
+RULENAME="biofid_turnus_r1",EXTRACTION="%reSetWords(e?)[rsnm] %reIntervalWords",NORM_VALUE="%normSetWords(group(1))",NORM_QUANT="EVERY"
+RULENAME="biofid_turnus_r2_a",EXTRACTION="%reNumWord1D-?%reUnitAdj(e?)[rsnm] %reIntervalWords",NORM_VALUE="P%normDurationNumber(group(1))%normUnitAdj4Duration(group(2))",NORM_QUANT="EVERY"
+RULENAME="biofid_turnus_r2_b",EXTRACTION="%reNumWord2D-?%reUnitAdj(e?)[rsnm] %reIntervalWords",NORM_VALUE="P%normDurationNumber(group(1))%normUnitAdj4Duration(group(2))",NORM_QUANT="EVERY"
+RULENAME="biofid_turnus_r3",EXTRACTION="([\d]+)-?%reUnitAdj(e?)[rsnm] %reIntervalWords",NORM_VALUE="Pgroup(1)%normUnitAdj4Duration(group(2))",NORM_QUANT="EVERY"
+
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-25
+//////////////////////
+// SETS OF WEEKDAYS //
+//////////////////////
+// Example biofid_setday_r1: viele Freitage
+RULENAME="biofid_setday_r1",EXTRACTION="%reQuantWords %reWeekday(e)?",NORM_VALUE="%normWeekday(group(2))",NORM_QUANT="%normQuantWords(group(1))"

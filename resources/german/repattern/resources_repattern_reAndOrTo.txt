@@ -10,3 +10,10 @@
  und (zum )?
  bis (zum )?
  oder (zum)?
+// BIOfid extension
+// author: Andy Lücking
+// email: luecking@em.uni-frankfurt.de
+// data: 2021-10-19
+// incorrect character encoding does not work...
+[\s]?--[\s]?
+[\s]?—[\s]?

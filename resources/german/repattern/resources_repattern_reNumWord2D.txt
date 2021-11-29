@@ -5,7 +5,11 @@
 // FORMAT: one line is one disjunction of the pattern
 [Zz]ehn
 [Ee]lf
-[ZZ]wölf
+// BIOfid extension: corrected capitilization regex of "Z/zwölf" from "[ZZ]" to "[Zz]"
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-28
+[Zz]wölf
 [Dd]reizehn
 [Vv]ierzehn
 [Ff]ünfzehn

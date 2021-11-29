@@ -3,13 +3,39 @@
 // date:   2011-06-10
 // This file contains regular expression patterns for seasons.
 // FORMAT: one line is one disjunction of the pattern
-[Ff]rühlings?
+// BIOfid extension: "-e" alternation
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-20
+[Ff]rühlinge?s?
 [Ff]rühjahre?s?
+[Ll]enz?e?n
 [Hh]ochsommers?
 [Ss]pätsommers?
 [Ff]rühsommers?
 [Ss]ommers?
-[Ss]pätherbsts?
-[Ff]rühherbsts?
-[Hh]erbsts?
+[Hh]ei(ss|s|ß)(.)+ [Jj]ahreszeit
+[Ss]pätherbste?s?
+[Ff]rühherbste?s?
+[Hh]erbste?s?
 [Ww]inters?
+// BIOfid extension: compounds with "-zeit"
+// replacing earlier rules from daterules
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-11-09
+[Ff]rühlingszeit
+[Ff]rühjahre?szeit
+[Hh]ochsommerzeit
+[Ss]pätsommerzeit
+[Ff]rühsommerzeit
+[Ss]ommerzeit
+[Ss]pätherbstzeit
+[Ff]rühherbstzeit
+[Hh]erbstzeit
+[Ww]interzeit
+// date:   2021-11-23
+[Ff]rühlingsmonate?s?n?
+[Ss]ommermonate?s?n?
+[Ww]intermonate?s?n?
+[Hh]erbstmonate?s?n?

@@ -608,6 +608,7 @@ public class HeidelTime extends JCasAnnotator_ImplBase {
 		String viThisHalf    = "";
 		String[] valueParts  = ambigString.split("-");
 		// check if UNDEF-year or UNDEF-century
+		// "BP" ADDED, Andy Lücking, 2021-11-09
 		if ((ambigString.startsWith("UNDEF-year")) || (ambigString.startsWith("UNDEF-century"))) {
 			if (valueParts.length > 2) {
 				// get vi month
@@ -616,7 +617,7 @@ public class HeidelTime extends JCasAnnotator_ImplBase {
 					viThisMonth = Integer.parseInt(valueParts[2]);
 				}
 				// get vi season
-				else if ((valueParts[2].equals("SP")) || (valueParts[2].equals("SU")) || (valueParts[2].equals("FA")) || (valueParts[2].equals("WI"))) {
+				else if ((valueParts[2].equals("SP")) || (valueParts[2].equals("SU")) || (valueParts[2].equals("FA")) || (valueParts[2].equals("WI")) || (valueParts[2].equals("BP"))) {
 					viHasSeason  = true;
 					viThisSeason = valueParts[2]; 
 				}
@@ -645,7 +646,7 @@ public class HeidelTime extends JCasAnnotator_ImplBase {
 					viThisMonth = Integer.parseInt(valueParts[1]);
 				}
 				// get vi season
-				else if ((valueParts[1].equals("SP")) || (valueParts[1].equals("SU")) || (valueParts[1].equals("FA")) || (valueParts[1].equals("WI"))) {
+				else if ((valueParts[1].equals("SP")) || (valueParts[1].equals("SU")) || (valueParts[1].equals("FA")) || (valueParts[1].equals("WI")) || (valueParts[1].equals("BP"))) {
 					viHasSeason  = true;
 					viThisSeason = valueParts[1]; 
 				}
@@ -1609,8 +1610,9 @@ public class HeidelTime extends JCasAnnotator_ImplBase {
 			}
 			
 			// SEASONS NAMES
-			else if (ambigString.matches("^UNDEF-(last|this|next)-(SP|SU|FA|WI).*")) {
-				for (MatchResult mr : Toolbox.findMatches(Pattern.compile("(UNDEF-(last|this|next)-(SP|SU|FA|WI)).*"),ambigString)) {
+			// "BP" ADDED, Andy Lücking, 2021-11-09
+			else if (ambigString.matches("^UNDEF-(last|this|next)-(SP|SU|FA|WI|BP).*")) {
+				for (MatchResult mr : Toolbox.findMatches(Pattern.compile("(UNDEF-(last|this|next)-(SP|SU|FA|WI|BP)).*"),ambigString)) {
 					String checkUndef = mr.group(1);
 					String ltn       = mr.group(2);
 					String newSeason = mr.group(3);

@@ -5,17 +5,43 @@
 // according to TIMEX3 format.
 // For example, the normalized value of "Sommer" is "SU"
 // FORMAT: "season-word","normalized-season-word"
+// BIOfid extension: "-e" alternation
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-20
 // spring
-"[Ff]rühlings?","SP"
+"[Ff]rühlinge?s?","SP"
 "[Ff]rühjahre?s?","SP"
+"[Ll]enz?e?n","SP"
 //summer
 "[Hh]ochsommers?","SU"
 "[Ss]pätsommers?","SU"
 "[Ff]rühsommers?","SU"
 "[Ss]ommers?","SU"
+"[Hh]ei(ss|s|ß)(.)+ [Jj]ahreszeit","SU"
 // fall
-"[Ss]pätherbsts?","FA"
-"[Ff]rühherbsts?","FA"
-"[Hh]erbsts?","FA"
+"[Ss]pätherbste?s?","FA"
+"[Ff]rühherbste?s?","FA"
+"[Hh]erbste?s?","FA"
 // winter
 "[Ww]inters?","WI"
+// BIOfid extension: compounds with "-zeit"
+// replacing earlier rules from daterules
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-11-09
+"[Ff]rühlingszeit","SP"
+"[Ff]rühjahre?szeit","SP"
+"[Hh]ochsommerzeit","SU"
+"[Ss]pätsommerszeit","SU"
+"[Ff]rühsommerzeit","SU"
+"[Ss]ommerzeit","SU"
+"[Ss]pätherbstzeit","FA"
+"[Ff]rühherbstzeit","FA"
+"[Hh]erbstzeit","FA"
+"[Ww]interzeit","WI"
+// date:   2021-11-23
+"[Ff]rühlingsmonate?s?n?","SP"
+"[Ss]ommermonate?s?n?","SU"
+"[Ww]intermonate?s?n?","WI"
+"[Hh]erbstmonate?s?n?","FA"

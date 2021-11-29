@@ -1,0 +1,7 @@
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-29
+[Mm]onaten
+[Mm]onate
+[Mm]onat

@@ -13,3 +13,9 @@
 "[Ss]iebzigern?","7"
 "[Aa]chtzigern?","8"
 "[Nn]eunzigern?","9"
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-11-04
+"[Nn]ullern?","0"
+"[Zz]ehnern?","1"

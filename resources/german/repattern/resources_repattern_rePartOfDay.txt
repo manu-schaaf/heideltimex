@@ -7,6 +7,12 @@
 [Nn]achmittag
 [Mm]ittag
 [Mm]itternacht
+[Nn]achts
+[Mm]orgens
+[Aa]bend
+// BIOfid extension
+// author: Andy Lücking
+// email:  stroetgen@uni-hd.de
+// date:   2011-11-23
 [Nn]acht
 [Mm]orgen
-[Aa]bend

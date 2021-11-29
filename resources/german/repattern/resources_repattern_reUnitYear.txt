@@ -1,0 +1,18 @@
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-29
+[Jj]ahres
+[Gg]eschäftsjahr
+[Gg]eschäftsjahre
+[Gg]eschäftsjahren
+[Gg]eschäftsjahrs
+[Gg]eschäftsjahres
+[Ss]teuerjahr
+[Ss]teuerjahre
+[Ss]teuerjahren
+[Ss]teuerjahrs
+[Ss]teuerjahres
+[Jj]ahren
+[Jj]ahre
+[Jj]ahr

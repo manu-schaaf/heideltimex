@@ -12,3 +12,9 @@
 "nach Chr[\.]",""
 "vor Christus","BC"
 "nach Christus",""
+// BIOFid extension: allow for empty space within abbreviations
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-21
+"A[\.]? D[\.]?",""
+"B[\.]? C[\.]?","BC"

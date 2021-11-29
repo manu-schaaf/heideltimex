@@ -49,6 +49,11 @@
 "31","31"
 // normal numbers
 "eins","1"
+// BIOfid extension: added "ein" for composing with "-einhalb"
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-11-23
+"ein","1"
 "zwei","2"
 "drei","3"
 "vier","4"
@@ -149,6 +154,11 @@
 "neunundneunzig","99"
 // UPPER CASE
 "Eins","1"
+// BIOfid extension: added "Ein" for composing with "-einhalb"
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-11-23
+"Ein","1"
 "Zwei","2"
 "Drei","3"
 "Vier","4"

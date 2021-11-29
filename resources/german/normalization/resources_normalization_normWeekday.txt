@@ -18,4 +18,37 @@
 "freitag","friday"
 "samstag","saturday"
 "sonntag","sunday"
+//
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-19
+"Montage","monday"
+"Dienstage","tuesday"
+"Mittwoche","wednesday"
+"Donnerstage","thursday"
+"Freitage","friday"
+"Samstage","saturday"
+"Sonntage","sunday"
+"montage","monday"
+"dienstage","tuesday"
+"mittwoche","wednesday"
+"donnerstage","thursday"
+"freitage","friday"
+"samstage","saturday"
+"sonntage","sunday"
+"Montags","monday"
+"Dienstags","tuesday"
+"Mittwochs","wednesday"
+"Donnerstags","thursday"
+"Freitags","friday"
+"Samstags","saturday"
+"Sonntags","sunday"
+"montags","monday"
+"dienstags","tuesday"
+"mittwochs","wednesday"
+"donnerstags","thursday"
+"freitags","friday"
+"samstags","saturday"
+"sonntags","sunday"
 

@@ -4,11 +4,11 @@
 // This file contains regular expression patterns for parts of year.
 // FORMAT: one line is one disjunction of the pattern
 // Quartale
-[Ee]rste[ns]? Quartals?
-[Zz]weite[ns]? Quartals?
-[Dd]ritte[ns]? Quartals?
-[Vv]ierte[ns]? Quartals?
-[Ll]etzte[ns]? Quartals?
+[Ee]rste[ns]? [Qq]uartals?
+[Zz]weite[ns]? [Qq]uartals?
+[Dd]ritte[ns]? [Qq]uartals?
+[Vv]ierte[ns]? [Qq]uartals?
+[Ll]etzte[ns]? [Qq]uartals?
 1\. Quartals?
 2\. Quartals?
 3\. Quartals?

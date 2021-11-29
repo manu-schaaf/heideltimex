@@ -26,3 +26,14 @@
 "bald","FUTURE_REF"
 "Kürzlich","PAST_REF"
 "kürzlich","PAST_REF"
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-20
+"Nun","PRESENT_REF"
+"nun","PRESENT_REF"
+// date:   2021-10-28
+"Vorgestern","UNDEF-this-day-MINUS-2"
+"vorgestern","UNDEF-this-day-MINUS-2"
+"Übermorgen","UNDEF-this-day-PLUS-2"
+"übermorgen","UNDEF-this-day-PLUS-2"

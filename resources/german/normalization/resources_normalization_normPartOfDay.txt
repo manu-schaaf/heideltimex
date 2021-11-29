@@ -36,3 +36,13 @@
 "Mitternacht","24:00"
 "mitternachts","24:00"
 "Mitternachts","24:00"
+// BIOfid extension: "-e" alternation
+// author: Andy Lücking
+// email:  luecking@em.uni-frnakfurt.de
+// date:   2021-10-21
+"vormittage","MO"
+"Vormittage","MO"
+"mittage","12:00"
+"Mittage","12:00"
+"nachmittage","AF"
+"Nachmittage","AF"

@@ -1,0 +1,12 @@
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-27 / 2021-10-28
+// This file contains regular expression patterns for adjectival unit words as used in compounds.
+// FORMAT: one line is one disjunction of the pattern
+[Jj]ährig
+[Ww]öchig
+[Tt]ägig
+[Ts]tündig
+[Mm]inütig
+[Ss]ekündig
