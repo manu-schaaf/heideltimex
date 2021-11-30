@@ -407,7 +407,7 @@ RULENAME="biofid_ferien_r2_c",EXTRACTION="%reSeason-?[Uu]rlaube?s?( des Jahres |
 ///////////////////////////////////////////
 RULENAME="season_pn_negative_1",EXTRACTION="(Herr|Frau|Hr.|Fr.|Ehepaar|Onkel|Tante|Sohn|Tochter|Name|Doktor|Dr.|Familie) %reSeason",NORM_VALUE="REMOVE"
 // date:   2021-11-26
-RULENAME="season_pn_negative_2",EXTRACTION="(Hallo| HGut) %reSeason",NORM_VALUE="REMOVE"
+RULENAME="season_pn_negative_2",EXTRACTION="%reProfession %reSeason",NORM_VALUE="REMOVE"
 
 
 // BIOfid extensions
