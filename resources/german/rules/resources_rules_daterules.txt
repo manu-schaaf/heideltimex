@@ -408,7 +408,9 @@ RULENAME="biofid_ferien_r2_c",EXTRACTION="%reSeason-?[Uu]rlaube?s?( des Jahres |
 RULENAME="season_pn_negative_1",EXTRACTION="(Herr|Frau|Hr.|Fr.|Ehepaar|Onkel|Tante|Sohn|Tochter|Name|Doktor|Dr.|Familie) %reSeason",NORM_VALUE="REMOVE"
 // date:   2021-11-26
 RULENAME="season_pn_negative_2",EXTRACTION="%reProfession %reSeason",NORM_VALUE="REMOVE"
-
+// date:   2021-11-30
+RULENAME="season_pn_negative_3",EXTRACTION="(Herr|Frau|Hr.|Fr.|Ehepaar|Onkel|Tante|Sohn|Tochter|Name|Doktor|Dr.|Familie) %reWeekday",NORM_VALUE="REMOVE"
+RULENAME="season_pn_negative_4",EXTRACTION="%reProfession %reWeekday",NORM_VALUE="REMOVE"
 
 // BIOfid extensions
 // author: Andy Lücking
@@ -445,3 +447,18 @@ RULENAME="biofid_prevunit_r1_b",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd
 RULENAME="biofid_prevunit_r1_c",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?[Vv]orjahre?s-?%reUnitYear",NORM_VALUE="UNDEF-last-year"
 RULENAME="biofid_prevunit_r1_d",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?[Vv]orjahre?s-?%reUnitQuartal",NORM_VALUE="UNDEF-last-year-QX"
 RULENAME="biofid_prevunit_r1_e",EXTRACTION="([Dd]er |[Dd]em |[Dd]en )?[Vv]orjahre?szeitraum",NORM_VALUE="UNDEF-last-year"
+
+// date:   2021-11-30
+// Example biofid_prevunit_r2_a vorherigen Freitag
+RULENAME="biofid_prevunit_r2_a",EXTRACTION="[Vv]orherige?r?s?n?m? %reWeekday",NORM_VALUE="UNDEF-last-%normWeekday(group(1))"
+RULENAME="biofid_prevunit_r2_b",EXTRACTION="[Vv]orherige?r?s?n?m? %reUnit",NORM_VALUE="UNDEF-last-%normUnit(group(1))"
+
+// BIOfid extensions
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-11-30
+////////////
+// Folge- //
+////////////
+// Example biofid_folge_r1: Folgemonat
+RULENAME="biofid_folge_r1",EXTRACTION="[Ff]olge-?%reUnit",NORM_VALUE="UNDEF-next-%normUnit(group(1))"

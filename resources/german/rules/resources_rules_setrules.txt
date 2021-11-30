@@ -52,10 +52,13 @@ RULENAME="biofid_beide_r1_b",EXTRACTION="(beide[rsnm]?) %reSeason(e?)[ns]",NORM_
 // Example biofid_turnus_r2_a: zweijähriger Turnus
 // Example biofid_turnus_r2_a: dreizehnmonatiger Turnus
 // Example biofid_turnus_r3: 13-Monatiger Turnus
+// Example biofid_turnus_r4: Wochenbasis
 RULENAME="biofid_turnus_r1",EXTRACTION="%reSetWords(e?)[rsnm] %reIntervalWords",NORM_VALUE="%normSetWords(group(1))",NORM_QUANT="EVERY"
 RULENAME="biofid_turnus_r2_a",EXTRACTION="%reNumWord1D-?%reUnitAdj(e?)[rsnm] %reIntervalWords",NORM_VALUE="P%normDurationNumber(group(1))%normUnitAdj4Duration(group(2))",NORM_QUANT="EVERY"
 RULENAME="biofid_turnus_r2_b",EXTRACTION="%reNumWord2D-?%reUnitAdj(e?)[rsnm] %reIntervalWords",NORM_VALUE="P%normDurationNumber(group(1))%normUnitAdj4Duration(group(2))",NORM_QUANT="EVERY"
 RULENAME="biofid_turnus_r3",EXTRACTION="([\d]+)-?%reUnitAdj(e?)[rsnm] %reIntervalWords",NORM_VALUE="Pgroup(1)%normUnitAdj4Duration(group(2))",NORM_QUANT="EVERY"
+// date:   2021-11-30
+RULENAME="biofid_turnus_r4",EXTRACTION="%reUnit-?[Bb]asis",NORM_VALUE="P1%normUnit4Duration(group(1))",NORM_QUANT="EVERY"
 
 // BIOfid extension
 // author: Andy Lücking
