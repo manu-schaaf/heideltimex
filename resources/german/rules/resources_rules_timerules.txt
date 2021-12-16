@@ -55,7 +55,7 @@ RULENAME="time_r3c",EXTRACTION="(%reApproximate )?%reTimeHour Uhr",NORM_VALUE="U
 // date:   2021-11-23
 // Example: time_r3a_2: 21.30 Uhr
 // Example: time_r3a_2: 19,30 Uhr
-RULENAME="time_r3a_2",EXTRACTION="(%reApproximate )?%reTimeHour.%reTimeMinute( Uhr)?",NORM_VALUE="UNDEF-this-dayT%normDay(group(3)):group(4)"
+RULENAME="time_r3a_2",EXTRACTION="(%reApproximate )?%reTimeHour\.%reTimeMinute( Uhr)?",NORM_VALUE="UNDEF-this-dayT%normDay(group(3)):group(4)"
 RULENAME="time_r3a_3",EXTRACTION="(%reApproximate )?%reTimeHour,%reTimeMinute( Uhr)?",NORM_VALUE="UNDEF-this-dayT%normDay(group(3)):group(4)"
 
 RULENAME="time_r3d1",EXTRACTION="(%reApproximate )?%reTimeHourWord Uhr( morgens)?",NORM_VALUE="UNDEF-this-dayT%normDay(group(3)):00"

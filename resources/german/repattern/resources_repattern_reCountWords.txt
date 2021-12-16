@@ -1,0 +1,15 @@
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-12-14
+// format: one count word per line
+[Ee]rster?s?
+[Zz]weiter?s?
+[Dd]dritte?r?s
+[Vv]ierter?s?
+[Ff]ünfter?s?
+[Ss]echster?s?
+[Ss]iebter?s?
+[Aa]chter?s?
+[Nn]eunter?s?
+[Zz]ehnter?s?

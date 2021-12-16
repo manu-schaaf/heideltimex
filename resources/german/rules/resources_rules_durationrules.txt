@@ -7,19 +7,23 @@
 ////////////////////
 // POSITIVE RULES //
 ////////////////////
+// BIOfid extension: added optional "lang"; extended reNumWord2d and normDurationNumber
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-12-14
 // duration_r1
 // EXAMPLE r1a_1: etwa fünf Tage
 // EXAMPLE r1b_1: etwa 20 Tage
 // EXAMPLE r1c_1: etwa fünf Stunden
 // EXAMPLE r1d_1: etwa 20 Stunden
-RULENAME="duration_r1a1",EXTRACTION="(%reApproximate )?(%reNumWord2D|%reNumWord1D) %reUnit",NORM_VALUE="P%normDurationNumber(group(3))%normUnit4Duration(group(6))"
-RULENAME="duration_r1b1",EXTRACTION="(%reApproximate )?([\d]+) %reUnit",NORM_VALUE="Pgroup(3)%normUnit4Duration(group(4))"
-RULENAME="duration_r1c1",EXTRACTION="(%reApproximate )?(%reNumWord2D|%reNumWord1D) (Minuten?|Stunden?)",NORM_VALUE="PT%normDurationNumber(group(3))%normUnit4Duration(group(6))"
-RULENAME="duration_r1d1",EXTRACTION="(%reApproximate )?([\d]+) (Minuten?|Stunden?)",NORM_VALUE="PTgroup(3)%normUnit4Duration(group(4))"
-RULENAME="duration_r1a2",EXTRACTION="(%reApproximate )?(%reNumWord2D|%reNumWord1D)%reAndOrTo(%reNumWord2D|%reNumWord1D) %reUnit",NORM_VALUE="P%normDurationNumber(group(3))%normUnit4Duration(group(10))",OFFSET="group(0)-group(3)"
-RULENAME="duration_r1b2",EXTRACTION="(%reApproximate )?([\d]+)%reAndOrTo([\d]+) %reUnit",NORM_VALUE="Pgroup(3)%normUnit4Duration(group(6))",OFFSET="group(0)-group(3)"
-RULENAME="duration_r1c2",EXTRACTION="(%reApproximate )?(%reNumWord2D|%reNumWord1D)%reAndOrTo(%reNumWord2D|%reNumWord1D) (Minuten?|Stunden?)",NORM_VALUE="PT%normDurationNumber(group(3))%normUnit4Duration(group(10))"
-RULENAME="duration_r1d2",EXTRACTION="(%reApproximate )?([\d]+)%reAndOrTo([\d]+) (Minuten?|Stunden?)",NORM_VALUE="PTgroup(3)%normUnit4Duration(group(6))"
+RULENAME="duration_r1a1",EXTRACTION="(%reApproximate )?(%reNumWord2D|%reNumWord1D) %reUnit( lang)?",NORM_VALUE="P%normDurationNumber(group(3))%normUnit4Duration(group(6))"
+RULENAME="duration_r1b1",EXTRACTION="(%reApproximate )?([\d]+) %reUnit( lang)?",NORM_VALUE="Pgroup(3)%normUnit4Duration(group(4))"
+RULENAME="duration_r1c1",EXTRACTION="(%reApproximate )?(%reNumWord2D|%reNumWord1D) (Minuten?|Stunden?)( lang)?",NORM_VALUE="PT%normDurationNumber(group(3))%normUnit4Duration(group(6))"
+RULENAME="duration_r1d1",EXTRACTION="(%reApproximate )?([\d]+) (Minuten?|Stunden?)( lang)?",NORM_VALUE="PTgroup(3)%normUnit4Duration(group(4))"
+RULENAME="duration_r1a2",EXTRACTION="(%reApproximate )?(%reNumWord2D|%reNumWord1D)%reAndOrTo(%reNumWord2D|%reNumWord1D) %reUnit( lang)?",NORM_VALUE="P%normDurationNumber(group(3))%normUnit4Duration(group(10))",OFFSET="group(0)-group(3)"
+RULENAME="duration_r1b2",EXTRACTION="(%reApproximate )?([\d]+)%reAndOrTo([\d]+) %reUnit( lang)?",NORM_VALUE="Pgroup(3)%normUnit4Duration(group(6))",OFFSET="group(0)-group(3)"
+RULENAME="duration_r1c2",EXTRACTION="(%reApproximate )?(%reNumWord2D|%reNumWord1D)%reAndOrTo(%reNumWord2D|%reNumWord1D) (Minuten?|Stunden?)( lang)?",NORM_VALUE="PT%normDurationNumber(group(3))%normUnit4Duration(group(10))"
+RULENAME="duration_r1d2",EXTRACTION="(%reApproximate )?([\d]+)%reAndOrTo([\d]+) (Minuten?|Stunden?)( lang)?",NORM_VALUE="PTgroup(3)%normUnit4Duration(group(6))"
 
 // duration_r2
 // EXAMPLE r2a_1: die nächsten zwanzig Tage
@@ -76,6 +80,11 @@ RULENAME="duration_r1c_negation",EXTRACTION="(%reApproximate )?(einige) %reUnit 
 RULENAME="biofid_quantdur_r1",EXTRACTION="([Ff]ür )?%reQuantWords %reSeason(e?n?)( lang)?",NORM_VALUE="PX%normSeason(group(3))"
 // date:   2021-10-28
 RULENAME="biofid_quantdur_r2",EXTRACTION="([Ff]ür )?%reQuantWords %reUnitPlural( lang)?",NORM_VALUE="PX%normUnit4Duration(group(3))"
+
+// date:   2021-12-14
+// Example biofid_quantdur_r3: paar Stunden
+RULENAME="biofid_quantdur_r3",EXTRACTION="([Ff]ür |[Ii]n )?([Ee]in )?%reQuantWords [Ss]tunden",NORM_VALUE="PTXH"
+RULENAME="biofid_quantdur_r4",EXTRACTION="([Ff]ür |[Ii]n )?([Ee]in )?%reQuantWords [Mm]inuten",NORM_VALUE="PTXM"
 
 // BIOfid extension
 // author: Andy Lücking

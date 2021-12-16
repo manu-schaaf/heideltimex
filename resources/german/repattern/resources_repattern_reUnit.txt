@@ -51,3 +51,14 @@ Jh\.
 [Hh]aushaltsjahres
 [Hh]aushaltsjahrs
 [Hh]aushaltsjahren
+// date:   2021-12-02
+[Bb]örsentag
+[Bb]örsentage
+[Bb]örsentagen
+[Bb]örsentags
+[Bb]örsentages
+// date:   2021-12-14
+[Tt]ags
+[Tt]ages
+[Mm]onats
+[Mm]onates

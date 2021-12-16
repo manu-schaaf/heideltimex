@@ -97,3 +97,41 @@
 [Ss]iebzig
 [Aa]chtzig
 [Nn]eunzig
+// BIOfid extension: until 100 and beyond
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-12-14
+[Ee]inundneunzig
+[Zz]weiundneunzig
+[Dd]reiundneunzig
+[Vv]ierundneunzig
+[Ff]ünfundneunzig
+[Ss]echsundneunzig
+[Ss]iebenundneunzig
+[Aa]chtundneunzig
+[Nn]eunundneunzig
+[Ee]inhundert
+[Hh]undert
+// hundreds
+[Zz]weihundert
+[Dd]reihundert
+[Vv]ierhundert
+[Ff]ünfhundert
+[Ss]echshundert
+[Ss]iebenhundert
+[Aa]chthundert
+[Nn]eunhundert
+[Ee]intausend
+[Tt]ausend
+// thousands
+[Zz]weitausend
+[Dd]reitausend
+[Vv]iertausend
+[Ff]ünftausend
+[Ss]echstausend
+[Ss]iebentausend
+[Aa]chttausend
+[Nn]euntausend
+[Zz]ehntausend
+[Ee]lftausend
+[Zz]wölftausend

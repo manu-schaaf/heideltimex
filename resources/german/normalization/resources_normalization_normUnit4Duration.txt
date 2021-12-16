@@ -97,3 +97,12 @@
 "haushaltsjahres","FY"
 "haushaltsjahrs","FY"
 "haushaltsjahren","FY"
+// date:   2021-12-14
+"tags","D"
+"tages","D"
+"Tags","D"
+"Tages","D"
+"monats","M"
+"monates","M"
+"Monats","M"
+"Monates","M"

@@ -26,5 +26,6 @@
 // author: Andy Lücking
 // email:  luecking@em.uni-frankfurt.de
 // date:   2021-10-20
+// why doesn't escaping period work?:
 [Cc]a\.
 [Cc]a

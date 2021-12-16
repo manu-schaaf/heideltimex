@@ -411,25 +411,48 @@ RULENAME="season_pn_negative_2",EXTRACTION="%reProfession %reSeason",NORM_VALUE=
 // date:   2021-11-30
 RULENAME="season_pn_negative_3",EXTRACTION="(Herr|Frau|Hr.|Fr.|Ehepaar|Onkel|Tante|Sohn|Tochter|Name|Doktor|Dr.|Familie) %reWeekday",NORM_VALUE="REMOVE"
 RULENAME="season_pn_negative_4",EXTRACTION="%reProfession %reWeekday",NORM_VALUE="REMOVE"
+// date:   2021-12-16
+RULENAME="season_pn_negative_5",EXTRACTION="%reBertListAnthro %reWeekday",NORM_VALUE="REMOVE"
+RULENAME="season_pn_negative_6",EXTRACTION="%reBertListAnthro %reSeason",NORM_VALUE="REMOVE"
 
 // BIOfid extensions
 // author: Andy Lücking
 // email:  luecking@em.uni-frankfurt.de
-// date:   2021-10-28
+// date:   2021-10-28 / generalized to reUnitYear 2021-12-13
 ////////////////////
 // RELATIVE UNITS //
 ////////////////////
 // Example biofid_relyear_r1: ein Jahr zuvor
 // Example biofid_relyear_r2: 13 Jahre später
-RULENAME="biofid_relyear_r1_a",EXTRACTION="(%reApproximate )?(%reNumWord1D|%reNumWord2D) Jahre? (vorher|zuvor|eher|früher)",NORM_VALUE="UNDEF-this-year-MINUS-%normDurationNumber(group(3))"
-RULENAME="biofid_relyear_r1_b",EXTRACTION="(%reApproximate )?([\d]+) Jahre?( vorher| zuvor| eher| früher)",NORM_VALUE="UNDEF-this-year-MINUS-group(2)"
-RULENAME="biofid_relyear_r2_a",EXTRACTION="(%reApproximate )?(%reNumWord1D|%reNumWord2D) Jahre? (später|danach)",NORM_VALUE="UNDEF-this-year-PLUS-%normDurationNumber(group(3))"
-RULENAME="biofid_relyear_r2_b",EXTRACTION="(%reApproximate )?([\d]+) Jahre? (später|danach)",NORM_VALUE="UNDEF-this-year-PLUS-group(2)"
+RULENAME="biofid_relyear_r1_a",EXTRACTION="(%reApproximate )?(%reNumWord1D|%reNumWord2D) %reUnitYear (vorher|zuvor|eher|früher)",NORM_VALUE="UNDEF-this-year-MINUS-%normDurationNumber(group(3))"
+RULENAME="biofid_relyear_r1_b",EXTRACTION="(%reApproximate )?([\d]+) %reUnitYear (vorher|zuvor|eher|früher)",NORM_VALUE="UNDEF-this-year-MINUS-group(3)"
+RULENAME="biofid_relyear_r2_a",EXTRACTION="(%reApproximate )?(%reNumWord1D|%reNumWord2D) %reUnitYear (später|danach)",NORM_VALUE="UNDEF-this-year-PLUS-%normDurationNumber(group(3))"
+RULENAME="biofid_relyear_r2_b",EXTRACTION="(%reApproximate )?([\d]+) %reUnitYear (später|danach)",NORM_VALUE="UNDEF-this-year-PLUS-group(3)"
 
-// date:   2021-10-29
+// date:   2021-10-29 / generalized to reUnitYear 2021-12-13
 // Example biofid_relyear_r3: vor drei/3 Jahren
-RULENAME="biofid_relyear_r3_a",EXTRACTION="[Vv]or (%reApproximate )?(%reNumWord1D|%reNumWord2D) Jahre?n?",NORM_VALUE="UNDEF-this-year-MINUS-%normDurationNumber(group(3))"
-RULENAME="biofid_relyear_r3_b",EXTRACTION="[Vv]or (%reApproximate )?([\d]+) Jahre?n?",NORM_VALUE="UNDEF-this-year-MINUS-group(3)"
+RULENAME="biofid_relyear_r3_a",EXTRACTION="[Vv]or (%reApproximate )?(%reNumWord1D|%reNumWord2D) %reUnitYear",NORM_VALUE="UNDEF-this-year-MINUS-%normDurationNumber(group(3))"
+RULENAME="biofid_relyear_r3_b",EXTRACTION="[Vv]or (%reApproximate )?([\d]+) %reUnitYear",NORM_VALUE="UNDEF-this-year-MINUS-group(3)"
+
+// date:   2021-12-13
+// Example biofid_prev_unit_r6_a: vor 4 Monaten
+RULENAME="biofid_prev_unit_r6_a",EXTRACTION="[Vv]or (%reApproximate )?(%reNumWord1D|%reNumWord2D) %reUnitMonth",NORM_VALUE="UNDEF-this-month-MINUS-%normDurationNumber(group(3))"
+RULENAME="biofid_prev_unit_r6_b",EXTRACTION="[Vv]or (%reApproximate )?([\d]+) %reUnitMonth",NORM_VALUE="UNDEF-this-month-MINUS-group(3)"
+
+// BIOfid extensions
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-12-13
+// Example biofid_prevunit_r3: das Jahr zuvor (see also above "ein Jahr zuvor" and so on)
+// Example biofid_prevunit_r4: 3 Quartale zuvor
+RULENAME="biofid_prevunit_r3_a",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )%reUnitYear zuvor",NORM_VALUE="UNDEF-last-year"
+RULENAME="biofid_prevunit_r3_b",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )%reUnitMonth zuvor",NORM_VALUE="UNDEF-last-month"
+RULENAME="biofid_prevunit_r3_c",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )%reUnitQuartal zuvor",NORM_VALUE="UNDEF-last-quarter"
+RULENAME="biofid_prevunit_r4_a",EXTRACTION="(%reApproximate )?(%reNumWord1D|%reNumWord2D) %reUnitMonth zuvor",NORM_VALUE="UNDEF-this-month-MINUS-%normDurationNumber(group(3))"
+RULENAME="biofid_prevunit_r4_b",EXTRACTION="(%reApproximate )?([\d]+) %reUnitMonth zuvor",NORM_VALUE="UNDEF-this-month-MINUS-group(3)"
+RULENAME="biofid_prevunit_r5_a",EXTRACTION="(%reApproximate )?(%reNumWord1D|%reNumWord2D) %reUnitQuartal zuvor",NORM_VALUE="UNDEF-this-quarter-MINUS-%normDurationNumber(group(3))"
+RULENAME="biofid_prevunit_r5_b",EXTRACTION="(%reApproximate )?([\d]+) %reUnitQuartal zuvor",NORM_VALUE="UNDEF-this-quarter-MINUS-group(3)"
+
 
 // date:   2021-10-29
 // Example biofid_endof_r1: das Jahresende
@@ -449,14 +472,10 @@ RULENAME="biofid_prevunit_r1_d",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd
 RULENAME="biofid_prevunit_r1_e",EXTRACTION="([Dd]er |[Dd]em |[Dd]en )?[Vv]orjahre?szeitraum",NORM_VALUE="UNDEF-last-year"
 
 // date:   2021-11-30
-// Example biofid_prevunit_r2_a vorherigen Freitag
+// Example biofid_prevunit_r2_a: vorherigen Freitag
 RULENAME="biofid_prevunit_r2_a",EXTRACTION="[Vv]orherige?r?s?n?m? %reWeekday",NORM_VALUE="UNDEF-last-%normWeekday(group(1))"
 RULENAME="biofid_prevunit_r2_b",EXTRACTION="[Vv]orherige?r?s?n?m? %reUnit",NORM_VALUE="UNDEF-last-%normUnit(group(1))"
 
-// BIOfid extensions
-// author: Andy Lücking
-// email:  luecking@em.uni-frankfurt.de
-// date:   2021-11-30
 ////////////
 // Folge- //
 ////////////
