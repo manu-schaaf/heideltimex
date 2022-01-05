@@ -62,3 +62,9 @@ Jh\.
 [Tt]ages
 [Mm]onats
 [Mm]onates
+// date:   2022-05-01
+[Rr]echnungsjahr
+[Rr]echnungsjahre
+[Rr]echnungsjahren
+[Rr]echnungsjahres
+[Rr]echnungsjahrs
