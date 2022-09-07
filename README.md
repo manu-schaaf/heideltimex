@@ -1,5 +1,4 @@
 [![version](https://img.shields.io/github/license/texttechnologylab/heideltime)]()
-[![latest](https://img.shields.io/github/v/release/texttechnologylab/heideltime)]()
 [![](https://jitpack.io/v/texttechnologylab/heideltime.svg)](https://jitpack.io/#texttechnologylab/heideltime)
 
 **HeidelTime can now also be used for English temponym tagging. For details, see our [TempWeb'16 paper](http://www2016.net/proceedings/companion/p841.pdf).**
