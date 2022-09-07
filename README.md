@@ -1,3 +1,7 @@
+[![version](https://img.shields.io/github/license/texttechnologylab/heideltime)]()
+[![latest](https://img.shields.io/github/v/release/texttechnologylab/heideltime)]()
+[![](https://jitpack.io/v/texttechnologylab/heideltime.svg)](https://jitpack.io/#texttechnologylab/heideltime)
+
 **HeidelTime can now also be used for English temponym tagging. For details, see our [TempWeb'16 paper](http://www2016.net/proceedings/companion/p841.pdf).**
 
 **HeidelTime contains automatically created resources for 200+ languages in addition to manually created ones for 13 languages. For further details, take a look at our [EMNLP 2015 paper](https://aclweb.org/anthology/D/D15/D15-1063.pdf).**
