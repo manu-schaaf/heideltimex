@@ -11,7 +11,6 @@ HeidelTime is one of the most widespread and successful tools for detecting temp
 ![[PDF]](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.505.pdf)
 
 ### BibTex
-
 ```
 @InProceedings{Luecking:Stoeckel:Abrami:Mehler:2022,
   Author         = {L\"{u}cking, Andy and Stoeckel, Manuel and Abrami, Giuseppe and Mehler, Alexander},
@@ -30,19 +29,19 @@ HeidelTime is one of the most widespread and successful tools for detecting temp
 ## Maven
 
 Add the JitPack repository and the dependency to your pom.xml:
-```
-	<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+```xml
+<repositories>
+	<repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+</repositories>
 
-	<dependency>
-	    <groupId>com.github.texttechnologylab</groupId>
-	    <artifactId>heideltime</artifactId>
-	    <version>0d4f7cad13</version>
-	</dependency>
+<dependency>
+    <groupId>com.github.texttechnologylab</groupId>
+    <artifactId>heideltime</artifactId>
+    <version>0d4f7cad13</version>
+</dependency>
 ```
 
 
