@@ -2,8 +2,30 @@
 [![](https://jitpack.io/v/texttechnologylab/heideltime.svg)](https://jitpack.io/#texttechnologylab/heideltime)
 [![paper](https://img.shields.io/badge/paper-ACL--anthology-B31B1B.svg)](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.505.pdf)
 
-## About the TTLab's Extension of HeidelTime
+## About TTLab's Extension of HeidelTime
 HeidelTime is one of the most widespread and successful tools for detecting temporal expressions in texts. Since HeidelTime's pattern matching system is based on regular expression, it can be extended in a convenient way. We present such an extension for the German resources of HeidelTime: HeidelTimeext. The extension has been brought about by means of observing false negatives within real world texts and various time banks. The gain in coverage is 2.7 % or 8.5 %, depending on the admitted degree of potential overgeneralization. We describe the development of HeidelTimeext, its evaluation on text samples from various genres, and share some linguistic observations.
+
+### How to Cite
+
+ A. Lücking, M. Stoeckel, G. Abrami, and A. Mehler, "I still have Time(s): Extending HeidelTime for German Texts," in *Proceedings of the Language Resources and Evaluation Conference*, Marseille, France, 2022, pp. 4723-4728. 
+![[PDF]](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.505.pdf)
+
+### BibTex
+
+```
+@InProceedings{Luecking:Stoeckel:Abrami:Mehler:2022,
+  Author         = {L\"{u}cking, Andy and Stoeckel, Manuel and Abrami, Giuseppe and Mehler, Alexander},
+  title     = {I still have Time(s): Extending HeidelTime for German Texts},
+  booktitle      = {Proceedings of the Language Resources and Evaluation Conference},
+  month          = {June},
+  year           = {2022},
+  address        = {Marseille, France},
+  publisher      = {European Language Resources Association},
+  pages     = {4723--4728},
+  abstract  = {HeidelTime is one of the most widespread and successful tools for detecting temporal expressions in texts. Since HeidelTime’s pattern matching system is based on regular expression, it can be extended in a convenient way. We present such an extension for the German resources of HeidelTime: HeidelTimeExt. The extension has been brought about by means of observing false negatives within real world texts and various time banks. The gain in coverage is 2.7 \% or 8.5 \%, depending on the admitted degree of potential overgeneralization. We describe the development of HeidelTimeExt, its evaluation on text samples from various genres, and share some linguistic observations. HeidelTimeExt can be obtained from https://github.com/texttechnologylab/heideltime.},
+  pdf    = {http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.505.pdf}
+}
+```
 
 ## Original HeidelTime
 **HeidelTime can now also be used for English temponym tagging. For details, see our [TempWeb'16 paper](http://www2016.net/proceedings/companion/p841.pdf).**
