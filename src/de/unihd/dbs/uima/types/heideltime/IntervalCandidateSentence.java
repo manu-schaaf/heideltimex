@@ -1,49 +1,88 @@
 
 
-/* First created by JCasGen Thu Sep 20 15:38:13 CEST 2012 */
-package de.unihd.dbs.uima.types.heideltime;
+   
+/* Apache UIMA v3 - First created by JCasGen Fri Jun 06 12:46:16 CEST 2025 */
 
+package de.unihd.dbs.uima.types.heideltime;
+ 
+
+
+import org.apache.uima.cas.impl.CASImpl;
+import org.apache.uima.cas.impl.TypeImpl;
 import org.apache.uima.jcas.JCas; 
 import org.apache.uima.jcas.JCasRegistry;
-import org.apache.uima.jcas.cas.TOP_Type;
+
 
 
 
 /** 
- * Updated by JCasGen Mon Aug 18 14:39:53 CEST 2014
- * XML source: /home/julian/heideltime/heideltime-kit/desc/type/HeidelTime_TypeSystem.xml
+ * Updated by JCasGen Fri Jun 06 12:46:16 CEST 2025
+ * XML source: /nvme/projects/TTLab/heideltime/target/jcasgen/typesystem.xml
  * @generated */
 public class IntervalCandidateSentence extends Sentence {
+ 
   /** @generated
    * @ordered 
    */
+  @SuppressWarnings ("hiding")
+  public final static String _TypeName = "de.unihd.dbs.uima.types.heideltime.IntervalCandidateSentence";
+  
+  /** @generated
+   * @ordered 
+   */
+  @SuppressWarnings ("hiding")
   public final static int typeIndexID = JCasRegistry.register(IntervalCandidateSentence.class);
   /** @generated
    * @ordered 
    */
+  @SuppressWarnings ("hiding")
   public final static int type = typeIndexID;
-  /** @generated  */
+  /** @generated
+   * @return index of the type  
+   */
   @Override
   public              int getTypeIndexID() {return typeIndexID;}
  
+ 
+  /* *******************
+   *   Feature Offsets *
+   * *******************/ 
+   
+
+
+  /* Feature Adjusted Offsets */
+
+   
   /** Never called.  Disable default constructor
    * @generated */
+  @Deprecated
+  @SuppressWarnings ("deprecation")
   protected IntervalCandidateSentence() {/* intentionally empty block */}
     
   /** Internal - constructor used by generator 
-   * @generated */
-  public IntervalCandidateSentence(int addr, TOP_Type type) {
-    super(addr, type);
+   * @generated
+   * @param casImpl the CAS this Feature Structure belongs to
+   * @param type the type of this Feature Structure 
+   */
+  public IntervalCandidateSentence(TypeImpl type, CASImpl casImpl) {
+    super(type, casImpl);
     readObject();
   }
   
-  /** @generated */
+  /** @generated
+   * @param jcas JCas to which this Feature Structure belongs 
+   */
   public IntervalCandidateSentence(JCas jcas) {
     super(jcas);
     readObject();   
   } 
 
-  /** @generated */  
+
+  /** @generated
+   * @param jcas JCas to which this Feature Structure belongs
+   * @param begin offset to the begin spot in the SofA
+   * @param end offset to the end spot in the SofA 
+  */  
   public IntervalCandidateSentence(JCas jcas, int begin, int end) {
     super(jcas);
     setBegin(begin);
@@ -53,9 +92,9 @@ public class IntervalCandidateSentence extends Sentence {
 
   /** 
    * <!-- begin-user-doc -->
-    * Write your own initialization here
-    * <!-- end-user-doc -->
-  *
+   * Write your own initialization here
+   * <!-- end-user-doc -->
+   *
    * @generated modifiable 
    */
   private void readObject() {/*default - does nothing empty block */}

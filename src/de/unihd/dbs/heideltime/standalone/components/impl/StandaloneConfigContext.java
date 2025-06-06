@@ -4,14 +4,17 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.uima.UimaContext;
 import org.apache.uima.cas.AbstractCas;
 import org.apache.uima.cas.SofaID;
 import org.apache.uima.resource.ResourceAccessException;
+import org.apache.uima.resource.ResourceConfigurationException;
 import org.apache.uima.resource.Session;
 import org.apache.uima.util.InstrumentationFacility;
 import org.apache.uima.util.Logger;
+import org.apache.uima.util.Settings;
 
 @SuppressWarnings("deprecation")
 public class StandaloneConfigContext implements UimaContext {
@@ -51,6 +54,26 @@ public class StandaloneConfigContext implements UimaContext {
 	public String[] getConfigParameterNames() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getSharedSettingValue(String s) throws ResourceConfigurationException {
+		throw new UnsupportedOperationException("getSharedSettingValue is not supported!");
+	}
+
+	@Override
+	public String[] getSharedSettingArray(String s) throws ResourceConfigurationException {
+		throw new UnsupportedOperationException("getSharedSettingArray is not supported!");
+	}
+
+	@Override
+	public String[] getSharedSettingNames() {
+		throw new UnsupportedOperationException("getSharedSettingNames is not supported!");
+	}
+
+	@Override
+	public Settings getExternalOverrides() {
+		throw new UnsupportedOperationException("getExternalOverrides is not supported!");
 	}
 
 	@Override
@@ -136,6 +159,11 @@ public class StandaloneConfigContext implements UimaContext {
 	public String getDataPath() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<String> getDataPathElements() {
+		return List.of();
 	}
 
 	@Override
