@@ -8,10 +8,10 @@
 // EVERY UNIT //
 ////////////////
 // set_r1
-// EXAMPLE 1: each day
-// EXAMPLE 2: every Monday
-// EXAMPLE 3: each September
-// EXAMPLE 4: every summer
+// EXAMPLE set_r1a: jeden Tag
+// EXAMPLE set_r1b: jeden Montag
+// EXAMPLE set_r1c: jeden September
+// EXAMPLE set_r1d: jeden Sommer
 RULENAME="set_r1a",EXTRACTION="(jede[nrs]?) %reUnit",NORM_VALUE="P1%UPPERCASE%(%SUBSTRING%(%normUnit(group(2)),0,1))",NORM_QUANT="EVERY"
 RULENAME="set_r1b",EXTRACTION="(jede[nrs]?) %reWeekday",NORM_VALUE="XXXX-WXX-%normDayInWeek(group(2))",NORM_QUANT="EVERY",NORM_FREQ="1W"
 RULENAME="set_r1c",EXTRACTION="(jede[nrs]?) (%reMonthLong|%reMonthShort)",NORM_VALUE="XXXX-%normMonth(group(2))",NORM_QUANT="EVERY",NORM_FREQ="1M"
@@ -37,7 +37,7 @@ RULENAME="set_r3b",EXTRACTION="%reWeekday (und|oder) %reWeekday %rePartOfDay[s]"
 /////////////
 // "beide" //
 /////////////
-// Example biofid_beide_r1: beide Jahre
+// EXAMPLE biofid_beide_r1: beide Jahre
 RULENAME="biofid_beide_r1_a",EXTRACTION="(beide[rsnm]?) %reUnit",NORM_VALUE="P1%UPPERCASE%(%SUBSTRING%(%normUnit(group(2)),0,1))",NORM_QUANT="TWO"
 RULENAME="biofid_beide_r1_b",EXTRACTION="(beide[rsnm]?) %reSeason(e?)[ns]",NORM_VALUE="P1%UPPERCASE%(%SUBSTRING%(%normSeason(group(2)),0,2))",NORM_QUANT="TWO"
 
@@ -48,15 +48,15 @@ RULENAME="biofid_beide_r1_b",EXTRACTION="(beide[rsnm]?) %reSeason(e?)[ns]",NORM_
 ///////////////////////////////
 // "Turnus"-LIKE EXPRESSIONS //
 ///////////////////////////////
-// Example biofid_turnus_r1: monatlichem Rhythmus
-// Example biofid_turnus_r2_a: zweijähriger Turnus
-// Example biofid_turnus_r2_a: dreizehnmonatiger Turnus
-// Example biofid_turnus_r3: 13-Monatiger Turnus
-// Example biofid_turnus_r4: Wochenbasis
-RULENAME="biofid_turnus_r1",EXTRACTION="%reSetWords(e?)[rsnm] %reIntervalWords",NORM_VALUE="%normSetWords(group(1))",NORM_QUANT="EVERY"
-RULENAME="biofid_turnus_r2_a",EXTRACTION="%reNumWord1D-?%reUnitAdj(e?)[rsnm] %reIntervalWords",NORM_VALUE="P%normDurationNumber(group(1))%normUnitAdj4Duration(group(2))",NORM_QUANT="EVERY"
-RULENAME="biofid_turnus_r2_b",EXTRACTION="%reNumWord2D-?%reUnitAdj(e?)[rsnm] %reIntervalWords",NORM_VALUE="P%normDurationNumber(group(1))%normUnitAdj4Duration(group(2))",NORM_QUANT="EVERY"
-RULENAME="biofid_turnus_r3",EXTRACTION="([\d]+)-?%reUnitAdj(e?)[rsnm] %reIntervalWords",NORM_VALUE="Pgroup(1)%normUnitAdj4Duration(group(2))",NORM_QUANT="EVERY"
+// EXAMPLE biofid_turnus_r1: monatlichem Rhythmus
+// EXAMPLE biofid_turnus_r2_a: zweijähriger Turnus
+// EXAMPLE biofid_turnus_r2_b: dreizehnmonatiger Turnus
+// EXAMPLE biofid_turnus_r3: 13-Monatiger Turnus
+// EXAMPLE biofid_turnus_r4: Wochenbasis
+RULENAME="biofid_turnus_r1",EXTRACTION="%reSetWords[e]?[rsnm] %reIntervalWords",NORM_VALUE="%normSetWords(group(1))",NORM_QUANT="EVERY"
+RULENAME="biofid_turnus_r2_a",EXTRACTION="%reNumWord1D-?%reUnitAdj[e]?[rsnm] %reIntervalWords",NORM_VALUE="P%normDurationNumber(group(1))%normUnitAdj4Duration(group(2))",NORM_QUANT="EVERY"
+RULENAME="biofid_turnus_r2_b",EXTRACTION="%reNumWord2D-?%reUnitAdj[e]?[rsnm] %reIntervalWords",NORM_VALUE="P%normDurationNumber(group(1))%normUnitAdj4Duration(group(2))",NORM_QUANT="EVERY"
+RULENAME="biofid_turnus_r3",EXTRACTION="([\d]+)-?%reUnitAdj[e]?[rsnm] %reIntervalWords",NORM_VALUE="Pgroup(1)%normUnitAdj4Duration(group(2))",NORM_QUANT="EVERY"
 // date:   2021-11-30
 RULENAME="biofid_turnus_r4",EXTRACTION="%reUnit-?[Bb]asis",NORM_VALUE="P1%normUnit4Duration(group(1))",NORM_QUANT="EVERY"
 
@@ -67,7 +67,7 @@ RULENAME="biofid_turnus_r4",EXTRACTION="%reUnit-?[Bb]asis",NORM_VALUE="P1%normUn
 //////////////////////
 // SETS OF WEEKDAYS //
 //////////////////////
-// Example biofid_setday_r1: viele Freitage
+// EXAMPLE biofid_setday_r1: viele Freitage
 RULENAME="biofid_setday_r1",EXTRACTION="%reQuantWords %reWeekday(e)?",NORM_VALUE="%normWeekday(group(2))",NORM_QUANT="%normQuantWords(group(1))"
 
 // BIOfid extension
@@ -78,9 +78,9 @@ RULENAME="biofid_setday_r1",EXTRACTION="%reQuantWords %reWeekday(e)?",NORM_VALUE
 //////////////////////
 // x times per unit //
 //////////////////////
-// Example biofid_times_per_unit_r1: zweimal pro Woche
-// Example biofid_times_per_unit_r2: zweimal innerhalb eines Monats
-// Example biofid_times_per_unit_r5: das zweite Mal innerhalb einer Stunde
+// EXAMPLE biofid_times_per_unit_r1: zweimal pro Woche
+// EXAMPLE biofid_times_per_unit_r2: zweimal innerhalb eines Monats
+// EXAMPLE biofid_times_per_unit_r5: das zweite Mal innerhalb einer Stunde
 RULENAME="biofid_times_per_unit_r1_a",EXTRACTION="(%reNumWord1D|%reNumWord2D)-?[Mm]al pro %reUnit",NORM_VALUE="P%normDurationNumber(group(2))%normUnit4Duration(group(4))",NORM_QUANT="EVERY"
 RULENAME="biofid_times_per_unit_r1_b",EXTRACTION="([\d]+)-?[Mm]al pro %reUnit",NORM_VALUE="Pgroup(1)%normUnit4Duration(group(2))",NORM_QUANT="EVERY"
 RULENAME="biofid_times_per_unit_r1_c",EXTRACTION="(%reNumWord1D|%reNumWord2D)-?[Mm]al (im |in der |in dem )%reUnit",NORM_VALUE="P%normDurationNumber(group(2))%normUnit4Duration(group(5))",NORM_QUANT="EVERY"
@@ -101,5 +101,5 @@ RULENAME="biofid_times_per_unit_r4_d",EXTRACTION="([\d]+)-?[Mm]al (in der|innerh
 // for some reason, patterns such as "12. Mal" are ignored, but only for capital "Mal", it works with "mal" and "Male"...
 RULENAME="biofid_times_per_unit_r5_a",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as )?%reCountWords [Mm]ale? (pro|innerhalb|in der|am|im) (einer |eine |eines |einem)?%reUnit",NORM_VALUE="P%normCountWords(group(2))%normUnit4Duration(group(5))",NORM_QUANT="SOME"
 RULENAME="biofid_times_per_unit_r5_b",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as )?([\d]+)[\.] [Mm]ale? (pro|innerhalb|in der|am|im) (einer |eine |eines |einem)?%reUnit",NORM_VALUE="Pgroup(2)%normUnit4Duration(group(5))",NORM_QUANT="SOME"
-RULENAME="biofid_times_per_unit_r5_c",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as )?%reCountWords [Mm]ale? (pro|innerhalb|in der|in) (einer |eine )?[Ss]tunde",NORM_VALUE="P%normCountWords(group(2))%normUnit4Duration(group(5))",NORM_QUANT="SOME"
+RULENAME="biofid_times_per_unit_r5_c",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as )?%reCountWords [Mm]ale? (pro|innerhalb|in der|in) (einer |eine )?[Ss]tunde",NORM_VALUE="P%normCountWords(group(2))H",NORM_QUANT="SOME"
 RULENAME="biofid_times_per_unit_r5_d",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as )?([\d]+)[\.] [Mm]ale? (pro|innerhalb|in der|in) (einer |eine )?[Ss]tunde",NORM_VALUE="Pgroup(2)H",NORM_QUANT="SOME"

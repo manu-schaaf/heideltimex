@@ -4,7 +4,7 @@
 
     <groupId>org.texttechnologylab</groupId>
     <artifactId>heideltimex</artifactId>
-    <version>3.0.1</version>
+    <version>3.0.2</version>
 
     <name>HeidelTime</name>
     <description>HeidelTime is a multilingual cross-domain temporal tagger that extracts temporal expressions from
@@ -40,6 +40,18 @@
             <name>Julian Zell</name>
             <email>zell@informatik.uni-heidelberg.de</email>
             <url>https://github.com/jzell</url>
+        </developer>
+        <developer>
+            <id>aluecking</id>
+            <name>Julian Zell</name>
+            <email>luecking@em.uni-frankfurt.de</email>
+            <url>https://github.com/aluecking</url>
+        </developer>
+        <developer>
+            <id>manu-schaaf</id>
+            <name>Manuel Schaaf</name>
+            <email>manuel.schaaf@em.uni-frankfurt.de</email>
+            <url>https://github.com/manu-schaaf</url>
         </developer>
     </developers>
 

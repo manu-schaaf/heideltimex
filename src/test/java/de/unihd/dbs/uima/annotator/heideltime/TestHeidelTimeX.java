@@ -194,6 +194,136 @@ public class TestHeidelTimeX {
         }
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "etwa fünf Tage", // EXAMPLE r1a_1
+            "etwa 20 Tage", // EXAMPLE r1b_1
+            "etwa fünf Stunden", // EXAMPLE r1c_1
+            "etwa 20 Stunden", // EXAMPLE r1d_1
+            "die nächsten zwanzig Tage", // EXAMPLE r2a_1
+            "die nächsten 20 Tage", // EXAMPLE r2b_1
+            "die nächsten paar Tage", // EXAMPLE r2c_1
+            "die nächsten zwanzig Minuten", // EXAMPLE r2d_1
+            "die nächsten 20 Minuten", // EXAMPLE r2e_1
+            "die nächsten paar Minuten", // EXAMPLE r2f_1
+            "ein Jahr", // EXAMPLE r3a_1
+            "eine Stunde", // EXAMPLE r3b_1
+            "20-tägig", // EXAMPLE r3c_1
+            "20-stündig", // EXAMPLE r3d_1
+            "viele Sommer", // EXAMPLE biofid_quantdur_r1
+            "mehrere Quartale", // EXAMPLE biofid_quantdur_r2
+            "paar Stunden", // EXAMPLE biofid_quantdur_r3
+            "halbes Quartal", // EXAMPLE biofid_unitdur_r1
+            "Vierteljahrhundert", // EXAMPLE biofid_unitdur_r2
+            "zweieinhalb Jahre", // EXAMPLE biofid_unitdur_r3_1
+            "2-einhalb Jahre", // EXAMPLE biofid_unitdur_r3_2
+            "zweistündig", // EXAMPLE biofid_unitdur_r1_a
+            "elfjährig", // EXAMPLE biofid_unitdur_r1_b
+            "11-tägig", // EXAMPLE biofid_unitdur_r2_a
+            "ganztägig", // EXAMPLE biofid_unitdur_r2_b_1: overgeneralises over UnitAdj
+            "ganzjährig", // EXAMPLE biofid_unitdur_r2_b_1
+    })
+    public void test_german_durationrules(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
+        runHeidelTimeX(input);
+        Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
+        if (timex3s.isEmpty()) {
+            printAnnotations(timex3s);
+            Assertions.fail("Expected one Timex3 found for %s but got %d".formatted(input, timex3s.size()));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "zwanzig Jahre alt", // EXAMPLE r1a_negation_1
+            "20 Jahre alt", // EXAMPLE r1b_negation_1
+            "einige Jahre alt", // EXAMPLE r1c_negation_1
+    })
+    public void test_german_durationrules_negative(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
+        runHeidelTimeX(input);
+        Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
+        if (!timex3s.isEmpty()) {
+            printAnnotations(timex3s);
+            Assertions.fail("Expected no Timex3 for %s but found %d".formatted(input, timex3s.size()));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "von 1999 bis 2012", // EXAMPLE interval_01
+            "zwischen März und Mai", // EXAMPLE interval_02
+            "20.3.2003 - 1.5.2003", // EXAMPLE interval_03
+            "20.3.2003 bis 1.5.2003", // EXAMPLE interval_04
+            "begann im März 2003 und endete im Mai 2003", // EXAMPLE interval_05
+            "2012/2013", // EXAMPLE interval_06
+    })
+    public void test_german_intervalrules(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
+        runHeidelTimeX(input);
+        Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
+        if (timex3s.isEmpty()) {
+            printAnnotations(timex3s);
+            Assertions.fail("Expected one Timex3 found for %s but got %d".formatted(input, timex3s.size()));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "jeden Tag", // EXAMPLE set_r1a
+            "jeden Montag", // EXAMPLE set_r1b
+            "jeden September", // EXAMPLE set_r1c
+            "jeden Sommer", // EXAMPLE set_r1d
+            "jährlich", // EXAMPLE r2a
+            "Montag vormittags", // EXAMPLE r3a_1
+            "Montag und Samstag nachts", // EXAMPLE r3a_1 (find: Montag nachts)
+            "beide Jahre", // EXAMPLE biofid_beide_r1
+            "monatlichem Rhythmus", // EXAMPLE biofid_turnus_r1
+            "zweijähriger Turnus", // EXAMPLE biofid_turnus_r2_a
+            "dreizehnmonatiger Turnus", // EXAMPLE biofid_turnus_r2_b
+            "13-Monatiger Turnus", // EXAMPLE biofid_turnus_r3
+            "Wochenbasis", // EXAMPLE biofid_turnus_r4
+            "viele Freitage", // EXAMPLE biofid_setday_r1
+            "zweimal pro Woche", // EXAMPLE biofid_times_per_unit_r1
+            "zweimal innerhalb eines Monats", // EXAMPLE biofid_times_per_unit_r2
+            "das zweite Mal innerhalb einer Stunde", // EXAMPLE biofid_times_per_unit_r5
+    })
+    public void test_german_setrules(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
+        runHeidelTimeX(input);
+        Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
+        if (timex3s.isEmpty()) {
+            printAnnotations(timex3s);
+            Assertions.fail("Expected one Timex3 found for %s but got %d".formatted(input, timex3s.size()));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "2009-12-19T17:00:00", // EXAMPLE r1a-1:
+            "2009-12-19 17:00:00", // EXAMPLE r1a-2:
+            "2009-12-19T17:00", // EXAMPLE r1b-1:
+            "12/29/2000 20:29", // EXAMPLE r1c-1:
+            "12/29/2000 20:29:29", // EXAMPLE r1d-1:
+            "12/29/2000 20:29:29.79", // EXAMPLE r1e-1:
+            "Montag Mitternacht", // EXAMPLE r2a_1:
+            "Montagnacht", // EXAMPLE r2b_1:
+            "Mitternacht heute", // EXAMPLE r2c_1:
+            "gestern Morgen", // EXAMPLE r2d_1:
+            "14:30 Uhr", // EXAMPLE r3a_1:
+            "14 Uhr 30", // EXAMPLE r3b_1:
+            "15 Uhr", // EXAMPLE r3c_1:
+            "Morgen des 1. August 2000", // EXAMPLE r4a_1:
+            "Morgen des 1. August", // EXAMPLE r4b_1:
+            "am Morgen", // EXAMPLE r5a-1:
+            "nächsten Morgen", // EXAMPLE r5b-1:
+            "am Morgen desselben Tages", // EXAMPLE r5c-1:
+    })
+    public void test_german_timerules(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
+        runHeidelTimeX(input);
+        Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
+        if (timex3s.isEmpty()) {
+            printAnnotations(timex3s);
+            Assertions.fail("Expected one Timex3 found for %s but got %d".formatted(input, timex3s.size()));
+        }
+    }
+
     public void runHeidelTimeX(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
         jCas.reset();
         jCas.setDocumentLanguage("de");
