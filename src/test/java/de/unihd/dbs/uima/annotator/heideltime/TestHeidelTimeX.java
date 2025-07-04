@@ -1,0 +1,223 @@
+package de.unihd.dbs.uima.annotator.heideltime;
+
+import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
+import de.unihd.dbs.uima.types.heideltime.Sentence;
+import de.unihd.dbs.uima.types.heideltime.Timex3;
+import de.unihd.dbs.uima.types.heideltime.Token;
+import org.apache.uima.analysis_engine.AnalysisEngine;
+import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
+import org.apache.uima.cas.CASException;
+import org.apache.uima.fit.factory.AnalysisEngineFactory;
+import org.apache.uima.fit.factory.JCasFactory;
+import org.apache.uima.fit.pipeline.SimplePipeline;
+import org.apache.uima.fit.util.JCasUtil;
+import org.apache.uima.jcas.JCas;
+import org.apache.uima.jcas.tcas.Annotation;
+import org.apache.uima.resource.ResourceInitializationException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.Collection;
+import java.util.Collections;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class TestHeidelTimeX {
+    AnalysisEngine engine;
+    JCas jCas;
+
+    @BeforeAll
+    public void setUp() throws ResourceInitializationException, CASException {
+        jCas = JCasFactory.createJCas();
+        engine = AnalysisEngineFactory.createEngine(
+                HeidelTime.class,
+                HeidelTime.PARAM_LANGUAGE, Language.GERMAN,
+                HeidelTime.PARAM_TYPE_TO_PROCESS, "news",
+                HeidelTime.PARAM_DATE, true,
+                HeidelTime.PARAM_TIME, true,
+                HeidelTime.PARAM_DURATION, true,
+                HeidelTime.PARAM_SET, true,
+                HeidelTime.PARAM_TEMPONYMS, false,
+                HeidelTime.PARAM_GROUP, true
+        );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "190 v. Chr.", // EXAMPLE date_historic_1a_BCADhint: (1- to 4-digit year)
+            "v. Chr. 190", // EXAMPLE date_historic_1b_BCADhint: (1- to 4-digit year)
+            "190 bis 180 v. Chr.", // EXAMPLE date_historic_1c_BCADhint: (find "190 v. Chr."; 1- to 4-digit year)
+            "Anfang 190 v. Chr.", // EXAMPLE date_historic_1d_BCADhint: (1- to 4-digit year)
+            "Anfang v. Chr. 190 v. Chr.", // EXAMPLE date_historic_1e_BCADhint: (1- to 4-digit year)
+            "Anfang 190 bis 180 v. Chr.", // EXAMPLE date_historic_1f_BCADhint: (find "Anfang 190 v. Chr."; 1- to 4-digit year)
+            "Januar 190 v. Chr.", // EXAMPLE date_historic_2a_BCADhint: (1- to 4-digit year)
+            "Januar 190", // EXAMPLE date_historic_2b: (3-digit year)
+            "Januar 90", // EXAMPLE date_historic_2c: (2-digit year)
+            "Anfang Januar 190 v. Chr.", // EXAMPLE date_historic_2d_BCADhint: (1- to 4-digit year)
+            "Anfang Januar 190", // EXAMPLE date_historic_2e: (3-digit year)
+            "Anfang Januar 90", // EXAMPLE date_historic_2f: (2-digit year)
+            "1. Januar 190 v. Chr.", // EXAMPLE date_historic_3a_BCADhint: (1- to 4-digit year)
+            "1. Januar 190", // EXAMPLE date_historic_3b: (3-digit year)
+            "1. Januar 90", // EXAMPLE date_historic_3c: (2-digit year)
+            "1. - 15. Januar 90", // EXAMPLE date_historic_3d: (find "1. Januar 90"; 2-digit year)
+            "Winter 190 v. Chr.", // EXAMPLE date_historic_4a_BCADhint: (1- to 4-digit year)
+            "Mitte Winter 190 v.Chr.", // EXAMPLE date_historic_4b_BCADhint: (1- to 4-digit year)
+            "das 5. Jahrhundert v. Chr.", // EXAMPLE date_historic_5a_BCADhint
+            "Jahr 90", // EXAMPLE date_historic_6a: (2-digit year)
+            "Jahr 190", // EXAMPLE date_historic_6b: (3-digit year)
+            "2010-01-29", // EXAMPLE r0a_1
+            "10-29-99", // EXAMPLE r0b_1
+            "09/26/1999", // EXAMPLE r0c_1
+            "09/26/99", // EXAMPLE r0d_1
+            "7-14 (AP)", // EXAMPLE r0e_1: (find 7-14)
+            "1.3.99", // EXAMPLE r1a_1
+            "1.3.1999", // EXAMPLE r1b_1
+            "Februar 25, 2009", // EXAMPLE r2a_1
+            "Feb. 25, 2009", // EXAMPLE r2a_2
+            "25. Februar 2009", // EXAMPLE r3a_1
+            "25 Feb 2009", // EXAMPLE r3a_2
+            "25 Feb. 2009", // EXAMPLE r3a_3
+            "25. November des Jahres 2001", // EXAMPLE r3a_4
+            "November 19", // EXAMPLE r4a_1
+            "19. November", // EXAMPLE r4b_1
+            "November 15 - 18", // EXAMPLE r4c_1: (find November 18)
+            "19. und 20. Januar", // EXAMPLE r4d_1: (find 19. Januar)
+            "Freitag Oktober 13", // EXAMPLE r5a_1
+            "Freitag 13. Oktober", // EXAMPLE r5b_1
+            "14. und 15. September 2010", // EXAMPLE r6a_1: (find: 14. September 2010)
+            "Friday Oktober 13 2009", // EXAMPLE r7a_1
+            "morgen", // EXAMPLE 8a_1
+            "Montag", // EXAMPLE r9a_1
+            "November 2001", // EXAMPLE r10a_1
+            "Nov. 2001", // EXAMPLE r10a_2
+            "Mai and Juni 2011", // EXAMPLE r10b_1: (find Mai 2001)
+            "November diesen Jahres", // EXAMPLE r11a_1
+            "Sommer", // EXAMPLE r12a_1
+            "Sommer 2001", // EXAMPLE r12b_1
+            "Sommer 69", // EXAMPLE r12c_1
+            "das erste Quartal 2001", // EXAMPLE r13a_1
+            "das erste Quartal", // EXAMPLE r13a_1
+            "2009", // EXAMPLE r14a_1
+            "Jahr 2009", // EXAMPLE r14a_2
+            "1850-58", // EXAMPLE r15a_1: (find: 1858)
+            "1850/51", // EXAMPLE r15a_2: (find: 1851)
+            "neunzehnsechsundneuzig", // EXAMPLE r16a_1
+            "Das 20. Jahrhundert", // EXAMPLE r17a_1
+            "Im 18. und 19. Jahrhundert", // EXAMPLE r17b_1: (find: 17. Jahrhundert)
+            "das 17. Jahrhundert", // EXAMPLE 2
+            "März", // EXAMPLE r18a_1
+            "Anfang 1999", // EXAMPLE r18b_1
+            "Anfang November 1999", // EXAMPLE r18c_1
+            "Anfang November 2000", // EXAMPLE r18d_1
+            "die 1920er Jahre", // EXAMPLE r19a_1
+            "die 20er Jahre", // EXAMPLE r19b_1
+            "die frühen 1920er Jahre", // EXAMPLE r19a_1
+            "die frühen 20er Jahre", // EXAMPLE r19b_1
+            "dieses Jahr", // EXAMPLE r20a_1
+            "gleichen Tag", // EXAMPLE r20b_1
+            "diesen November", // EXAMPLE r20c_1
+            "diesen Montag", // EXAMPLE r20d_1
+            "diesen Sommer", // EXAMPLE r20e_1
+            "Anfang diesen Jahres", // EXAMPLE r21a_1
+            "Anfang dieses Novembers", // EXAMPLE r21b_1
+            "Anfang dieses Montags", // EXAMPLE r21c_1
+            "Anfang dieses Sommers", // EXAMPLE r21d_1
+            "letztes Wochenende", // EXAMPLE r22a_1
+            "das letztjährige Quartal", // EXAMPLE r23a_1
+            "das Quartal", // EXAMPLE r23b_1
+            "ein Jahr früher", // EXAMPLE r24a_1
+            "ein Jahr später", // EXAMPLE r24b_2
+            "etwa zehn Tage später", // EXAMPLE r25a_1
+            "etwa 20 Jahre später", // EXAMPLE r25b_1
+            "etwa ein Jahr später", // EXAMPLE r25c_1
+            "etwa zehn Tage früher", // EXAMPLE r25d_1
+            "etwa 20 Tage früher", // EXAMPLE r25e_1
+            "etwa ein Tag früher", // EXAMPLE r25f_1
+            "Neujahr", // EXAMPLE r27a_1
+            "Neujahr 2010", // EXAMPLE r27b_1
+            "Neujahr 87", // EXAMPLE r27c_1
+            "Ostermontag", // EXAMPLE r28a_1
+            "Ostermontag 2010", // EXAMPLE r28b_1
+            "Ostermontag 87", // EXAMPLE r28c_1
+            "Sommerzeit", // EXAMPLE biofid_zeit_r1
+            "Mittagszeit", // EXAMPLE biofid_zeit_r1
+            "diesjährig", // EXAMPLE biofid_adjunit_r1
+            "Vorjahre", // EXAMPLE biofid_vor_r1
+            "Herbstferien", // EXAMPLE biofid_ferien_r1
+            "Sommer-Ferien", // EXAMPLE biofid_ferien_r2
+            "ein Jahr zuvor", // EXAMPLE biofid_relyear_r1
+            "13 Jahre später", // EXAMPLE biofid_relyear_r2
+            "vor drei Jahren", // EXAMPLE biofid_relyear_r3
+            "vor 3 Jahren", // EXAMPLE biofid_relyear_r3
+            "vor 4 Monaten", // EXAMPLE biofid_prev_unit_r6_a
+            "das Jahr zuvor", // EXAMPLE biofid_prevunit_r3: (see also above "ein Jahr zuvor" and so on)
+            "3 Quartale zuvor", // EXAMPLE biofid_prevunit_r4
+            "das Jahresende", // EXAMPLE biofid_endof_r1
+            "das laufende Quartal", // EXAMPLE biofid_endof_r1
+            "Vorjahreszeitraum", // EXAMPLE biofid_prevunit_r1
+            "Vorjahresquartal", // EXAMPLE biofid_prevunit_r2
+            "vorherigen Freitag", // EXAMPLE biofid_prevunit_r2_a
+            "Folgemonat", // EXAMPLE biofid_folge_r1
+    })
+    public void test_german_daterules(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
+        runHeidelTimeX(input);
+        Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
+        if (timex3s.isEmpty()) {
+            printAnnotations(timex3s);
+            Assertions.fail("Expected one Timex3 found for %s but got %d".formatted(input, timex3s.size()));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "MiG-190", // EXAMPLE date_historic_0a_negative: (1- to 4-digit year)
+            "90 Menschen", // EXAMPLE date_historic_0b_negative: (2-digit year)
+            "Märchen aus 1001 Nacht", // EXAMPLE r1e1_negative
+            "1001-Nacht", // EXAMPLE r1e2_negative
+            "Sonnenfelsgasse 19, 1010 Wien", // EXAMPLE r2a_negative
+            "1010 Wien", // EXAMPLE r2b_negative
+            "1600 Pennsylvania Avenue", // EXAMPLE r2c_negative
+            "Sitzungssaal 1901", // EXAMPLE r2d_negative
+            "1200 davon sind tot", // EXAMPLE r3a_negative
+            "mindestens 2000 sind tot", // EXAMPLE r3b_negative
+            "von 2000 auf 1800 reduziert", // EXAMPLE r3c_negative
+            "UN Resolution 1441", // EXAMPLE r4a_negative
+    })
+    public void test_german_daterules_negative(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
+        runHeidelTimeX(input);
+        Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
+        if (!timex3s.isEmpty()) {
+            printAnnotations(timex3s);
+            Assertions.fail("Expected no Timex3 for %s but found %d".formatted(input, timex3s.size()));
+        }
+    }
+
+    public void runHeidelTimeX(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
+        jCas.reset();
+        jCas.setDocumentLanguage("de");
+        jCas.setDocumentText(input);
+
+        int offset = 0;
+        for (int i = 1; i < input.length(); i++) {
+            if (input.charAt(i) == ' ' || i == input.length() - 1) {
+                new Token(jCas, offset, i).addToIndexes();
+                offset = i;
+            }
+        }
+        new Sentence(jCas, 0, input.length()).addToIndexes();
+
+        SimplePipeline.runPipeline(jCas, engine);
+    }
+
+    public static void printAnnotations(Collection<? extends Annotation> annotations) {
+        for (Annotation annotation : annotations) {
+            StringBuffer stringBuffer = new StringBuffer();
+            annotation.prettyPrint(0, 2, stringBuffer, true);
+            System.out.print(stringBuffer);
+            System.out.println("\n  text: \"" + annotation.getCoveredText() + "\"\n");
+        }
+    }
+
+}

@@ -4,7 +4,7 @@
 
     <groupId>org.texttechnologylab</groupId>
     <artifactId>heideltimex</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
 
     <name>HeidelTime</name>
     <description>HeidelTime is a multilingual cross-domain temporal tagger that extracts temporal expressions from
@@ -59,22 +59,6 @@
             </activation>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>3.3.1</version>
-                        <configuration>
-                            <excludeResources>true</excludeResources>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
@@ -197,7 +181,7 @@
                             <typeSystemIncludes>
                                 <include>desc/type/HeidelTime_TypeSystem.xml</include>
                             </typeSystemIncludes>
-                            <outputDirectory>src/</outputDirectory>
+                            <outputDirectory>src/main/java</outputDirectory>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -206,7 +190,7 @@
     </profiles>
 
     <build>
-        <sourceDirectory>src</sourceDirectory>
+        <sourceDirectory>src/main/java</sourceDirectory>
         <outputDirectory>${basedir}/class</outputDirectory>
         <resources>
             <resource>
@@ -216,7 +200,7 @@
                 </includes>
             </resource>
             <resource>
-                <directory>resources/</directory>
+                <directory>src/main/resources/</directory>
                 <includes>
                     <include>**/*.txt</include>
                 </includes>
@@ -232,6 +216,30 @@
                     <target>17</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <excludeResources>true</excludeResources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.3</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.5.3</version>
+            </plugin>
         </plugins>
     </build>
 
@@ -246,14 +254,37 @@
         </repository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.13.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
-        <!-- for practically every component -->
         <dependency>
             <groupId>org.apache.uima</groupId>
             <artifactId>uimaj-core</artifactId>
-            <version>3.6.0</version>
-            <!-- <scope>provided</scope> -->
+            <version>3.5.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.uima</groupId>
+            <artifactId>uimafit-core</artifactId>
+            <version>3.5.0</version>
+        </dependency>
+
         <!-- for the StanfordPOSTaggerWrapper -->
         <dependency>
             <groupId>edu.stanford.nlp</groupId>
@@ -273,6 +304,19 @@
             <artifactId>lbfgs</artifactId>
             <version>0.1</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.texttechnologylab</groupId>
+            <artifactId>UIMATypeSystem</artifactId>
+            <version>3.0.10</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

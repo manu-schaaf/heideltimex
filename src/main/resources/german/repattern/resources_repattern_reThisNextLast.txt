@@ -1,0 +1,29 @@
+// author: Jannik Strötgen
+// email:  stroetgen@uni-hd.de
+// date:   2011-06-10
+// This file contains regular expression patterns for this/next/last words.
+// FORMAT: one line is one disjunction of the pattern
+[Ll]etzte[rsnm]?
+[Nn]ächste[rsnm]?
+[Ff]olgende[rsnm]?
+[Dd]iese[rsnm]?
+[Vv]orige[rsnm]?
+[Ss]elbe[rsnm]?
+[Gg]leiche[rsnm]?
+[Kk]ommende[rsnm]?
+[Vv]ergangene[rsnm]?
+// BIOFid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-20
+[Dd]emselben
+[Dd]erselben
+[Dd]ieselbe
+[Dd]em selben
+[Dd]er selben
+[Dd]ie selbe
+// BIOFid extension
+// author: Manuel Schaaf
+// email:  manuel.schaaf@em.uni-frankfurt.de
+// date:   2025-07-04
+[Vv]orherige[rsnm]?
