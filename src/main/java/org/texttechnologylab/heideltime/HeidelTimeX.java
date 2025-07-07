@@ -19,14 +19,17 @@ import java.util.concurrent.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.unihd.dbs.uima.annotator.heideltime.ProcessorManager;
+import org.apache.commons.compress.utils.Iterators;
 import org.apache.uima.UimaContext;
 import org.apache.uima.cas.FSIterator;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
+import org.apache.uima.fit.util.CasUtil;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
@@ -2244,32 +2247,36 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
     }
 
     private void deleteOverlappedTimexesPostprocessing(JCas jcas) {
+
+        HashSet<ArrayList<Timex3>> effectivelyToInspect = new HashSet<ArrayList<Timex3>>();
+        HashSet<Timex3> allTimexesToInspect = new HashSet<>();
         FSIterator<Annotation> timexIter = jcas.getAnnotationIndex(Timex3.type).iterator();
         FSIterator<Annotation> innerTimexIter = timexIter.copy();
-        HashSet<ArrayList<Timex3>> effectivelyToInspect = new HashSet<ArrayList<Timex3>>();
-        ArrayList<Timex3> allTimexesToInspect = new ArrayList<Timex3>();
         while (timexIter.hasNext()) {
-            Timex3 myTimex = (Timex3) timexIter.next();
+            Timex3 outer = (Timex3) timexIter.next();
+
+            if (outer.getTimexType().equals("TEMPONYM")) {
+                continue;
+            }
 
             ArrayList<Timex3> timexSet = new ArrayList<Timex3>();
-            if (!(myTimex.getTimexType().equals("TEMPONYM"))) {
-                timexSet.add(myTimex);
-            }
+            timexSet.add(outer);
 
             // compare this timex to all other timexes and mark those that have an overlap
             while (innerTimexIter.hasNext()) {
-                Timex3 myInnerTimex = (Timex3) innerTimexIter.next();
-                if (!(myTimex.getTimexType().equals("TEMPONYM"))) {
-                    if (
-                            (myTimex.getBegin() <= myInnerTimex.getBegin() && myTimex.getEnd() > myInnerTimex.getBegin()) || // timex1 starts, timex2 is partial overlap
-                                    (myInnerTimex.getBegin() <= myTimex.getBegin() && myInnerTimex.getEnd() > myTimex.getBegin()) || // same as above, but in reverse
-                                    (myInnerTimex.getBegin() <= myTimex.getBegin() && myTimex.getEnd() <= myInnerTimex.getEnd()) || // timex 1 is contained within or identical to timex2
-                                    (myTimex.getBegin() <= myInnerTimex.getBegin() && myInnerTimex.getEnd() <= myTimex.getEnd())
-                    ) { // same as above, but in reverse
-                        timexSet.add(myInnerTimex); // increase the sets
+                Timex3 inner = (Timex3) innerTimexIter.next();
 
-                        allTimexesToInspect.add(myTimex); // note that these timexes are being looked at
-                        allTimexesToInspect.add(myInnerTimex);
+                if (!(outer.getTimexType().equals("TEMPONYM"))) {
+                    if (
+                            (outer.getBegin() <= inner.getBegin() && outer.getEnd() > inner.getBegin()) || // timex1 starts, timex2 is partial overlap
+                                    (inner.getBegin() <= outer.getBegin() && inner.getEnd() > outer.getBegin()) || // same as above, but in reverse
+                                    (inner.getBegin() <= outer.getBegin() && outer.getEnd() <= inner.getEnd()) || // timex 1 is contained within or identical to timex2
+                                    (outer.getBegin() <= inner.getBegin() && inner.getEnd() <= outer.getEnd()) // same as above, but in reverse
+                    ) {
+                        timexSet.add(inner); // increase the sets
+
+                        allTimexesToInspect.add(outer); // note that these timexes are being looked at
+                        allTimexesToInspect.add(inner);
                     }
                 }
             }
