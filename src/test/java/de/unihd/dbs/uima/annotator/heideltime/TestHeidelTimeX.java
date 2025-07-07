@@ -21,7 +21,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Collection;
-import java.util.Collections;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TestHeidelTimeX {
@@ -34,13 +33,14 @@ public class TestHeidelTimeX {
         engine = AnalysisEngineFactory.createEngine(
                 HeidelTime.class,
                 HeidelTime.PARAM_LANGUAGE, Language.GERMAN,
-                HeidelTime.PARAM_TYPE_TO_PROCESS, "news",
-                HeidelTime.PARAM_DATE, true,
-                HeidelTime.PARAM_TIME, true,
-                HeidelTime.PARAM_DURATION, true,
-                HeidelTime.PARAM_SET, true,
-                HeidelTime.PARAM_TEMPONYMS, false,
-                HeidelTime.PARAM_GROUP, true
+                HeidelTime.PARAM_TYPE_TO_PROCESS, "narrative",
+                HeidelTime.PARAM_FIND_DATES, true,
+                HeidelTime.PARAM_FIND_TIMES, true,
+                HeidelTime.PARAM_FIND_DURATIONS, true,
+                HeidelTime.PARAM_FIND_SETS, true,
+                HeidelTime.PARAM_FIND_TEMPONYMS, true,
+                HeidelTime.PARAM_GROUP_GRAN, true,
+                HeidelTime.PARAM_DEBUG, true
         );
     }
 
@@ -103,7 +103,7 @@ public class TestHeidelTimeX {
             "Jahr 2009", // EXAMPLE r14a_2
             "1850-58", // EXAMPLE r15a_1: (find: 1858)
             "1850/51", // EXAMPLE r15a_2: (find: 1851)
-            "neunzehnsechsundneuzig", // EXAMPLE r16a_1
+            "Im Jahre neunzehnsechsundneuzig", // EXAMPLE r16a_1
             "Das 20. Jahrhundert", // EXAMPLE r17a_1
             "Im 18. und 19. Jahrhundert", // EXAMPLE r17b_1: (find: 17. Jahrhundert)
             "das 17. Jahrhundert", // EXAMPLE 2
