@@ -25,10 +25,10 @@ RULENAME="time_r1e",EXTRACTION="(%reMonthNumber/%reDayNumber/%reYear4Digit) %reT
 // PART-OF-DAY GRANULARITY //
 /////////////////////////////
 // time_r2
-// EXAMPLE r2a_1: midnight Monday
-// EXAMPLE r2b_1: Monday night
-// EXAMPLE r2c_1: midnight today
-// EXAMPLE r2d_1: yesterday morning
+// EXAMPLE r2a_1: Montag Mitternacht
+// EXAMPLE r2b_1: Montagnacht
+// EXAMPLE r2c_1: Mitternacht heute
+// EXAMPLE r2d_1: gestern Morgen
 RULENAME="time_r2a",EXTRACTION="%rePartOfDay %reWeekday",NORM_VALUE="UNDEF-day-%normWeekday(group(2))T%normPartOfDay(group(1))"
 // BIOfid extension: "-s" alternation, caution: adds a group!
 // author: Andy Lücking
@@ -72,9 +72,9 @@ RULENAME="time_r4b",EXTRACTION="(%reApproximate )?%rePartOfDay (des) (%reDayNumb
 
 
 // time_r5
-// EXAMPLE r5a-1: (am) Morgen 
+// EXAMPLE r5a-1: [am] Morgen
 // EXAMPLE r5b-1: nächsten Morgen
-// EXAMPLE r5c-1: (am) Morgen desselben Tages
+// EXAMPLE r5c-1: [am] Morgen desselben Tages
 RULENAME="time_r5a",EXTRACTION="(\b[Aa]m) %rePartOfDay",NORM_VALUE="UNDEF-this-dayT%normPartOfDay(group(2))",OFFSET="group(2)-group(2)"
 RULENAME="time_r5b",EXTRACTION="%reThisNextLast %rePartOfDay",NORM_VALUE="UNDEF-%normThisNextLast(group(1))-dayT%normPartOfDay(group(2))"
 RULENAME="time_r5c",EXTRACTION="(de[rm]selben?) %rePartOfDay",NORM_VALUE="UNDEF-REF-day-PLUS-0T%normPartOfDay(group(2))"

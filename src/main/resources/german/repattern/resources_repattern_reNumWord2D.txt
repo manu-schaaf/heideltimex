@@ -101,15 +101,15 @@
 // author: Andy Lücking
 // email:  luecking@em.uni-frankfurt.de
 // date:   2021-12-14
-[Ee]inundneunzig
-[Zz]weiundneunzig
-[Dd]reiundneunzig
-[Vv]ierundneunzig
-[Ff]ünfundneunzig
-[Ss]echsundneunzig
-[Ss]iebenundneunzig
-[Aa]chtundneunzig
-[Nn]eunundneunzig
+// [Ee]inundneunzig
+// [Zz]weiundneunzig
+// [Dd]reiundneunzig
+// [Vv]ierundneunzig
+// [Ff]ünfundneunzig
+// [Ss]echsundneunzig
+// [Ss]iebenundneunzig
+// [Aa]chtundneunzig
+// [Nn]eunundneunzig
 [Ee]inhundert
 [Hh]undert
 // hundreds

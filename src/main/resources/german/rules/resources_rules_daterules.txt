@@ -9,12 +9,12 @@
 ///////////////////
 
 // historic dates; year granularity; with explicit AD / BC hints
-// EXAMPLE date_historic_1a-BCADhint: 190 v. Chr.                (1- to 4-digit year)
-// EXAMPLE date_historic_1b-BCADhint: v. Chr. 190                (1- to 4-digit year)
-// EXAMPLE date_historic_1c-BCADhint: 190 bis 180 v. Chr.        (find "190 v. Chr."; 1- to 4-digit year)
-// EXAMPLE date_historic_1d-BCADhint: Anfang 190 v. Chr.         (1- to 4-digit year)
-// EXAMPLE date_historic_1e-BCADhint: Anfang v. Chr. 190 v. Chr. (1- to 4-digit year)
-// EXAMPLE date_historic_1f-BCADhint: Anfang 190 bis 180 v. Chr. (find "Anfang 190 v. Chr."; 1- to 4-digit year)
+// EXAMPLE date_historic_1a-BCADhint: 190 v. Chr.                | 1- to 4-digit year
+// EXAMPLE date_historic_1b-BCADhint: v. Chr. 190                | 1- to 4-digit year
+// EXAMPLE date_historic_1c-BCADhint: 190 bis 180 v. Chr.        | find "190 v. Chr."; 1- to 4-digit year
+// EXAMPLE date_historic_1d-BCADhint: Anfang 190 v. Chr.         | 1- to 4-digit year
+// EXAMPLE date_historic_1e-BCADhint: Anfang v. Chr. 190 v. Chr. | 1- to 4-digit year
+// EXAMPLE date_historic_1f-BCADhint: Anfang 190 bis 180 v. Chr. | find "Anfang 190 v. Chr."; 1- to 4-digit year
 RULENAME="date_historic_1a-BCADhint",EXTRACTION="(%reApproximate )?(Jahr(e)?([ns])? )?%reYearBC %reYearPrefix",NORM_VALUE="%normYearPrefix(group(7))%normYearBC(group(6))"
 RULENAME="date_historic_1b-BCADhint",EXTRACTION="(%reApproximate )?(Jahr(e)?([ns])? )?%reYearPrefix %reYearBC",NORM_VALUE="%normYearPrefix(group(6))%normYearBC(group(7))"
 RULENAME="date_historic_1c-BCADhint",EXTRACTION="(%reApproximate )?(Jahr(e)?([ns])? )?%reYearBC%reAndOrTo%reYearBC %reYearPrefix",NORM_VALUE="%normYearPrefix(group(9))%normYearBC(group(6))",OFFSET="group(0)-group(6)"
@@ -23,12 +23,12 @@ RULENAME="date_historic_1e-BCADhint",EXTRACTION="(%rePartWords )(Jahr(e)?([ns])?
 RULENAME="date_historic_1f-BCADhint",EXTRACTION="(%rePartWords )(Jahr(e)?([ns])? )?%reYearBC%reAndOrTo%reYearBC %reYearPrefix",NORM_VALUE="%normYearPrefix(group(9))%normYearBC(group(6))",OFFSET="group(0)-group(6)"
 
 // historic dates; month granularity
-// EXAMPLE date_historic_2a-BCADhint: Januar 190 v. Chr.        (1- to 4-digit year)
-// EXAMPLE date_historic_2b:          Januar 190                (3-digit year)
-// EXAMPLE date_historic_2c:          Januar 90                 (2-digit year)
-// EXAMPLE date_historic_2d-BCADhint: Anfang Januar 190 v. Chr. (1- to 4-digit year)
-// EXAMPLE date_historic_2e:          Anfang Januar 190         (3-digit year)
-// EXAMPLE date_historic_2f:          Anfang Januar 90          (2-digit year)
+// EXAMPLE date_historic_2a-BCADhint: Januar 190 v. Chr.        | 1- to 4-digit year
+// EXAMPLE date_historic_2b:          Januar 190                | 3-digit year
+// EXAMPLE date_historic_2c:          Januar 90                 | 2-digit year
+// EXAMPLE date_historic_2d-BCADhint: Anfang Januar 190 v. Chr. | 1- to 4-digit year
+// EXAMPLE date_historic_2e:          Anfang Januar 190         | 3-digit year
+// EXAMPLE date_historic_2f:          Anfang Januar 90          | 2-digit year
 RULENAME="date_historic_2a-BCADhint",EXTRACTION="(%reApproximate )?(%reMonthLong|%reMonthShort)( )%reYearBC %reYearPrefix",NORM_VALUE="%normYearPrefix(group(8))%normYearBC(group(7))-%normMonth(group(3))"
 RULENAME="date_historic_2b",EXTRACTION="(%reApproximate )?(%reMonthLong|%reMonthShort)( )([\d][\d][\d])",NORM_VALUE="%normYearBC(group(7))-%normMonth(group(3))"
 RULENAME="date_historic_2c",EXTRACTION="(%reApproximate )?(%reMonthLong|%reMonthShort)( )([\d][\d])",NORM_VALUE="UNDEF-centurygroup(7)-%normMonth(group(3))"
@@ -37,18 +37,18 @@ RULENAME="date_historic_2e",EXTRACTION="(%rePartWords )(%reMonthLong|%reMonthSho
 RULENAME="date_historic_2f",EXTRACTION="(%rePartWords )(%reMonthLong|%reMonthShort)( )([\d][\d])",NORM_VALUE="UNDEF-centurygroup(7)-%normMonth(group(3))"
 
 // historic dates; day granularity
-// EXAMPLE date_historic_3a-BCADhint: 1. Januar 190 v. Chr. (1- to 4-digit year)
-// EXAMPLE date_historic_3b:          1. Januar 190         (3-digit year)
-// EXAMPLE date_historic_3c:          1. Januar 90          (2-digit year)
-// EXAMPLE date_historic_3d:          1. - 15. Januar 90    (find "1. Januar 90"; 2-digit year)
+// EXAMPLE date_historic_3a-BCADhint: 1. Januar 190 v. Chr. | 1- to 4-digit year
+// EXAMPLE date_historic_3b:          1. Januar 190         | 3-digit year
+// EXAMPLE date_historic_3c:          1. Januar 90          | 2-digit year
+// EXAMPLE date_historic_3d:          1. - 15. Januar 90    | find "1. Januar 90"; 2-digit year
 RULENAME="date_historic_3a-BCADhint",EXTRACTION="%reDayNumber[\.]? (%reMonthLong|%reMonthShort)( des Jahres| im Jahre)? %reYearBC %reYearPrefix",NORM_VALUE="%normYearPrefix(group(7))%normYearBC(group(6))-%normMonth(group(2))-%normDay(group(1))"
 RULENAME="date_historic_3b",EXTRACTION="%reDayNumber[\.]? (%reMonthLong|%reMonthShort)( des Jahres| im Jahre)? (\d\d\d)",NORM_VALUE="%normYearBC(group(6))-%normMonth(group(2))-%normDay(group(1))"
 RULENAME="date_historic_3c",EXTRACTION="%reDayNumber[\.]? (%reMonthLong|%reMonthShort)( des Jahres| im Jahre)? %reYear2Digit",NORM_VALUE="UNDEF-centurygroup(6)-%normMonth(group(2))-%normDay(group(1))"
 RULENAME="date_historic_3d",EXTRACTION="(%reDayNumber[\.]?)%reAndOrTo%reDayNumber[\.]? (%reMonthLong|%reMonthShort)( des Jahres| im Jahre)? %reYear2Digit",NORM_VALUE="UNDEF-centurygroup(9)-%normMonth(group(5))-%normDay(group(1))",OFFSET="group(1)-group(1)"
 
 // historic dates; season granularity
-// EXAMPLE date_historic_4a-BCADhint: Winter 190 v. Chr.      (1- to 4-digit year)
-// EXAMPLE date_historic_4b-BCADhint: Mitte Winter 190 v.Chr. (1- to 4-digit year)
+// EXAMPLE date_historic_4a-BCADhint: Winter 190 v. Chr.      | 1- to 4-digit year
+// EXAMPLE date_historic_4b-BCADhint: Mitte Winter 190 v.Chr. | 1- to 4-digit year
 RULENAME="date_historic_4a-BCADhint",EXTRACTION="(%reApproximate )?%reSeason %reYearBC %reYearPrefix",NORM_VALUE="%normYearPrefix(group(5))%normYearBC(group(4))-%normSeason(group(3))",
 RULENAME="date_historic_4b-BCADhint",EXTRACTION="(%rePartWords )%reSeason %reYearBC %reYearPrefix",NORM_VALUE="%normYearPrefix(group(5))%normYearBC(group(4))-%normSeason(group(3))",
 
@@ -57,14 +57,14 @@ RULENAME="date_historic_4b-BCADhint",EXTRACTION="(%rePartWords )%reSeason %reYea
 RULENAME="date_historic_5a-BCADhint",EXTRACTION="([Dd]as )?(%reDayNumber[\.]?|%reDayWordTh) (Jahrhundert[s]?|Jh\.) %reYearPrefix",NORM_VALUE="%normYearPrefix(group(6))%normDay(%SUM%(%normDay(group(2)),-1))"
 
 // historic dates; year granularity
-// EXAMPLE date_historic_6a: Jahr 90  (2-digit year)
-// EXAMPLE date_historic_6b: Jahr 190 (3-digit year)
+// EXAMPLE date_historic_6a: Jahr 90  | 2-digit year
+// EXAMPLE date_historic_6b: Jahr 190 | 3-digit year
 RULENAME="date_historic_6a",EXTRACTION="(Jahr(e)?([ns])?) (\d\d)",NORM_VALUE="%normYearBC(group(4))"
 RULENAME="date_historic_6b",EXTRACTION="(Jahr(e)?([ns])?) (\d\d\d)",NORM_VALUE="%normYearBC(group(4))"
 
 // historic dates; negative rules
-// EXAMPLE date_historic_0a_negative: MiG-190      (1- to 4-digit year)
-// EXAMPLE date_historic_0b_negative: 90 Menschen  (2-digit year)
+// EXAMPLE date_historic_0a_negative: MiG-190      | 1- to 4-digit year
+// EXAMPLE date_historic_0b_negative: 90 Menschen  | 2-digit year
 RULENAME="date_historic_0a_negative",EXTRACTION="(MiG(-)%reYearBC)",NORM_VALUE="REMOVE"
 RULENAME="date_historic_0b_negative",EXTRACTION="(%reYear2Digit )([\S]+)",NORM_VALUE="REMOVE",POS_CONSTRAINT="group(3):NN:",OFFSET="group(1)-group(1)"
 
@@ -80,7 +80,7 @@ RULENAME="date_historic_0b_negative",EXTRACTION="(%reYear2Digit )([\S]+)",NORM_V
 // EXAMPLE r0b_1: 10-29-99
 // EXAMPLE r0c_1: 09/26/1999
 // EXAMPLE r0d_1: 09/26/99
-// EXAMPLE r0e_1: 7-14 (AP) (find 7-14)
+// EXAMPLE r0e_1: 7-14 (AP) | find "7-14"
 RULENAME="date_r0a",EXTRACTION="(%reYear4Digit-%reMonthNumber-%reDayNumber)",NORM_VALUE="group(1)"
 RULENAME="date_r0b",EXTRACTION="(%reMonthNumber-%reDayNumber-%reYear2Digit)",NORM_VALUE="UNDEF-centurygroup(4)-group(2)-group(3)"
 RULENAME="date_r0c",EXTRACTION="%reMonthNumber/%reDayNumber/%reYear4Digit",NORM_VALUE="group(3)-%normMonth(group(1))-%normDay(group(2))"
@@ -108,8 +108,8 @@ RULENAME="date_r3a",EXTRACTION="%reDayNumber[\.]? (%reMonthLong|%reMonthShort)( 
 // date_r4
 // EXAMPLE r4a_1: November 19
 // EXAMPLE r4b_1: 19. November
-// EXAMPLE r4c_1: November 15 - 18   (find November 18)
-// EXAMPLE r4d_1: 19. und 20. Januar (find 19. Januar)
+// EXAMPLE r4c_1: November 15 - 18   | find November 18
+// EXAMPLE r4d_1: 19. und 20. Januar | find 19. Januar
 RULENAME="date_r4a",EXTRACTION="(%reMonthLong|%reMonthShort) (%reDayWordTh|%reDayNumberTh|%reDayNumber)",NORM_VALUE="UNDEF-year-%normMonth(group(1))-%normDay(group(4))"
 RULENAME="date_r4b",EXTRACTION="(%reDayWordTh|%reDayNumberTh|%reDayNumber[\.]?) (%reMonthLong|%reMonthShort)",NORM_VALUE="UNDEF-year-%normMonth(group(5))-%normDay(group(1))"
 RULENAME="date_r4c",EXTRACTION="(%reMonthLong|%reMonthShort) (%reDayWordTh|%reDayNumberTh|%reDayNumber)(\–| - | – |-|–)(%reDayWordTh|%reDayNumberTh|%reDayNumber)",NORM_VALUE="UNDEF-year-%normMonth(group(1))-%normDay(group(9))",OFFSET="group(9)-group(9)"
@@ -122,7 +122,7 @@ RULENAME="date_r5a",EXTRACTION="%reWeekday[,]? (%reMonthLong|%reMonthShort) (%re
 RULENAME="date_r5b",EXTRACTION="%reWeekday[,]? (%reDayWordTh|%reDayNumberTh|%reDayNumber)[\.]? (%reMonthLong|%reMonthShort)",NORM_VALUE="UNDEF-year-%normMonth(group(6))-%normDay(group(2))"
 
 // date_r6
-// EXAMPLE r6a_1: 14. und 15. September 2010 (find: 14. September 2010)
+// EXAMPLE r6a_1: 14. und 15. September 2010 | find: 14. September 2010
 RULENAME="date_r6a",EXTRACTION="(%reDayNumberTh|%reDayNumber)[\.]?%reAndOrTo(%reDayNumberTh|%reDayNumber)[\.]? (%reMonthLong|%reMonthShort) %reYear4Digit",NORM_VALUE="group(11)-%normMonth(group(8))-%normDay(group(1))",OFFSET="group(1)-group(1)"
 
 // date_r7
@@ -147,7 +147,7 @@ RULENAME="date_r9a",EXTRACTION="%reWeekday(e|s)?",NORM_VALUE="UNDEF-day-%normWee
 //date_r10
 // EXAMPLE r10a_1: November 2001
 // EXAMPLE r10a_2: Nov. 2001
-// EXAMPLE r10b_1: Mai and Juni 2011 (find Mai 2001)
+// EXAMPLE r10b_1: Mai and Juni 2011 | find Mai 2001
 RULENAME="date_r10a",EXTRACTION="(%reMonthLong|%reMonthShort) %reYear4Digit",NORM_VALUE="group(4)-%normMonth(group(1))"
 RULENAME="date_r10b",EXTRACTION="(%reMonthLong|%reMonthShort)%reAndOrTo(%reMonthLong|%reMonthShort) %reYear4Digit",NORM_VALUE="group(8)-%normMonth(group(1))",OFFSET="group(1)-group(1)"
 
@@ -185,23 +185,23 @@ RULENAME="date_r13c",EXTRACTION="([Dd]as |[Dd]er |[Dd]ie )?%rePartOfYear des Vor
 RULENAME="date_r14a",EXTRACTION="(Jahr[es]* )?%reYear4Digit",NORM_VALUE="group(2)"
 
 //date_r15
-// EXAMPLE r15a_1: 1850-58 (find: 1858)
-// EXAMPLE r15a_2: 1850/51 (find: 1851)
+// EXAMPLE r15a_1: 1850-58 | find: 1858
+// EXAMPLE r15a_2: 1850/51 | find: 1851
 RULENAME="date_r15a",EXTRACTION="%reYear4Digit%reAndOrTo%reYear2Digit",NORM_VALUE="%SUBSTRING%(group(1),0,2)group(3)",OFFSET="group(3)-group(3)"
 
 // date_r16
 // EXAMPLE r16a_1: neunzehnsechsundneuzig
-RULENAME="date_r16a",EXTRACTION="%reNumWordTeen( |-|)%reNumWord2D",NORM_VALUE="%normDurationNumber(group(1))%normDurationNumber(group(3))"
+RULENAME="date_r16a",EXTRACTION="%reNumWordTeen[ -]?%reNumWord2D",NORM_VALUE="%normDurationNumber(group(1))%normDurationNumber(group(2))"
 
 /////////////////////////
 // Century Granularity //
 /////////////////////////
 // date_r17
 // EXAMPLE r17a_1: Das 20. Jahrhundert
-// EXAMPLE r17b_1: Im 18. und 19. Jahrhundert (find: 17. Jahrhundert)
+// EXAMPLE r17b_1: Im 18. und 19. Jahrhundert | find: 17. Jahrhundert
 // EXAMPLE 2: the seventh century
-RULENAME="date_r17a",EXTRACTION="(Das )?(%reDayNumber[\.]?|%reDayWordTh) Jahrhundert[s]?",NORM_VALUE="%normDay(%SUM%(%normDay(group(2)),-1))"
-RULENAME="date_r17b",EXTRACTION="(Das )?(%reDayNumber[\.]?|%reDayWordTh)%reAndOrTo(%reDayNumber[\.]?|%reDayWordTh) Jahrhundert[s]?",NORM_VALUE="%normDay(%SUM%(%normDay(group(2)),-1))",OFFSET="group(2)-group(2)"
+RULENAME="date_r17a",EXTRACTION="([Ii]m |[Dd]as )?(%reDayNumber[\.]?|%reDayWordTh) Jahrhundert[s]?",NORM_VALUE="%normDay(%SUM%(%normDay(group(2)),-1))"
+RULENAME="date_r17b",EXTRACTION="([Ii]m |[Dd]as )?(%reDayNumber[\.]?|%reDayWordTh)%reAndOrTo(%reDayNumber[\.]?|%reDayWordTh) Jahrhundert[s]?",NORM_VALUE="%normDay(%SUM%(%normDay(group(2)),-1))",OFFSET="group(2)-group(2)"
 
 ///////////////////////////////////
 // GRANULARITY INDEPENDENT RULES //
@@ -284,18 +284,18 @@ RULENAME="date_r26f",EXTRACTION="(%reApproximate )?([Ee]inen|[Ee]ine|[Ee]in) (%r
 // HOLIDAY RULES //
 ///////////////////
 
-//date_r27
-//EXAMPLE r27a_1: Neujahr
-//EXAMPLE r27b_1: Neujahr 2010
-//EXAMPLE r27c_1: Neujahr 87
+// date_r27
+// EXAMPLE r27a_1: Neujahr
+// EXAMPLE r27b_1: Neujahr 2010
+// EXAMPLE r27c_1: Neujahr 87
 RULENAME="date_r27a",EXTRACTION="%reHolidayFix",NORM_VALUE="UNDEF-year-%normHolidayFix(group(1))"
 RULENAME="date_r27b",EXTRACTION="%reHolidayFix %reYear4Digit",NORM_VALUE="group(2)-%normHolidayFix(group(1))"
 RULENAME="date_r27c",EXTRACTION="%reHolidayFix %reYear2Digit",NORM_VALUE="UNDEF-centurygroup(2)-%normHolidayFix(group(1))"
 
-//date_r28
-//EXAMPLE r28a_1: Ostermontag
-//EXAMPLE r28b_1: Ostermontag 2010
-//EXAMPLE r28c_1: Ostermontag 87
+// date_r28
+// EXAMPLE r28a_1: Ostermontag
+// EXAMPLE r28b_1: Ostermontag 2010
+// EXAMPLE r28c_1: Ostermontag 87
 RULENAME="date_r28a",EXTRACTION="%reHolidayVar",NORM_VALUE="UNDEF-year-00-00 %normHolidayVar(group(1))"
 RULENAME="date_r28b",EXTRACTION="%reHolidayVar %reYear4Digit",NORM_VALUE="group(2)-00-00 %normHolidayVar(group(1))"
 RULENAME="date_r28c",EXTRACTION="%reHolidayVar %reYear2Digit",NORM_VALUE="UNDEF-centurygroup(2)-00-00 %normHolidayVar(group(1))"
@@ -338,10 +338,10 @@ RULENAME="date_r2d_negative",EXTRACTION="([A-Z][\S]+)?([Ss]aal|[Rr]aum|[Zz]immer
 // Further negative rules (March 2015, Jannik Strötgen)
 // EXAMPLE r3a_negative: 1200 davon [sind tot]
 // EXAMPLE r3b_negative: mindestens 2000 [sind tot]
-// EXAMPLE r3c_negative: von 2000 auf 1800 [reduziert] 
+// EXAMPLE r3c_negative: von 2000 auf 1800 [reduziert]
 RULENAME="date_r3a_negative",EXTRACTION="%reYear4Digit (davon)",NORM_VALUE="REMOVE"
 RULENAME="date_r3b_negative",EXTRACTION="([Üü]ber|[Dd]arunter|[Dd]avon|[Kk]napp|[Ww]eniger als|[Mm]ehr als|[Rr]und|[Mm]indestens|[Hh]öchstens|[Mm]aximal|[Ww]eitere) %reYear4Digit",NORM_VALUE="REMOVE"
-RULENAME="date_r3c_negative",EXTRACTION="(von|um) (%reYear4Digit|[\d]+) (auf) (%reYear4Digit|[\d]+)",NORM_VALUE="REMOVE"
+RULENAME="date_r3c_negative",EXTRACTION="von \d+ auf \d+",NORM_VALUE="REMOVE"
 
 // Further negative rules (March 2015, Jannik Strötgen)
 // EXAMPLE r4a_negative: UN Resolution 1441
@@ -357,10 +357,10 @@ RULENAME="date_r4a_negative",EXTRACTION="([Rr]esolution|[Ee]ntschließung) %reYe
 // Lexicalized in repattern_reSeason.txt /////////
 // for proper interplay with other season rules //
 //////////////////////////////////////////////////
-// Example biofid_zeit_r1: Sommerzeit
-// RULENAME="biofid_zeit_r1",EXTRACTION="%reSeason(s)?+zeit",NORM_VALUE="UNDEF-year-%normSeason(group(1))"
-// Example biofid_zeit_r1: Mittagszeit
-// RULENAME="biofid_zeit_r2",EXTRACTION="%rePartOfDay(s)?+zeit",NORM_VALUE="UNDEF-this-dayT%normPartOfDay(group(1))"
+// EXAMPLE biofid_zeit_r1: Sommerzeit
+// RULENAME="biofid_zeit_r1",EXTRACTION="%reSeason[s]?zeit",NORM_VALUE="UNDEF-year-%normSeason(group(1))"
+// EXAMPLE biofid_zeit_r1: Mittagszeit
+RULENAME="biofid_zeit_r2",EXTRACTION="%rePartOfDay[s]?zeit",NORM_VALUE="UNDEF-this-dayT%normPartOfDay(group(1))"
 
 // BIOfid extensions
 // author: Andy Lücking
@@ -369,8 +369,8 @@ RULENAME="date_r4a_negative",EXTRACTION="([Rr]esolution|[Ee]ntschließung) %reYe
 //////////////////////
 // Adjectival units //
 //////////////////////
-// Example biofid_adjunit_r1: diesjährig
-RULENAME="biofid_adjunit_r1",EXTRACTION="%reThisNextLastSuffix+%reUnitAdj",NORM_VALUE="UNDEF-%normThisNextLastSuffix(group(1))-%normUnitAdj(group(2))"
+// EXAMPLE biofid_adjunit_r1: diesjährig
+RULENAME="biofid_adjunit_r1",EXTRACTION="%reThisNextLastSuffix+%reUnitAdj",NORM_VALUE="UNDEF-%normThisNextLastSuffix(group(1))-%normUnitAdj4Duration(group(2))"
 
 // BIOfid extensions
 // author: Andy Lücking
@@ -379,7 +379,7 @@ RULENAME="biofid_adjunit_r1",EXTRACTION="%reThisNextLastSuffix+%reUnitAdj",NORM_
 ///////////////////////////
 // COMPOUNDS WITH "Vor-" //
 ///////////////////////////
-// Example biofid_vor_r1: Vorjahre
+// EXAMPLE biofid_vor_r1: Vorjahre
 RULENAME="biofid_vor_r1",EXTRACTION="([Vv]or)+%reUnit",NORM_VALUE="UNDEF-last-%normUnit(group(2))"
 
 // BIOfid extensions
@@ -389,7 +389,8 @@ RULENAME="biofid_vor_r1",EXTRACTION="([Vv]or)+%reUnit",NORM_VALUE="UNDEF-last-%n
 ////////////////////////////
 // COMPOUND FOR VACATIONS //
 ////////////////////////////
-// Example biofid_ferien_r1: Herbstferien, Sommer-Ferien
+// EXAMPLE biofid_ferien_r1_a: Herbstferien
+// EXAMPLE biofid_ferien_r1_a: Sommer-Ferien
 RULENAME="biofid_ferien_r1_a",EXTRACTION="%reSeason-?[Ff]erien",NORM_VALUE="UNDEF-year-%normSeason(group(1))"
 RULENAME="biofid_ferien_r1_b",EXTRACTION="%reSeason-?[Ff]erien( des Jahres | )%reYear4Digit",NORM_VALUE="group(3)-%normSeason(group(1))"
 RULENAME="biofid_ferien_r1_c",EXTRACTION="%reSeason-?[Ff]erien( des Jahres | )%reYear2Digit",NORM_VALUE="UNDEF-centurygroup(3)-%normSeason(group(1))"
@@ -402,6 +403,10 @@ RULENAME="biofid_ferien_r2_c",EXTRACTION="%reSeason-?[Uu]rlaube?s?( des Jahres |
 // author: Andy Lücking
 // email:  luecking@em.uni-frankfurt.de
 // date:   2021-10-28
+// ------------------
+// update: 2025-07-04
+// author: Manuel Schaaf
+// note:   removed season_pn_negative_5 & season_pn_negative_6 due to too many false positives
 ///////////////////////////////////////////
 // NEGATIVE RULE FOR "MR. or MS. SEASON" //
 ///////////////////////////////////////////
@@ -412,8 +417,8 @@ RULENAME="season_pn_negative_2",EXTRACTION="%reProfession %reSeason",NORM_VALUE=
 RULENAME="season_pn_negative_3",EXTRACTION="(Herr|Frau|Hr.|Fr.|Ehepaar|Onkel|Tante|Sohn|Tochter|Name|Doktor|Dr.|Familie) %reWeekday",NORM_VALUE="REMOVE"
 RULENAME="season_pn_negative_4",EXTRACTION="%reProfession %reWeekday",NORM_VALUE="REMOVE"
 // date:   2021-12-16
-RULENAME="season_pn_negative_5",EXTRACTION="%reBertListAnthro %reWeekday",NORM_VALUE="REMOVE"
-RULENAME="season_pn_negative_6",EXTRACTION="%reBertListAnthro %reSeason",NORM_VALUE="REMOVE"
+// RULENAME="season_pn_negative_5",EXTRACTION="%reBertListAnthro %reWeekday",NORM_VALUE="REMOVE"
+// RULENAME="season_pn_negative_6",EXTRACTION="%reBertListAnthro %reSeason",NORM_VALUE="REMOVE"
 
 // BIOfid extensions
 // author: Andy Lücking
@@ -422,20 +427,20 @@ RULENAME="season_pn_negative_6",EXTRACTION="%reBertListAnthro %reSeason",NORM_VA
 ////////////////////
 // RELATIVE UNITS //
 ////////////////////
-// Example biofid_relyear_r1: ein Jahr zuvor
-// Example biofid_relyear_r2: 13 Jahre später
+// EXAMPLE biofid_relyear_r1: ein Jahr zuvor
+// EXAMPLE biofid_relyear_r2: 13 Jahre später
 RULENAME="biofid_relyear_r1_a",EXTRACTION="(%reApproximate )?(%reNumWord1D|%reNumWord2D) %reUnitYear (vorher|zuvor|eher|früher)",NORM_VALUE="UNDEF-this-year-MINUS-%normDurationNumber(group(3))"
 RULENAME="biofid_relyear_r1_b",EXTRACTION="(%reApproximate )?([\d]+) %reUnitYear (vorher|zuvor|eher|früher)",NORM_VALUE="UNDEF-this-year-MINUS-group(3)"
 RULENAME="biofid_relyear_r2_a",EXTRACTION="(%reApproximate )?(%reNumWord1D|%reNumWord2D) %reUnitYear (später|danach)",NORM_VALUE="UNDEF-this-year-PLUS-%normDurationNumber(group(3))"
 RULENAME="biofid_relyear_r2_b",EXTRACTION="(%reApproximate )?([\d]+) %reUnitYear (später|danach)",NORM_VALUE="UNDEF-this-year-PLUS-group(3)"
 
 // date:   2021-10-29 / generalized to reUnitYear 2021-12-13
-// Example biofid_relyear_r3: vor drei/3 Jahren
+// EXAMPLE biofid_relyear_r3: vor drei/3 Jahren
 RULENAME="biofid_relyear_r3_a",EXTRACTION="[Vv]or (%reApproximate )?(%reNumWord1D|%reNumWord2D) %reUnitYear",NORM_VALUE="UNDEF-this-year-MINUS-%normDurationNumber(group(3))"
 RULENAME="biofid_relyear_r3_b",EXTRACTION="[Vv]or (%reApproximate )?([\d]+) %reUnitYear",NORM_VALUE="UNDEF-this-year-MINUS-group(3)"
 
 // date:   2021-12-13
-// Example biofid_prev_unit_r6_a: vor 4 Monaten
+// EXAMPLE biofid_prev_unit_r6_a: vor 4 Monaten
 RULENAME="biofid_prev_unit_r6_a",EXTRACTION="[Vv]or (%reApproximate )?(%reNumWord1D|%reNumWord2D) %reUnitMonth",NORM_VALUE="UNDEF-this-month-MINUS-%normDurationNumber(group(3))"
 RULENAME="biofid_prev_unit_r6_b",EXTRACTION="[Vv]or (%reApproximate )?([\d]+) %reUnitMonth",NORM_VALUE="UNDEF-this-month-MINUS-group(3)"
 
@@ -443,8 +448,8 @@ RULENAME="biofid_prev_unit_r6_b",EXTRACTION="[Vv]or (%reApproximate )?([\d]+) %r
 // author: Andy Lücking
 // email:  luecking@em.uni-frankfurt.de
 // date:   2021-12-13
-// Example biofid_prevunit_r3: das Jahr zuvor (see also above "ein Jahr zuvor" and so on)
-// Example biofid_prevunit_r4: 3 Quartale zuvor
+// EXAMPLE biofid_prevunit_r3: das Jahr zuvor (see also above "ein Jahr zuvor" and so on)
+// EXAMPLE biofid_prevunit_r4: 3 Quartale zuvor
 RULENAME="biofid_prevunit_r3_a",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )%reUnitYear zuvor",NORM_VALUE="UNDEF-last-year"
 RULENAME="biofid_prevunit_r3_b",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )%reUnitMonth zuvor",NORM_VALUE="UNDEF-last-month"
 RULENAME="biofid_prevunit_r3_c",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )%reUnitQuartal zuvor",NORM_VALUE="UNDEF-last-quarter"
@@ -455,17 +460,17 @@ RULENAME="biofid_prevunit_r5_b",EXTRACTION="(%reApproximate )?([\d]+) %reUnitQua
 
 
 // date:   2021-10-29
-// Example biofid_endof_r1: das Jahresende
+// EXAMPLE biofid_endof_r1: das Jahresende
 RULENAME="biofid_endof_r1",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?%reUnit+s?ende",NORM_VALUE="UNDEF-this-%normUnit(group(2))"
 
 // date:   2021-10-29
-// Example biofid_endof_r1: das laufende Quartal
-RULENAME="biofid_current_r1",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?([Aa]ktuelle?r?s?n?m? |[Ll]aufende?s?r?n?m? |[Gg]engenwärtige?s?n?r?m? )%reUnit",NORM_VALUE="UNDEF-this-%normUnit(group(3))"
+// EXAMPLE biofid_endof_r1: das laufende Quartal
+RULENAME="biofid_current_r1",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?([Aa]ktuelle?[rsnm]? |[Ll]aufende?[rsnm]? |[Gg]engenwärtige?[rsnm]? )%reUnit",NORM_VALUE="UNDEF-this-%normUnit(group(3))"
 
 // date:   2021-10-29
-// Example biofid_prevunit_r1: Vorjahreszeitraum, Vorjahresquartal
+// EXAMPLE biofid_prevunit_r1: Vorjahreszeitraum, Vorjahresquartal
 // CAUTION: Vorjahres-UNIT != LAST UNIT, rather UNIT of last year, partition units, resolving needs to resolve both year and unit.
-RULENAME="biofid_prevunit_r1_a",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?[Vv]orjahre?s-?%reUnitMonth",NORM_VALUE="UNDEF-last-year-%normUnit(group(3))"
+RULENAME="biofid_prevunit_r1_a",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?[Vv]orjahre?s-?%reUnitMonth",NORM_VALUE="UNDEF-last-year-%normUnit(group(2))"
 RULENAME="biofid_prevunit_r1_b",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?[Vv]orjahre?s-?%reUnitWeek",NORM_VALUE="pass"
 RULENAME="biofid_prevunit_r1_c",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?[Vv]orjahre?s-?%reUnitYear",NORM_VALUE="UNDEF-last-year"
 RULENAME="biofid_prevunit_r1_d",EXTRACTION="([Dd]er |[Dd]ie |[Dd]as |[Dd]em |[Dd]en )?[Vv]orjahre?s-?%reUnitQuartal",NORM_VALUE="UNDEF-last-year-QX"
@@ -473,11 +478,15 @@ RULENAME="biofid_prevunit_r1_e",EXTRACTION="([Dd]er |[Dd]em |[Dd]en )?[Vv]orjahr
 
 // date:   2021-11-30
 // Example biofid_prevunit_r2_a: vorherigen Freitag
-RULENAME="biofid_prevunit_r2_a",EXTRACTION="[Vv]orherige?r?s?n?m? %reWeekday",NORM_VALUE="UNDEF-last-%normWeekday(group(1))"
-RULENAME="biofid_prevunit_r2_b",EXTRACTION="[Vv]orherige?r?s?n?m? %reUnit",NORM_VALUE="UNDEF-last-%normUnit(group(1))"
+// ------------------
+// update: 2025-07-04
+// author: Manuel Schaaf
+// note:   removed as duplicate of date_r20d & date_r20e
+// RULENAME="biofid_prevunit_r2_a",EXTRACTION="[Vv]orherige?r?s?n?m? %reWeekday",NORM_VALUE="UNDEF-last-%normWeekday(group(1))"
+// RULENAME="biofid_prevunit_r2_b",EXTRACTION="[Vv]orherige?r?s?n?m? %reUnit",NORM_VALUE="UNDEF-last-%normUnit(group(1))"
 
 ////////////
 // Folge- //
 ////////////
-// Example biofid_folge_r1: Folgemonat
+// EXAMPLE biofid_folge_r1: Folgemonat
 RULENAME="biofid_folge_r1",EXTRACTION="[Ff]olge-?%reUnit",NORM_VALUE="UNDEF-next-%normUnit(group(1))"

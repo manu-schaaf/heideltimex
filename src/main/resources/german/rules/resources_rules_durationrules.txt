@@ -75,14 +75,14 @@ RULENAME="duration_r1c_negation",EXTRACTION="(%reApproximate )?(einige) %reUnit 
 ////////////////////
 // QUANT DURATION //
 ////////////////////
-// Example biofid_quantdur_r1: viele Sommer
-// Example biofid_quantdur_r2: mehrere Quartale
+// EXAMPLE biofid_quantdur_r1: viele Sommer
+// EXAMPLE biofid_quantdur_r2: mehrere Quartale
 RULENAME="biofid_quantdur_r1",EXTRACTION="([Ff]ür )?%reQuantWords %reSeason(e?n?)( lang)?",NORM_VALUE="PX%normSeason(group(3))"
 // date:   2021-10-28
 RULENAME="biofid_quantdur_r2",EXTRACTION="([Ff]ür )?%reQuantWords %reUnitPlural( lang)?",NORM_VALUE="PX%normUnit4Duration(group(3))"
 
 // date:   2021-12-14
-// Example biofid_quantdur_r3: paar Stunden
+// EXAMPLE biofid_quantdur_r3: paar Stunden
 RULENAME="biofid_quantdur_r3",EXTRACTION="([Ff]ür |[Ii]n )?([Ee]in )?%reQuantWords [Ss]tunden",NORM_VALUE="PTXH"
 RULENAME="biofid_quantdur_r4",EXTRACTION="([Ff]ür |[Ii]n )?([Ee]in )?%reQuantWords [Mm]inuten",NORM_VALUE="PTXM"
 
@@ -93,10 +93,10 @@ RULENAME="biofid_quantdur_r4",EXTRACTION="([Ff]ür |[Ii]n )?([Ee]in )?%reQuantWo
 ////////////////////
 // UNIT DURATION //
 ////////////////////
-// Example biofid_unitdur_r1: halbes Quartal
-// Example biofid_unitdur_r2: Vierteljahrhundert
-// Example biofid_unitdur_r3_1: zweieinhalb Jahre
-// Example biofid_unitdur_r3_2: 2-einhalb Jahre
+// EXAMPLE biofid_unitdur_r1: halbes Quartal
+// EXAMPLE biofid_unitdur_r2: Vierteljahrhundert
+// EXAMPLE biofid_unitdur_r3_1: zweieinhalb Jahre
+// EXAMPLE biofid_unitdur_r3_2: 2-einhalb Jahre
 RULENAME="biofid_unitdur_r1_1",EXTRACTION="([Ee]ine?r?s?m? )?halbes?r?n? %reUnit( lang)?",NORM_VALUE="P0.5%normUnit4Duration(group(2))"
 RULENAME="biofid_unitdur_r1_2",EXTRACTION="([Ee]iner? )?halben? [Mn]inute( lang)?",NORM_VALUE="PT0.5M"
 RULENAME="biofid_unitdur_r1_3",EXTRACTION="([Ee]iner? )?halben? [Ss]tunde( lang)?",NORM_VALUE="PT0.5H"
@@ -121,10 +121,11 @@ RULENAME="biofid_unitdur_r3_8",EXTRACTION="([Ff]ür )?([\d]+)-?[Ee]inhalb [Ss]ek
 ///////////////////////////////
 // COMPOUNDS WITH UNIT WORDs //
 ///////////////////////////////
-// Example: biofid_unitdur_r1_a: zweistündig
-// Example: biofid_unitdur_r1_b: elfjährig
-// Example: biofid_unitdur_r2_a: 11-tägig
-// Example: biofid_unitdur_r2_b_1: ganztägig, ganzjährig (overgeneralises over UnitAdj)
+// EXAMPLE biofid_unitdur_r1_a: zweistündig
+// EXAMPLE biofid_unitdur_r1_b: elfjährig
+// EXAMPLE biofid_unitdur_r2_a: 11-tägig
+// EXAMPLE biofid_unitdur_r2_b_1: ganztägig  | overgeneralises over UnitAdj
+// EXAMPLE biofid_unitdur_r2_b_1: ganzjährig
 RULENAME="biofid_unitdur_r1_a",EXTRACTION="%reNumWord1D-?%reUnitAdj(e)?(s)?(n)?(m)?",NORM_VALUE="P%normDurationNumber(group(1))%normUnitAdj4Duration(group(2))"
 RULENAME="biofid_unitdur_r1_b",EXTRACTION="%reNumWord2D-?%reUnitAdj(e)?(s)?(n)?(m)?",NORM_VALUE="P%normDurationNumber(group(1))%normUnitAdj4Duration(group(2))"
 RULENAME="biofid_unitdur_r2_a",EXTRACTION="([\d]+)-?%reUnitAdj(e)?(s)?(n)?(m)?",NORM_VALUE="Pgroup(1)%normUnitAdj4Duration(group(2))"
