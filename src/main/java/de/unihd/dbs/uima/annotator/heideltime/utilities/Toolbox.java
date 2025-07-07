@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
 /**
  * 
  * The Toolbox class contains methods with functionality that you would also
@@ -23,14 +25,16 @@ public class Toolbox {
 	 * 
 	 * @param pattern Pattern to be matched
 	 * @param s String to be matched against
-	 * @return Iterable List of MatchResults
+	 * @return List of MatchResults
 	 */
-	public static Iterable<MatchResult> findMatches(Pattern pattern, CharSequence s) {
-		List<MatchResult> results = new ArrayList<MatchResult>();
+	public static List<MatchResult> findMatches(Pattern pattern, CharSequence s) {
+		if (s == null || s.isEmpty()) {
+			return Collections.emptyList();
+		}
 
+		List<MatchResult> results = new ArrayList<MatchResult>();
 		for (Matcher m = pattern.matcher(s); m.find();)
 			results.add(m.toMatchResult());
-
 		return results;
 	}
 

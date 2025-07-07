@@ -1,19 +1,21 @@
-package de.unihd.dbs.uima.annotator.heideltime.resources;
+package org.texttechnologylab.heideltime;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.unihd.dbs.uima.annotator.heideltime.utilities.ContextAnalyzer;
+import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
+import de.unihd.dbs.uima.annotator.heideltime.resources.*;
 import de.unihd.dbs.uima.annotator.heideltime.utilities.Logger;
 import de.unihd.dbs.uima.annotator.heideltime.utilities.Toolbox;
-import de.unihd.dbs.uima.types.heideltime.Token;
 import org.apache.uima.jcas.tcas.Annotation;
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 /**
  * This class fills the role of a manager of all the rule resources. It reads
@@ -112,9 +114,10 @@ public class RuleManager {
          * Identify the part of speech (POS) of a MarchResult.
          */
         public static String getPosFromMatchResult(ContextAnalyzer.SentenceContainer sentence, int tokBegin) {
-            for (Annotation annotation : sentence.tokens()) {
-                if (annotation.getBegin() == tokBegin) {
-                    return ((Token) annotation).getPos();
+            for (Token token : sentence.tokens()) {
+                if (token.getBegin() == tokBegin) {
+                    POS pos = token.getPos();
+                    return pos == null ? "" : pos.getPosValue();
                 }
             }
             return "";
@@ -233,32 +236,29 @@ public class RuleManager {
             LinkedList<String> resourceKeys = new LinkedList<String>(hmResourcesRules.keySet());
 
             // sort DATE > TIME > DURATION > SET > rest
-            Collections.sort(resourceKeys, new Comparator<String>() {
-                @Override
-                public int compare(String arg0, String arg1) {
-                    if ("daterules".equals(arg0)) {
-                        return -1;
-                    } else if ("timerules".equals(arg0) && !"daterules".equals(arg1)) {
-                        return -1;
-                    } else if ("durationrules".equals(arg0) && !"daterules".equals(arg1) && !"timerules".equals(arg1)) {
-                        return -1;
-                    } else if ("setrules".equals(arg0) && !"daterules".equals(arg1) && !"timerules".equals(arg1) && !"durationrules".equals(arg1)) {
-                        return -1;
-                    }
-                    return 1;
+            resourceKeys.sort((arg0, arg1) -> {
+                if ("daterules".equals(arg0)) {
+                    return -1;
+                } else if ("timerules".equals(arg0) && !"daterules".equals(arg1)) {
+                    return -1;
+                } else if ("durationrules".equals(arg0) && !"daterules".equals(arg1) && !"timerules".equals(arg1)) {
+                    return -1;
+                } else if ("setrules".equals(arg0) && !"daterules".equals(arg1) && !"timerules".equals(arg1) && !"durationrules".equals(arg1)) {
+                    return -1;
                 }
+                return 1;
             });
 
             try {
                 for (String resource : resourceKeys) {
                     is = hmResourcesRules.getInputStream(resource);
-                    isr = new InputStreamReader(is, "UTF-8");
+                    isr = new InputStreamReader(is, StandardCharsets.UTF_8);
                     br = new BufferedReader(isr);
 
                     Logger.printDetail(component, "Adding rule resource: " + resource);
                     for (String line; (line = br.readLine()) != null; ) {
                         // skip comments or empty lines in resource files
-                        if (line.startsWith("//") || line.equals(""))
+                        if (line.startsWith("//") || line.isEmpty())
                             continue;
 
                         boolean correctLine = false;
@@ -279,10 +279,10 @@ public class RuleManager {
                             String rule_fast_check = "";
 
                             // throw an error if the rule's name already exists
-                            if (hmDatePattern.containsValue(rule_name) ||
-                                    hmDurationPattern.containsValue(rule_name) ||
-                                    hmSetPattern.containsValue(rule_name) ||
-                                    hmTimePattern.containsValue(rule_name)) {
+                            if (hmDatePattern.containsKey(rule_name) ||
+                                    hmDurationPattern.containsKey(rule_name) ||
+                                    hmSetPattern.containsKey(rule_name) ||
+                                    hmTimePattern.containsKey(rule_name)) {
                                 Logger.printError("WARNING: Duplicate rule name detected. This rule is being ignored:");
                                 Logger.printError(line);
                             }
@@ -411,33 +411,33 @@ public class RuleManager {
                                 hmDateNormalization.put(rule_name,
                                         rule_normalization);
                                 // get offset part
-                                if (!(rule_offset.equals(""))) {
+                                if (!(rule_offset.isEmpty())) {
                                     hmDateOffset.put(rule_name, rule_offset);
                                 }
                                 // get quant part
-                                if (!(rule_quant.equals(""))) {
+                                if (!(rule_quant.isEmpty())) {
                                     hmDateQuant.put(rule_name, rule_quant);
                                 }
                                 // get freq part
-                                if (!(rule_freq.equals(""))) {
+                                if (!(rule_freq.isEmpty())) {
                                     hmDateFreq.put(rule_name, rule_freq);
                                 }
                                 // get mod part
-                                if (!(rule_mod.equals(""))) {
+                                if (!(rule_mod.isEmpty())) {
                                     hmDateMod.put(rule_name, rule_mod);
                                 }
                                 // get pattern constraint part
-                                if (!(pos_constraint.equals(""))) {
+                                if (!(pos_constraint.isEmpty())) {
                                     hmDatePosConstraint.put(rule_name,
                                             pos_constraint);
                                 }
                                 // get empty value part
-                                if (!(rule_empty_value.equals(""))) {
+                                if (!(rule_empty_value.isEmpty())) {
                                     hmDateEmptyValue.put(rule_name,
                                             rule_empty_value);
                                 }
                                 // get fast check part
-                                if (!(rule_fast_check.equals(""))) {
+                                if (!(rule_fast_check.isEmpty())) {
                                     hmDateFastCheck.put(rule_name,
                                             patternFast);
                                 }
@@ -453,33 +453,33 @@ public class RuleManager {
                                 hmDurationNormalization.put(rule_name,
                                         rule_normalization);
                                 // get offset part
-                                if (!(rule_offset.equals(""))) {
+                                if (!(rule_offset.isEmpty())) {
                                     hmDurationOffset.put(rule_name, rule_offset);
                                 }
                                 // get quant part
-                                if (!(rule_quant.equals(""))) {
+                                if (!(rule_quant.isEmpty())) {
                                     hmDurationQuant.put(rule_name, rule_quant);
                                 }
                                 // get freq part
-                                if (!(rule_freq.equals(""))) {
+                                if (!(rule_freq.isEmpty())) {
                                     hmDurationFreq.put(rule_name, rule_freq);
                                 }
                                 // get mod part
-                                if (!(rule_mod.equals(""))) {
+                                if (!(rule_mod.isEmpty())) {
                                     hmDurationMod.put(rule_name, rule_mod);
                                 }
                                 // get pattern constraint part
-                                if (!(pos_constraint.equals(""))) {
+                                if (!(pos_constraint.isEmpty())) {
                                     hmDurationPosConstraint.put(rule_name,
                                             pos_constraint);
                                 }
                                 // get empty value part
-                                if (!(rule_empty_value.equals(""))) {
+                                if (!(rule_empty_value.isEmpty())) {
                                     hmDurationEmptyValue.put(rule_name,
                                             rule_empty_value);
                                 }
                                 // get fast check part
-                                if (!(rule_fast_check.equals(""))) {
+                                if (!(rule_fast_check.isEmpty())) {
                                     hmDurationFastCheck.put(rule_name,
                                             patternFast);
                                 }
@@ -495,33 +495,33 @@ public class RuleManager {
                                 hmSetNormalization.put(rule_name,
                                         rule_normalization);
                                 // get offset part
-                                if (!rule_offset.equals("")) {
+                                if (!rule_offset.isEmpty()) {
                                     hmSetOffset.put(rule_name, rule_offset);
                                 }
                                 // get quant part
-                                if (!rule_quant.equals("")) {
+                                if (!rule_quant.isEmpty()) {
                                     hmSetQuant.put(rule_name, rule_quant);
                                 }
                                 // get freq part
-                                if (!rule_freq.equals("")) {
+                                if (!rule_freq.isEmpty()) {
                                     hmSetFreq.put(rule_name, rule_freq);
                                 }
                                 // get mod part
-                                if (!rule_mod.equals("")) {
+                                if (!rule_mod.isEmpty()) {
                                     hmSetMod.put(rule_name, rule_mod);
                                 }
                                 // get pattern constraint part
-                                if (!pos_constraint.equals("")) {
+                                if (!pos_constraint.isEmpty()) {
                                     hmSetPosConstraint.put(rule_name,
                                             pos_constraint);
                                 }
                                 // get empty value part
-                                if (!(rule_empty_value.equals(""))) {
+                                if (!(rule_empty_value.isEmpty())) {
                                     hmSetEmptyValue.put(rule_name,
                                             rule_empty_value);
                                 }
                                 // get fast check part
-                                if (!(rule_fast_check.equals(""))) {
+                                if (!(rule_fast_check.isEmpty())) {
                                     hmSetFastCheck.put(rule_name,
                                             patternFast);
                                 }
@@ -537,33 +537,33 @@ public class RuleManager {
                                 hmTimeNormalization.put(rule_name,
                                         rule_normalization);
                                 // get offset part
-                                if (!rule_offset.equals("")) {
+                                if (!rule_offset.isEmpty()) {
                                     hmTimeOffset.put(rule_name, rule_offset);
                                 }
                                 // get quant part
-                                if (!rule_quant.equals("")) {
+                                if (!rule_quant.isEmpty()) {
                                     hmTimeQuant.put(rule_name, rule_quant);
                                 }
                                 // get freq part
-                                if (!rule_freq.equals("")) {
+                                if (!rule_freq.isEmpty()) {
                                     hmTimeFreq.put(rule_name, rule_freq);
                                 }
                                 // get mod part
-                                if (!rule_mod.equals("")) {
+                                if (!rule_mod.isEmpty()) {
                                     hmTimeMod.put(rule_name, rule_mod);
                                 }
                                 // get pattern constraint part
-                                if (!pos_constraint.equals("")) {
+                                if (!pos_constraint.isEmpty()) {
                                     hmTimePosConstraint.put(rule_name,
                                             pos_constraint);
                                 }
                                 // get empty value part
-                                if (!(rule_empty_value.equals(""))) {
+                                if (!(rule_empty_value.isEmpty())) {
                                     hmTimeEmptyValue.put(rule_name,
                                             rule_empty_value);
                                 }
                                 // get fast check part
-                                if (!(rule_fast_check.equals(""))) {
+                                if (!(rule_fast_check.isEmpty())) {
                                     hmTimeFastCheck.put(rule_name,
                                             patternFast);
                                 }
@@ -578,33 +578,33 @@ public class RuleManager {
                                 hmTemponymNormalization.put(rule_name,
                                         rule_normalization);
                                 // get offset part
-                                if (!(rule_offset.equals(""))) {
+                                if (!(rule_offset.isEmpty())) {
                                     hmTemponymOffset.put(rule_name, rule_offset);
                                 }
                                 // get quant part
-                                if (!(rule_quant.equals(""))) {
+                                if (!(rule_quant.isEmpty())) {
                                     hmTemponymQuant.put(rule_name, rule_quant);
                                 }
                                 // get freq part
-                                if (!(rule_freq.equals(""))) {
+                                if (!(rule_freq.isEmpty())) {
                                     hmTemponymFreq.put(rule_name, rule_freq);
                                 }
                                 // get mod part
-                                if (!(rule_mod.equals(""))) {
+                                if (!(rule_mod.isEmpty())) {
                                     hmTemponymMod.put(rule_name, rule_mod);
                                 }
                                 // get pattern constraint part
-                                if (!(pos_constraint.equals(""))) {
+                                if (!(pos_constraint.isEmpty())) {
                                     hmTemponymPosConstraint.put(rule_name,
                                             pos_constraint);
                                 }
                                 // get empty value part
-                                if (!(rule_empty_value.equals(""))) {
+                                if (!(rule_empty_value.isEmpty())) {
                                     hmTemponymEmptyValue.put(rule_name,
                                             rule_empty_value);
                                 }
                                 // get fast check part
-                                if (!(rule_fast_check.equals(""))) {
+                                if (!(rule_fast_check.isEmpty())) {
                                     hmTemponymFastCheck.put(rule_name,
                                             patternFast);
                                 }

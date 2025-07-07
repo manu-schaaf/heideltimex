@@ -1,9 +1,9 @@
 package de.unihd.dbs.uima.annotator.heideltime;
 
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
-import de.unihd.dbs.uima.types.heideltime.Sentence;
 import de.unihd.dbs.uima.types.heideltime.Timex3;
-import de.unihd.dbs.uima.types.heideltime.Token;
 import org.apache.uima.analysis_engine.AnalysisEngine;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.cas.CASException;
@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.texttechnologylab.heideltime.HeidelTimeX;
 
 import java.util.Collection;
 
@@ -31,16 +32,17 @@ public class TestHeidelTimeX {
     public void setUp() throws ResourceInitializationException, CASException {
         jCas = JCasFactory.createJCas();
         engine = AnalysisEngineFactory.createEngine(
-                HeidelTime.class,
-                HeidelTime.PARAM_LANGUAGE, Language.GERMAN,
-                HeidelTime.PARAM_TYPE_TO_PROCESS, "narrative",
-                HeidelTime.PARAM_FIND_DATES, true,
-                HeidelTime.PARAM_FIND_TIMES, true,
-                HeidelTime.PARAM_FIND_DURATIONS, true,
-                HeidelTime.PARAM_FIND_SETS, true,
-                HeidelTime.PARAM_FIND_TEMPONYMS, true,
-                HeidelTime.PARAM_GROUP_GRAN, true,
-                HeidelTime.PARAM_DEBUG, true
+                HeidelTimeX.class,
+//                HeidelTimeX.PARAM_PARALLEL_SEARCH, true,
+                HeidelTimeX.PARAM_LANGUAGE, Language.GERMAN,
+                HeidelTimeX.PARAM_DEBUG, false,
+                HeidelTimeX.PARAM_TYPE_TO_PROCESS, "narrative",
+                HeidelTimeX.PARAM_FIND_DATES, true,
+                HeidelTimeX.PARAM_FIND_TIMES, true,
+                HeidelTimeX.PARAM_FIND_DURATIONS, true,
+                HeidelTimeX.PARAM_FIND_SETS, true,
+                HeidelTimeX.PARAM_FIND_TEMPONYMS, true,
+                HeidelTimeX.PARAM_GROUP_GRAN, true
         );
     }
 
@@ -333,7 +335,7 @@ public class TestHeidelTimeX {
         for (int i = 1; i < input.length(); i++) {
             if (input.charAt(i) == ' ' || i == input.length() - 1) {
                 new Token(jCas, offset, i).addToIndexes();
-                offset = i;
+                offset = i + 1;
             }
         }
         new Sentence(jCas, 0, input.length()).addToIndexes();

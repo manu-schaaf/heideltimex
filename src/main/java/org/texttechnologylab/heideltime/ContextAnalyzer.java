@@ -1,4 +1,4 @@
-package de.unihd.dbs.uima.annotator.heideltime.utilities;
+package org.texttechnologylab.heideltime;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,15 +7,18 @@ import java.util.TreeMap;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
+import de.unihd.dbs.uima.annotator.heideltime.utilities.DateCalculator;
+import de.unihd.dbs.uima.annotator.heideltime.utilities.Logger;
+import de.unihd.dbs.uima.annotator.heideltime.utilities.Toolbox;
 import org.apache.uima.cas.FSIterator;
 import org.apache.uima.jcas.JCas;
 
 import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
 import de.unihd.dbs.uima.annotator.heideltime.resources.NormalizationManager;
 import de.unihd.dbs.uima.annotator.heideltime.resources.RePatternManager;
-import de.unihd.dbs.uima.types.heideltime.Sentence;
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.unihd.dbs.uima.types.heideltime.Timex3;
-import de.unihd.dbs.uima.types.heideltime.Token;
 import org.apache.uima.jcas.tcas.Annotation;
 
 /**
@@ -211,124 +214,6 @@ public class ContextAnalyzer {
      * @param timex timex construct to discover tense data for
      * @return string that contains the tense
      */
-    public static String getClosestTense(Timex3 timex, JCas jcas, Language language) {
-        RePatternManager rpm = RePatternManager.getInstance(language, false);
-
-        String lastTense = "";
-        String nextTense = "";
-
-        int tokenCounter = 0;
-        int lastid = 0;
-        int nextid = 0;
-        int tid = 0;
-
-        // Get the sentence
-        FSIterator iterSentence = jcas.getAnnotationIndex(Sentence.type).iterator();
-        Sentence s = new Sentence(jcas);
-        while (iterSentence.hasNext()) {
-            s = (Sentence) iterSentence.next();
-            if ((s.getBegin() <= timex.getBegin())
-                    && (s.getEnd() >= timex.getEnd())) {
-                break;
-            }
-        }
-
-        // Get the tokens
-        TreeMap<Integer, Token> tmToken = new TreeMap<Integer, Token>();
-        FSIterator iterToken = jcas.getAnnotationIndex(Token.type).subiterator(s);
-        while (iterToken.hasNext()) {
-            Token token = (Token) iterToken.next();
-            tmToken.put(token.getEnd(), token);
-        }
-
-        // Get the last VERB token
-        for (Integer tokEnd : tmToken.keySet()) {
-            tokenCounter++;
-            if (tokEnd < timex.getBegin()) {
-                Token token = tmToken.get(tokEnd);
-
-                Logger.printDetail("GET LAST TENSE: string:" + token.getCoveredText() + " pattern:" + token.getPos());
-                Logger.printDetail("hmAllRePattern.containsKey(tensePos4PresentFuture):" + rpm.get("tensePos4PresentFuture"));
-                Logger.printDetail("hmAllRePattern.containsKey(tensePos4Future):" + rpm.get("tensePos4Future"));
-                Logger.printDetail("hmAllRePattern.containsKey(tensePos4Past):" + rpm.get("tensePos4Past"));
-                Logger.printDetail("CHECK TOKEN:" + token.getPos());
-
-                if (token.getPos() == null) {
-
-                } else if ((rpm.containsKey("tensePos4PresentFuture")) && (token.getPos().matches(rpm.get("tensePos4PresentFuture")))) {
-                    lastTense = "PRESENTFUTURE";
-                    lastid = tokenCounter;
-                } else if ((rpm.containsKey("tensePos4Past")) && (token.getPos().matches(rpm.get("tensePos4Past")))) {
-                    lastTense = "PAST";
-                    lastid = tokenCounter;
-                } else if ((rpm.containsKey("tensePos4Future")) && (token.getPos().matches(rpm.get("tensePos4Future")))) {
-                    if (token.getCoveredText().matches(rpm.get("tenseWord4Future"))) {
-                        lastTense = "FUTURE";
-                        lastid = tokenCounter;
-                    }
-                }
-            } else {
-                if (tid == 0) {
-                    tid = tokenCounter;
-                }
-            }
-        }
-        tokenCounter = 0;
-        for (Integer tokEnd : tmToken.keySet()) {
-            tokenCounter++;
-            if (nextTense.equals("")) {
-                if (tokEnd > timex.getEnd()) {
-                    Token token = tmToken.get(tokEnd);
-
-                    Logger.printDetail("GET NEXT TENSE: string:" + token.getCoveredText() + " pattern:" + token.getPos());
-                    Logger.printDetail("hmAllRePattern.containsKey(tensePos4PresentFuture):" + rpm.get("tensePos4PresentFuture"));
-                    Logger.printDetail("hmAllRePattern.containsKey(tensePos4Future):" + rpm.get("tensePos4Future"));
-                    Logger.printDetail("hmAllRePattern.containsKey(tensePos4Past):" + rpm.get("tensePos4Past"));
-                    Logger.printDetail("CHECK TOKEN:" + token.getPos());
-
-                    if (token.getPos() == null) {
-
-                    } else if ((rpm.containsKey("tensePos4PresentFuture")) && (token.getPos().matches(rpm.get("tensePos4PresentFuture")))) {
-                        nextTense = "PRESENTFUTURE";
-                        nextid = tokenCounter;
-                    } else if ((rpm.containsKey("tensePos4Past")) && (token.getPos().matches(rpm.get("tensePos4Past")))) {
-                        nextTense = "PAST";
-                        nextid = tokenCounter;
-                    } else if ((rpm.containsKey("tensePos4Future")) && (token.getPos().matches(rpm.get("tensePos4Future")))) {
-                        if (token.getCoveredText().matches(rpm.get("tenseWord4Future"))) {
-                            nextTense = "FUTURE";
-                            nextid = tokenCounter;
-                        }
-                    }
-                }
-            }
-        }
-        if (lastTense.equals("")) {
-            Logger.printDetail("TENSE: " + nextTense);
-            return nextTense;
-        } else if (nextTense.equals("")) {
-            Logger.printDetail("TENSE: " + lastTense);
-            return lastTense;
-        } else {
-            // If there is tense before and after the timex token,
-            // return the closer one:
-            if ((tid - lastid) > (nextid - tid)) {
-                Logger.printDetail("TENSE: " + nextTense);
-                return nextTense;
-            } else {
-                Logger.printDetail("TENSE: " + lastTense);
-                return lastTense;
-            }
-        }
-    }
-
-
-    /**
-     * Get the last tense used in the sentence
-     *
-     * @param timex timex construct to discover tense data for
-     * @return string that contains the tense
-     */
     public static String getLastTense(Timex3 timex, JCas jcas, Language language) {
         RePatternManager rpm = RePatternManager.getInstance(language, false);
 
@@ -366,13 +251,13 @@ public class ContextAnalyzer {
 
                 if (token.getPos() == null) {
 
-                } else if ((rpm.containsKey("tensePos4PresentFuture")) && (token.getPos().matches(rpm.get("tensePos4PresentFuture")))) {
+                } else if ((rpm.containsKey("tensePos4PresentFuture")) && (token.getPos().getPosValue().matches(rpm.get("tensePos4PresentFuture")))) {
                     lastTense = "PRESENTFUTURE";
                     Logger.printDetail("this tense:" + lastTense);
-                } else if ((rpm.containsKey("tensePos4Past")) && (token.getPos().matches(rpm.get("tensePos4Past")))) {
+                } else if ((rpm.containsKey("tensePos4Past")) && (token.getPos().getPosValue().matches(rpm.get("tensePos4Past")))) {
                     lastTense = "PAST";
                     Logger.printDetail("this tense:" + lastTense);
-                } else if ((rpm.containsKey("tensePos4Future")) && (token.getPos().matches(rpm.get("tensePos4Future")))) {
+                } else if ((rpm.containsKey("tensePos4Future")) && (token.getPos().getPosValue().matches(rpm.get("tensePos4Future")))) {
                     if (token.getCoveredText().matches(rpm.get("tenseWord4Future"))) {
                         lastTense = "FUTURE";
                         Logger.printDetail("this tense:" + lastTense);
@@ -399,13 +284,13 @@ public class ContextAnalyzer {
 
                     if (token.getPos() == null) {
 
-                    } else if ((rpm.containsKey("tensePos4PresentFuture")) && (token.getPos().matches(rpm.get("tensePos4PresentFuture")))) {
+                    } else if ((rpm.containsKey("tensePos4PresentFuture")) && (token.getPos().getPosValue().matches(rpm.get("tensePos4PresentFuture")))) {
                         lastTense = "PRESENTFUTURE";
                         Logger.printDetail("this tense:" + lastTense);
-                    } else if ((rpm.containsKey("tensePos4Past")) && (token.getPos().matches(rpm.get("tensePos4Past")))) {
+                    } else if ((rpm.containsKey("tensePos4Past")) && (token.getPos().getPosValue().matches(rpm.get("tensePos4Past")))) {
                         lastTense = "PAST";
                         Logger.printDetail("this tense:" + lastTense);
-                    } else if ((rpm.containsKey("tensePos4Future")) && (token.getPos().matches(rpm.get("tensePos4Future")))) {
+                    } else if ((rpm.containsKey("tensePos4Future")) && (token.getPos().getPosValue().matches(rpm.get("tensePos4Future")))) {
                         if (token.getCoveredText().matches(rpm.get("tenseWord4Future"))) {
                             lastTense = "FUTURE";
                             Logger.printDetail("this tense:" + lastTense);
@@ -432,7 +317,7 @@ public class ContextAnalyzer {
                             }
                         }
                     }
-                    prevPos = token.getPos();
+                    prevPos = token.getPos().getPosValue();
                 }
                 if (longTense.equals("")) {
                     if (tokEnd > timex.getEnd()) {
@@ -447,7 +332,7 @@ public class ContextAnalyzer {
                                 }
                             }
                         }
-                        prevPos = token.getPos();
+                        prevPos = token.getPos().getPosValue();
                     }
                 }
             }
@@ -464,9 +349,9 @@ public class ContextAnalyzer {
                             Logger.printDetail("this tense:" + lastTense);
                         }
                     }
-                    prevPos = token.getPos();
+                    prevPos = token.getPos().getPosValue();
                 }
-                if (longTense.equals("")) {
+                if (longTense.isEmpty()) {
                     if (tokEnd > timex.getEnd()) {
                         Token token = tmToken.get(tokEnd);
                         if (("VER:pres".equals(prevPos)) && ("VER:pper".equals(token.getPos()))) {
@@ -476,7 +361,7 @@ public class ContextAnalyzer {
                                 Logger.printDetail("this tense:" + lastTense);
                             }
                         }
-                        prevPos = token.getPos();
+                        prevPos = token.getPos().getPosValue();
                     }
                 }
             }
@@ -486,12 +371,12 @@ public class ContextAnalyzer {
         return lastTense;
     }
 
-    public record SentenceContainer(String text, int begin, int end, List<Annotation> tokens) {
+    public record SentenceContainer(String text, int begin, int end, List<Token> tokens) {
         public static SentenceContainer fromSentence(JCas jCas, Sentence sentence) {
             FSIterator<Annotation> subiterator = jCas.getAnnotationIndex(Token.type).subiterator(sentence);
-            ArrayList<Annotation> tokens = new ArrayList<>();
+            ArrayList<Token> tokens = new ArrayList<>();
             while (subiterator.hasNext()) {
-                tokens.add(subiterator.next());
+                tokens.add((Token) subiterator.next());
             }
             return new ContextAnalyzer.SentenceContainer(
                     sentence.getCoveredText(),
