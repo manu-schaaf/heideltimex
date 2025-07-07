@@ -495,16 +495,11 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
      * explicit "AD" hints if it is likely that they refer to the respective dates BC
      */
     public void disambiguateHistoricDates(JCas jcas) {
-        // build up a list with all found TIMEX expressions
-        List<Timex3> linearDates = new ArrayList<Timex3>();
-
         // Create List of all Timexes of types "dates" and "times"
-        for (Annotation annotation : jcas.getAnnotationIndex(Timex3.type)) {
-            Timex3 timex = (Timex3) annotation;
-            if (timex.getTimexType().equals("DATE") || timex.getTimexType().equals("TIME")) {
-                linearDates.add(timex);
-            }
-        }
+        List<Timex3> linearDates = JCasUtil.select(jcas, Timex3.class).stream()
+                .filter(timex -> timex.getTimexType().equals("DATE") || timex.getTimexType().equals("TIME"))
+                .sorted(Comparator.comparing(Timex3::getBegin))
+                .toList();
 
         //////////////////////////////////////////////
         // go through list of Date and Time timexes //
@@ -614,30 +609,23 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
          * Iterate over timexes and add invalids to HashSet
          * (invalids cannot be removed directly since iterator is used)
          */
-        FSIterator iterTimex = jcas.getAnnotationIndex(Timex3.type).iterator();
-        HashSet<Timex3> hsTimexToRemove = new HashSet<Timex3>();
-        while (iterTimex.hasNext()) {
-            Timex3 timex = (Timex3) iterTimex.next();
-            if (timex.getTimexValue().equals("REMOVE")) {
-                hsTimexToRemove.add(timex);
-            }
-        }
-
-        // remove invalids, finally
-        for (Timex3 timex3 : hsTimexToRemove) {
-            timex3.removeFromIndexes();
-            this.timex_counter--;
-            getLogger().debug(
-                    " REMOVING PHASE: " +
-                            timex3.getTimexId() +
-                            "found by:" +
-                            timex3.getFoundByRule() +
-                            " text:" +
-                            timex3.getCoveredText() +
-                            " value:" +
-                            timex3.getTimexValue()
-            );
-        }
+        JCasUtil.select(jcas, Timex3.class).stream()
+                .filter(timex3 -> timex3.getTimexValue().equals("REMOVE"))
+                .forEach(timex3 -> {
+                            timex3.removeFromIndexes();
+                            this.timex_counter--;
+                            getLogger().debug(
+                                    " REMOVING PHASE: " +
+                                            timex3.getTimexId() +
+                                            "found by:" +
+                                            timex3.getFoundByRule() +
+                                            " text:" +
+                                            timex3.getCoveredText() +
+                                            " value:" +
+                                            timex3.getTimexValue()
+                            );
+                        }
+                );
     }
 
     @SuppressWarnings("unused")
