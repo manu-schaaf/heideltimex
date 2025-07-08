@@ -2247,79 +2247,51 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
 
     private void deleteOverlappedTimexesPostprocessing(JCas jcas) {
 
-        HashSet<ArrayList<Timex3>> effectivelyToInspect = new HashSet<ArrayList<Timex3>>();
+        HashSet<Set<Timex3>> effectivelyToInspect = new HashSet<>();
         HashSet<Timex3> allTimexesToInspect = new HashSet<>();
-        FSIterator<Annotation> timexIter = jcas.getAnnotationIndex(Timex3.type).iterator();
-        FSIterator<Annotation> innerTimexIter = timexIter.copy();
-        while (timexIter.hasNext()) {
-            Timex3 outer = (Timex3) timexIter.next();
 
+        List<Timex3> timex3s = JCasUtil.select(jcas, Timex3.class).stream()
+                .filter(t -> !t.getTimexType().equals("TEMPONYM") && !t.getTimexValue().equals("REMOVE"))
+                .toList();
+        Utils.MergeSets<Timex3> mergeSets = new Utils.MergeSets<>();
+        TreeMap<Integer, Set<Timex3>> beginTreeMap = timex3s.stream().collect(Collectors.toMap(Timex3::getBegin, Collections::singleton, mergeSets, TreeMap::new));
+        TreeMap<Integer, Set<Timex3>> endTreeMap = timex3s.stream().collect(Collectors.toMap(Timex3::getEnd, Collections::singleton, mergeSets, TreeMap::new));
+        for (Timex3 outer : timex3s) {
             if (outer.getTimexType().equals("TEMPONYM")) {
                 continue;
             }
 
-            ArrayList<Timex3> timexSet = new ArrayList<Timex3>();
-            timexSet.add(outer);
+            Set<Timex3> timexSet = getIntersection(outer, beginTreeMap, endTreeMap);
 
-            // compare this timex to all other timexes and mark those that have an overlap
-            while (innerTimexIter.hasNext()) {
-                Timex3 inner = (Timex3) innerTimexIter.next();
-
-                if (!(outer.getTimexType().equals("TEMPONYM"))) {
-                    if (
-                            (outer.getBegin() <= inner.getBegin() && outer.getEnd() > inner.getBegin()) || // timex1 starts, timex2 is partial overlap
-                                    (inner.getBegin() <= outer.getBegin() && inner.getEnd() > outer.getBegin()) || // same as above, but in reverse
-                                    (inner.getBegin() <= outer.getBegin() && outer.getEnd() <= inner.getEnd()) || // timex 1 is contained within or identical to timex2
-                                    (outer.getBegin() <= inner.getBegin() && inner.getEnd() <= outer.getEnd()) // same as above, but in reverse
-                    ) {
-                        timexSet.add(inner); // increase the sets
-
-                        allTimexesToInspect.add(outer); // note that these timexes are being looked at
-                        allTimexesToInspect.add(inner);
-                    }
-                }
+            if (timexSet.size() > 1) {
+                allTimexesToInspect.add(outer);
+                allTimexesToInspect.addAll(timexSet);
+                effectivelyToInspect.add(timexSet);
             }
-
-            // if overlaps with myTimex were detected, memorize them
-            if (timexSet.size() > 1) effectivelyToInspect.add(timexSet);
-
-            // reset the inner iterator
-            innerTimexIter.moveToFirst();
         }
 
         /* prune those sets of overlapping timexes that are subsets of others
          * (i.e. leave only the largest union of overlapping timexes)
          */
-        HashSet<ArrayList<Timex3>> newEffectivelyToInspect = new HashSet<ArrayList<Timex3>>();
+        HashSet<Set<Timex3>> newEffectivelyToInspect = new HashSet<>();
         for (Timex3 t : allTimexesToInspect) {
-            ArrayList<Timex3> setToKeep = new ArrayList<Timex3>();
+            Set<Timex3> setToKeep = Collections.emptySet();
 
             // determine the largest sets that contains this timex
-            for (ArrayList<Timex3> tSet : effectivelyToInspect) {
+            for (Set<Timex3> tSet : effectivelyToInspect) {
                 if (tSet.contains(t) && tSet.size() > setToKeep.size()) setToKeep = tSet;
             }
 
-            newEffectivelyToInspect.add(setToKeep);
+            if (!setToKeep.isEmpty()) {
+                newEffectivelyToInspect.add(setToKeep);
+            }
         }
         // overwrite previous list of sets
         effectivelyToInspect = newEffectivelyToInspect;
 
         // iterate over the selected sets and merge information, remove old timexes
-        for (ArrayList<Timex3> tSet : effectivelyToInspect) {
+        for (Set<Timex3> tSet : effectivelyToInspect) {
             Timex3 newTimex = new Timex3(jcas);
-
-            // if a timex has the timex value REMOVE, remove it from consideration
-            @SuppressWarnings("unchecked")
-            ArrayList<Timex3> newTSet = (ArrayList<Timex3>) tSet.clone();
-            for (Timex3 t : tSet) {
-                if (t.getTimexValue().equals("REMOVE")) { // remove timexes with value "REMOVE"
-                    newTSet.remove(t);
-                }
-            }
-            tSet = newTSet;
-
-            // iteration is done if all the timexes have been removed, i.e. the sets is empty
-            if (tSet.isEmpty()) continue;
 
             /*
              * check
@@ -2411,7 +2383,15 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
         }
     }
 
-    public record RuleMatches<T>(RuleManager.RuleInstance rule, List<T> results) {
+    private static Set<Timex3> getIntersection(Timex3 pivot, TreeMap<Integer, Set<Timex3>> beginTreeMap, TreeMap<Integer, Set<Timex3>> endTreeMap) {
+        Set<Timex3> othersThatEndAfterThisBegins = endTreeMap.tailMap(pivot.getBegin(), false).values().stream().flatMap(Collection::stream).collect(Collectors.toSet());
+        Set<Timex3> othersThatBeginBeforeThisEnds = beginTreeMap.headMap(pivot.getEnd(), false).values().stream().flatMap(Collection::stream).collect(Collectors.toSet());
+        othersThatEndAfterThisBegins.retainAll(othersThatBeginBeforeThisEnds);
+        othersThatEndAfterThisBegins.add(pivot);
+        return othersThatEndAfterThisBegins;
+    }
+
+    public static record RuleMatches<T>(RuleManager.RuleInstance rule, List<T> results) {
         public boolean isEmpty() {
             return results.isEmpty();
         }
