@@ -1,4 +1,4 @@
-package de.unihd.dbs.uima.annotator.heideltime;
+package org.texttechnologylab.heideltime;
 
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
@@ -16,12 +16,17 @@ import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.texttechnologylab.heideltime.HeidelTimeX;
 
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TestHeidelTimeX {
@@ -164,7 +169,7 @@ public class TestHeidelTimeX {
             "Folgemonat", // EXAMPLE biofid_folge_r1
     })
     public void test_german_daterules(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
-        runHeidelTimeX(input);
+        runSingleSentence(input);
         Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
         if (timex3s.isEmpty()) {
             printAnnotations(timex3s);
@@ -188,7 +193,7 @@ public class TestHeidelTimeX {
             "UN Resolution 1441", // EXAMPLE r4a_negative
     })
     public void test_german_daterules_negative(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
-        runHeidelTimeX(input);
+        runSingleSentence(input);
         Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
         if (!timex3s.isEmpty()) {
             printAnnotations(timex3s);
@@ -226,7 +231,7 @@ public class TestHeidelTimeX {
             "ganzjährig", // EXAMPLE biofid_unitdur_r2_b_1
     })
     public void test_german_durationrules(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
-        runHeidelTimeX(input);
+        runSingleSentence(input);
         Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
         if (timex3s.isEmpty()) {
             printAnnotations(timex3s);
@@ -241,7 +246,7 @@ public class TestHeidelTimeX {
             "einige Jahre alt", // EXAMPLE r1c_negation_1
     })
     public void test_german_durationrules_negative(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
-        runHeidelTimeX(input);
+        runSingleSentence(input);
         Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
         if (!timex3s.isEmpty()) {
             printAnnotations(timex3s);
@@ -259,7 +264,7 @@ public class TestHeidelTimeX {
             "2012/2013", // EXAMPLE interval_06
     })
     public void test_german_intervalrules(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
-        runHeidelTimeX(input);
+        runSingleSentence(input);
         Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
         if (timex3s.isEmpty()) {
             printAnnotations(timex3s);
@@ -288,7 +293,7 @@ public class TestHeidelTimeX {
             "das zweite Mal innerhalb einer Stunde", // EXAMPLE biofid_times_per_unit_r5
     })
     public void test_german_setrules(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
-        runHeidelTimeX(input);
+        runSingleSentence(input);
         Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
         if (timex3s.isEmpty()) {
             printAnnotations(timex3s);
@@ -318,7 +323,7 @@ public class TestHeidelTimeX {
             "am Morgen desselben Tages", // EXAMPLE r5c-1:
     })
     public void test_german_timerules(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
-        runHeidelTimeX(input);
+        runSingleSentence(input);
         Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
         if (timex3s.isEmpty()) {
             printAnnotations(timex3s);
@@ -326,7 +331,7 @@ public class TestHeidelTimeX {
         }
     }
 
-    public void runHeidelTimeX(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
+    public void runSingleSentence(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
         jCas.reset();
         jCas.setDocumentLanguage("de");
         jCas.setDocumentText(input);
@@ -341,6 +346,45 @@ public class TestHeidelTimeX {
         new Sentence(jCas, 0, input.length()).addToIndexes();
 
         SimplePipeline.runPipeline(jCas, engine);
+    }
+
+    @Test
+    public void testLeipzigWikipedia() throws URISyntaxException, IOException {
+        URI fileUri = TestHeidelTimeX.class.getClassLoader().getResource("leizipg_wortschatz/deu_wikipedia_2021_10K-sentences.txt").toURI();
+        try (BufferedReader fr = new BufferedReader(new FileReader(new File(fileUri)))) {
+            List<String> lines = fr.lines().map(line -> line.substring(line.indexOf('\t') + 1).trim()).toList();
+            lines = lines.subList(0, 1000);
+
+            ArrayList<Integer> offsets = new ArrayList<>();
+            offsets.add(0);
+            for (String line : lines) {
+                offsets.add(offsets.getLast() + line.length() + 1);
+            }
+            String text = String.join(" ", lines);
+
+            jCas.reset();
+            jCas.setDocumentLanguage("de");
+            jCas.setDocumentText(text);
+
+            int offset = 0;
+            for (int i = 1; i < text.length(); i++) {
+                if (text.charAt(i) == ' ' || i == text.length() - 1) {
+                    new Token(jCas, offset, i).addToIndexes();
+                    offset = i + 1;
+                }
+            }
+            for (int i = 1; i < offsets.size(); i++) {
+                new Sentence(jCas, offsets.get(i-1), offsets.get(i)-1).addToIndexes();
+            }
+
+            SimplePipeline.runPipeline(jCas, engine);
+
+            Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
+            System.out.printf("Found %d Timex3 annotations in %d sentences.%n", timex3s.size(), lines.size());
+            printAnnotations(timex3s);
+        } catch (AnalysisEngineProcessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void printAnnotations(Collection<? extends Annotation> annotations) {

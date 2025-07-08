@@ -14,27 +14,9 @@
 
 package org.texttechnologylab.heideltime;
 
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.unihd.dbs.uima.annotator.heideltime.ProcessorManager;
-import org.apache.commons.compress.utils.Iterators;
-import org.apache.uima.UimaContext;
-import org.apache.uima.cas.FSIterator;
-import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
-import org.apache.uima.fit.descriptor.ConfigurationParameter;
-import org.apache.uima.fit.util.CasUtil;
-import org.apache.uima.fit.util.JCasUtil;
-import org.apache.uima.jcas.JCas;
-import org.apache.uima.jcas.tcas.Annotation;
-import org.apache.uima.resource.ResourceInitializationException;
-
 import de.unihd.dbs.uima.annotator.heideltime.ProcessorManager.Priority;
 import de.unihd.dbs.uima.annotator.heideltime.processors.TemponymPostprocessing;
 import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
@@ -45,7 +27,25 @@ import de.unihd.dbs.uima.annotator.heideltime.utilities.DateCalculator;
 import de.unihd.dbs.uima.annotator.heideltime.utilities.LocaleException;
 import de.unihd.dbs.uima.types.heideltime.Dct;
 import de.unihd.dbs.uima.types.heideltime.Timex3;
+import org.apache.uima.UimaContext;
+import org.apache.uima.cas.FSIterator;
+import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
+import org.apache.uima.fit.descriptor.ConfigurationParameter;
+import org.apache.uima.fit.util.JCasUtil;
+import org.apache.uima.jcas.JCas;
+import org.apache.uima.jcas.tcas.Annotation;
+import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.util.Level;
+
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 /**
@@ -55,7 +55,6 @@ import org.apache.uima.util.Level;
  * @author jannik stroetgen
  */
 public class HeidelTimeX extends JCasAnnotator_ImplBase {
-
     public static final Pattern PATTERN_CHINESE_NORM = Pattern.compile("%CHINESENUMBERS%\\((.*?)\\)");
     public static final Pattern PATTERN_NORM_NO_GROUP = Pattern.compile("%([A-Za-z0-9]+?)\\((.*?)\\)");
     public static final Pattern PATTERN_SUM = Pattern.compile("%SUM%\\((.*?),(.*?)\\)");
@@ -92,56 +91,56 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
     private int timexID = 0;
 
     // chosen locale parameter name
-    public final static String PARAM_LOCALE = "locale";
+    public static final String PARAM_LOCALE = "locale";
     @ConfigurationParameter(name = PARAM_LOCALE, defaultValue = "de_DE")
     String requestedLocale;
 
     // supported types (2012-05-19): news (english, german, dutch), narrative (english, german, dutch), colloquial
-    public final static String PARAM_LANGUAGE = "languageString";
+    public static final String PARAM_LANGUAGE = "languageString";
     @ConfigurationParameter(name = PARAM_LANGUAGE, defaultValue = "german")
     private String languageString;
 
     private Language language = Language.GERMAN;
 
-    public final static String PARAM_TYPE_TO_PROCESS = "typeToProcess";
+    public static final String PARAM_TYPE_TO_PROCESS = "typeToProcess";
     @ConfigurationParameter(name = PARAM_TYPE_TO_PROCESS, defaultValue = "news")
     private String typeToProcess;
 
     // INPUT PARAMETER HANDLING WITH UIMA (which types shall be extracted)
-    public final static String PARAM_FIND_DATES = "find_dates";
+    public static final String PARAM_FIND_DATES = "find_dates";
     @ConfigurationParameter(name = PARAM_FIND_DATES, defaultValue = "true")
     private boolean find_dates;
 
-    public final static String PARAM_FIND_TIMES = "find_times";
+    public static final String PARAM_FIND_TIMES = "find_times";
     @ConfigurationParameter(name = PARAM_FIND_TIMES, defaultValue = "true")
     private boolean find_times;
 
-    public final static String PARAM_FIND_DURATIONS = "find_durations";
+    public static final String PARAM_FIND_DURATIONS = "find_durations";
     @ConfigurationParameter(name = PARAM_FIND_DURATIONS, defaultValue = "true")
     private boolean find_durations;
 
-    public final static String PARAM_FIND_SETS = "find_sets";
+    public static final String PARAM_FIND_SETS = "find_sets";
     @ConfigurationParameter(name = PARAM_FIND_SETS, defaultValue = "true")
     private boolean find_sets;
 
-    public final static String PARAM_FIND_TEMPONYMS = "find_temponyms";
+    public static final String PARAM_FIND_TEMPONYMS = "find_temponyms";
     @ConfigurationParameter(name = PARAM_FIND_TEMPONYMS, defaultValue = "true")
     private boolean find_temponyms;
 
-    public final static String PARAM_GROUP_GRAN = "group_gran";
+    public static final String PARAM_GROUP_GRAN = "group_gran";
     @ConfigurationParameter(name = PARAM_GROUP_GRAN, defaultValue = "true")
     private boolean group_gran;
 
-    public final static String PARAM_DELETE_OVERLAPPED = "deleteOverlapped";
+    public static final String PARAM_DELETE_OVERLAPPED = "deleteOverlapped";
     @ConfigurationParameter(name = PARAM_DELETE_OVERLAPPED, defaultValue = "true")
     private boolean deleteOverlapped;
 
-//    public final static String PARAM_PARALLEL_SEARCH = "parallelSearch";
+//    public static final String PARAM_PARALLEL_SEARCH = "parallelSearch";
 //    @ConfigurationParameter(name = PARAM_PARALLEL_SEARCH, defaultValue = "true")
 //    private boolean parallelSearch;
 
     // FOR DEBUGGING PURPOSES (IF FALSE)
-    public final static String PARAM_DEBUG = "doDebug";
+    public static final String PARAM_DEBUG = "doDebug";
     @ConfigurationParameter(name = PARAM_DEBUG, defaultValue = "false")
     private boolean doDebug;
     private RegexHashMap<String> chineseNumerals;
@@ -235,7 +234,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
     }
 
     /**
-     * @see JCasAnnotator_ImplBase#process(JCas)
+     * @see org.apache.uima.fit.component.JCasAnnotator_ImplBase#process(JCas)
      */
     public void process(JCas jcas) {
         String documentUri = "";
@@ -309,7 +308,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                 boolean debugIteration = false;
                 do {
                     try {
-                        ArrayList<Future<List<RuleMatches<TimexAttributes>>>> futures = new ArrayList<>();
+                        ArrayList<Future<List<HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes>>>> futures = new ArrayList<>();
                         if (find_dates) {
                             futures.add(threadPool.submit(() -> findTimexes(ruleSet.dates(), container)));
                         }
@@ -325,7 +324,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                         if (find_temponyms) {
                             futures.add(threadPool.submit(() -> findTimexes(ruleSet.temponyms(), container)));
                         }
-                        for (Future<List<RuleMatches<TimexAttributes>>> future : futures) {
+                        for (Future<List<HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes>>> future : futures) {
                             addTimexAnnotationsToJCas(jcas, container, future.get());
                         }
                     } catch (NullPointerException npe) {
@@ -412,7 +411,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
             int begin,
             int end,
             ContextAnalyzer.SentenceContainer sentence,
-            TimexAttributes attributes,
+            HeidelTimeX.TimexAttributes attributes,
             String timexId,
             String foundByRule,
             JCas jcas
@@ -424,7 +423,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
 //        timex3.setFilename(sentence.getFilename());
 //        timex3.setSentId(sentence.getSentenceId());
 
-        timex3.setEmptyValue(attributes.emptyValue);
+        timex3.setEmptyValue(attributes.emptyValue());
 
 //        StringBuilder allTokIds = new StringBuilder();
 //        for (Annotation annotation : sentence.tokens()) {
@@ -440,11 +439,11 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
 //        timex3.setAllTokIds(allTokIds.toString());
 
         timex3.setTimexType(timexType);
-        timex3.setTimexValue(attributes.value);
+        timex3.setTimexValue(attributes.value());
         timex3.setTimexId(timexId);
         timex3.setFoundByRule(foundByRule);
         if ((timexType.equals("DATE")) || (timexType.equals("TIME"))) {
-            if ((attributes.value.startsWith("X")) || (attributes.value.startsWith("UNDEF"))) {
+            if ((attributes.value().startsWith("X")) || (attributes.value().startsWith("UNDEF"))) {
                 timex3.setFoundByRule(foundByRule + "-relative");
             } else {
                 timex3.setFoundByRule(foundByRule + "-explicit");
@@ -460,14 +459,14 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                 }
             }
         }
-        if (attributes.quant != null) {
-            timex3.setTimexQuant(attributes.quant);
+        if (attributes.quant() != null) {
+            timex3.setTimexQuant(attributes.quant());
         }
-        if (attributes.freq != null) {
-            timex3.setTimexFreq(attributes.freq);
+        if (attributes.freq() != null) {
+            timex3.setTimexFreq(attributes.freq());
         }
-        if (attributes.mod != null) {
-            timex3.setTimexMod(attributes.mod);
+        if (attributes.mod() != null) {
+            timex3.setTimexMod(attributes.mod());
         }
 
         timex3.addToIndexes();
@@ -2425,41 +2424,39 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
     /**
      * Apply the extraction rules, normalization rules
      */
-    private List<RuleMatches<TimexAttributes>> findTimexes(
+    private List<HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes>> findTimexes(
             TreeMap<String, RuleManager.RuleInstance> rules,
             ContextAnalyzer.SentenceContainer sentence
     ) {
         return rules.values().stream().parallel()
                 .filter(rule -> rule.fastCheck(sentence.text()))
                 .map(rule ->
-                        new RuleMatches<>(
+                        new HeidelTimeX.RuleMatches<>(
                                 rule,
                                 Utils.findMatches(rule.pattern(), sentence.text()).stream()
                                         .filter(matchResult -> ContextAnalyzer.checkSentenceMatch(
-                                                sentence,
-                                                matchResult.start(),
-                                                matchResult.end()
+                                                sentence, matchResult.start(), matchResult.end()
                                         ))
                                         .filter(matchResult -> rule.checkPosConstraint(sentence, matchResult))
                                         .map(matchResult -> getTimexAttributes(rule, matchResult)).toList()
                         )
                 )
-                .sorted(Comparator.comparing(stage -> stage.rule.name()))
+                .sorted(Comparator.comparing(stage -> stage.rule().name()))
                 .toList();
     }
 
-    private void addTimexAnnotationsToJCas(JCas jCas, ContextAnalyzer.SentenceContainer sentence, List<RuleMatches<TimexAttributes>> ruleMatches) {
+    private void addTimexAnnotationsToJCas(JCas jCas, ContextAnalyzer.SentenceContainer sentence, List<HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes>> ruleMatches) {
         // Iterator over the rules by sorted by the name of the rules
         // this is important since later, the timexId will be used to
         // decide which of two expressions shall be removed if both
         // have the same offset
-        for (RuleMatches<TimexAttributes> ruleMatch : ruleMatches) {
-            RuleManager.RuleInstance rule = ruleMatch.rule;
-            for (TimexAttributes attributes : ruleMatch.results) {
+        for (HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes> ruleMatch : ruleMatches) {
+            RuleManager.RuleInstance rule = ruleMatch.rule();
+            for (HeidelTimeX.TimexAttributes attributes : ruleMatch.results()) {
                 addTimexAnnotation(
                         rule.type(),
-                        attributes.start + sentence.begin(),
-                        attributes.end + sentence.begin(),
+                        attributes.start() + sentence.begin(),
+                        attributes.end() + sentence.begin(),
                         sentence,
                         attributes,
                         "t" + timexID++,
@@ -2597,7 +2594,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
     ) {
     }
 
-    public TimexAttributes getTimexAttributes(RuleManager.RuleInstance rule, MatchResult matchResult) {
+    public HeidelTimeX.TimexAttributes getTimexAttributes(RuleManager.RuleInstance rule, MatchResult matchResult) {
         // Normalize Value
         String value = applyRuleFunctions(rule.normalization(), matchResult);
         if (value == null) return null;
@@ -2632,7 +2629,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
 
         RuleManager.Offset offset = rule.offset();
 
-        return new TimexAttributes(matchResult.start(offset.start()), matchResult.end(offset.end()), value, quant, freq, mod, emptyValue);
+        return new HeidelTimeX.TimexAttributes(matchResult.start(offset.start()), matchResult.end(offset.end()), value, quant, freq, mod, emptyValue);
     }
 
     /**

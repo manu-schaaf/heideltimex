@@ -74,23 +74,22 @@ public class HeidelTime extends JCasAnnotator_ImplBase {
 	private int timexID = 0;
 	
 	// INPUT PARAMETER HANDLING WITH UIMA
-	private String PARAM_LANGUAGE         = "Language";
+	public static final String PARAM_LANGUAGE         = "Language";
 	// supported languages (2012-05-19): english, german, dutch, englishcoll, englishsci
-	private String PARAM_TYPE_TO_PROCESS  = "Type";
+	public static final String PARAM_TYPE_TO_PROCESS  = "Type";
 	// chosen locale parameter name
-	private String PARAM_LOCALE			   = "locale";
+	public static final String PARAM_LOCALE			   = "locale";
 	// supported types (2012-05-19): news (english, german, dutch), narrative (english, german, dutch), colloquial
 	private Language language       = Language.ENGLISH;
 	private String typeToProcess  = "news";
 	
 	// INPUT PARAMETER HANDLING WITH UIMA (which types shall be extracted)
-	private String PARAM_DATE      = "Date";
-	private String PARAM_TIME      = "Time";
-	private String PARAM_DURATION  = "Duration";
-	private String PARAM_SET       = "Set";
-	private String PARAM_TEMPONYMS = "Temponym";
-	private String PARAM_DEBUG	   = "Debugging";
-	private String PARAM_GROUP     = "ConvertDurations";
+	public static final String PARAM_DATE      = "Date";
+	public static final String PARAM_TIME      = "Time";
+	public static final String PARAM_DURATION  = "Duration";
+	public static final String PARAM_SET       = "Set";
+	public static final String PARAM_TEMPONYMS = "Temponym";
+	public static final String PARAM_GROUP     = "ConvertDurations";
 	private Boolean find_dates     = true;
 	private Boolean find_times     = true;
 	private Boolean find_durations = true;
@@ -99,6 +98,8 @@ public class HeidelTime extends JCasAnnotator_ImplBase {
 	private Boolean group_gran     = true;
 	// FOR DEBUGGING PURPOSES (IF FALSE)
 	private Boolean deleteOverlapped = true;
+
+	public static final String PARAM_DEBUG	   = "Debugging";
 
 
 	/**
