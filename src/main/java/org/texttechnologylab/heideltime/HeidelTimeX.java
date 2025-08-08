@@ -2147,36 +2147,40 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
         // go through list of Date and Time timexes //
         //////////////////////////////////////////////
         for (int i = 0; i < linearDates.size(); i++) {
-            Timex3 t_i = linearDates.get(i);
-            String value_i = t_i.getTimexValue();
+            try {
+                Timex3 t_i = linearDates.get(i);
+                String value_i = t_i.getTimexValue();
 
-            String valueNew = value_i;
-            // handle the value attribute only if we have a TIME or DATE
-            if (t_i.getTimexType().equals("TIME") || t_i.getTimexType().equals("DATE")) valueNew =
-                    specifyAmbiguousValuesString(value_i, t_i, i, linearDates, jcas);
+                String valueNew = value_i;
+                // handle the value attribute only if we have a TIME or DATE
+                if (t_i.getTimexType().equals("TIME") || t_i.getTimexType().equals("DATE")) valueNew =
+                        specifyAmbiguousValuesString(value_i, t_i, i, linearDates, jcas);
 
-            // handle the emptyValue attribute for any type
-            if (t_i.getEmptyValue() != null && !t_i.getEmptyValue().isEmpty()) {
-                String emptyValueNew = specifyAmbiguousValuesString(t_i.getEmptyValue(), t_i, i, linearDates, jcas);
-                t_i.setEmptyValue(emptyValueNew);
+                // handle the emptyValue attribute for any type
+                if (t_i.getEmptyValue() != null && !t_i.getEmptyValue().isEmpty()) {
+                    String emptyValueNew = specifyAmbiguousValuesString(t_i.getEmptyValue(), t_i, i, linearDates, jcas);
+                    t_i.setEmptyValue(emptyValueNew);
+                }
+
+                t_i.removeFromIndexes();
+                getLogger().debug(
+                        t_i.getTimexId() +
+                                " DISAMBIGUATION PHASE: foundBy:" +
+                                t_i.getFoundByRule() +
+                                " text:" +
+                                t_i.getCoveredText() +
+                                " value:" +
+                                t_i.getTimexValue() +
+                                " NEW value:" +
+                                valueNew
+                );
+
+                t_i.setTimexValue(valueNew);
+                t_i.addToIndexes();
+                linearDates.set(i, t_i);
+            } catch (Exception e) {
+                getLogger().error("Caught error in disambiguation phase!", e);
             }
-
-            t_i.removeFromIndexes();
-            getLogger().debug(
-                    t_i.getTimexId() +
-                            " DISAMBIGUATION PHASE: foundBy:" +
-                            t_i.getFoundByRule() +
-                            " text:" +
-                            t_i.getCoveredText() +
-                            " value:" +
-                            t_i.getTimexValue() +
-                            " NEW value:" +
-                            valueNew
-            );
-
-            t_i.setTimexValue(valueNew);
-            t_i.addToIndexes();
-            linearDates.set(i, t_i);
         }
     }
 
@@ -2448,119 +2452,125 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
     }
 
     public String applyRuleFunctions(String tonormalize, MatchResult m) {
-        NormalizationManager norm = NormalizationManager.getInstance(language, find_temponyms);
+        try {
+            NormalizationManager norm = NormalizationManager.getInstance(language, find_temponyms);
 
-        // pattern for normalization functions + group information
-        // pattern for group information
-        while ((tonormalize.contains("%")) || (tonormalize.contains("group"))) {
-            // replace normalization functions
-            for (MatchResult mr : Utils.findMatches(PATTERN_NORM, tonormalize)) {
-                getLogger().debug("-----------------------------------");
-                getLogger().debug("DEBUGGING: tonormalize:" + tonormalize);
-                getLogger().debug("DEBUGGING: mr.group():" + mr.group());
-                getLogger().debug("DEBUGGING: mr.group(1):" + mr.group(1));
-                getLogger().debug("DEBUGGING: mr.group(2):" + mr.group(2));
-                getLogger().debug("DEBUGGING: m.group():" + m.group());
-                getLogger().debug(
-                        "DEBUGGING: m.group(" +
-                                Integer.parseInt(mr.group(2)) +
-                                "):" +
-                                m.group(Integer.parseInt(mr.group(2)))
-                );
-                getLogger().debug(
-                        "DEBUGGING: hmR...:" +
-                                norm.getFromHmAllNormalization(mr.group(1)).get(m.group(Integer.parseInt(mr.group(2))))
-                );
-                getLogger().debug("-----------------------------------");
+            // pattern for normalization functions + group information
+            // pattern for group information
+            while ((tonormalize.contains("%")) || (tonormalize.contains("group"))) {
+                // replace normalization functions
+                for (MatchResult mr : Utils.findMatches(PATTERN_NORM, tonormalize)) {
+                    getLogger().debug("-----------------------------------");
+                    getLogger().debug("DEBUGGING: tonormalize:" + tonormalize);
+                    getLogger().debug("DEBUGGING: mr.group():" + mr.group());
+                    getLogger().debug("DEBUGGING: mr.group(1):" + mr.group(1));
+                    getLogger().debug("DEBUGGING: mr.group(2):" + mr.group(2));
+                    getLogger().debug("DEBUGGING: m.group():" + m.group());
+                    getLogger().debug(
+                            "DEBUGGING: m.group(" +
+                                    Integer.parseInt(mr.group(2)) +
+                                    "):" +
+                                    m.group(Integer.parseInt(mr.group(2)))
+                    );
+                    getLogger().debug(
+                            "DEBUGGING: hmR...:" +
+                                    norm.getFromHmAllNormalization(mr.group(1)).get(m.group(Integer.parseInt(mr.group(2))))
+                    );
+                    getLogger().debug("-----------------------------------");
 
-                if (!(m.group(Integer.parseInt(mr.group(2))) == null)) {
-                    String partToReplace = m.group(Integer.parseInt(mr.group(2))).replaceAll("[\n\\s]+", " "); //.replace("+", "");
-                    if (!(norm.getFromHmAllNormalization(mr.group(1)).containsKey(partToReplace))) {
-                        getLogger().debug("Maybe problem with normalization of the resource: " + mr.group(1));
-                        getLogger().debug("Maybe problem with part to replace? " + partToReplace);
-                        if (mr.group(1).contains("Temponym")) {
-                            getLogger().debug("Should be ok, as it's a temponyms.");
-                            return null;
+                    if (!(m.group(Integer.parseInt(mr.group(2))) == null)) {
+                        String partToReplace = m.group(Integer.parseInt(mr.group(2))).replaceAll("[\n\\s]+", " "); //.replace("+", "");
+                        if (!(norm.getFromHmAllNormalization(mr.group(1)).containsKey(partToReplace))) {
+                            getLogger().debug("Maybe problem with normalization of the resource: " + mr.group(1));
+                            getLogger().debug("Maybe problem with part to replace? " + partToReplace);
+                            if (mr.group(1).contains("Temponym")) {
+                                getLogger().debug("Should be ok, as it's a temponyms.");
+                                return null;
+                            }
+                        } else {
+                            tonormalize = tonormalize.replace(
+                                    mr.group(),
+                                    norm.getFromHmAllNormalization(mr.group(1)).get(partToReplace)
+                            );
                         }
                     } else {
-                        tonormalize = tonormalize.replace(
-                                mr.group(),
-                                norm.getFromHmAllNormalization(mr.group(1)).get(partToReplace)
-                        );
-                    }
-                } else {
-                    getLogger().debug("Empty part to normalize in " + mr.group(1));
+                        getLogger().debug("Empty part to normalize in " + mr.group(1));
 
-                    tonormalize = tonormalize.replace(mr.group(), "");
-                }
-            }
-            // replace other groups
-            for (MatchResult mr : Utils.findMatches(PATTERN_GROUP, tonormalize)) {
-                getLogger().debug("-----------------------------------");
-                getLogger().debug("DEBUGGING: tonormalize:" + tonormalize);
-                getLogger().debug("DEBUGGING: mr.group():" + mr.group());
-                getLogger().debug("DEBUGGING: mr.group(1):" + mr.group(1));
-                getLogger().debug("DEBUGGING: m.group():" + m.group());
-                getLogger().debug(
-                        "DEBUGGING: m.group(" +
-                                Integer.parseInt(mr.group(1)) +
-                                "):" +
-                                m.group(Integer.parseInt(mr.group(1)))
-                );
-                getLogger().debug("-----------------------------------");
-
-                tonormalize = tonormalize.replace(mr.group(), m.group(Integer.parseInt(mr.group(1))));
-            }
-            // replace substrings
-            for (MatchResult mr : Utils.findMatches(PATTERN_SUBSTRING, tonormalize)) {
-                String substring = mr.group(1).substring(Integer.parseInt(mr.group(2)), Integer.parseInt(mr.group(3)));
-                tonormalize = tonormalize.replace(mr.group(), substring);
-            }
-            if (language.getName().compareTo("arabic") != 0) {
-                // replace lowercase
-                for (MatchResult mr : Utils.findMatches(PATTERN_LOWERCASE, tonormalize)) {
-                    String substring = mr.group(1).toLowerCase();
-                    tonormalize = tonormalize.replace(mr.group(), substring);
-                }
-
-                // replace uppercase
-                for (MatchResult mr : Utils.findMatches(PATTERN_UPPERCASE, tonormalize)) {
-                    String substring = mr.group(1).toUpperCase();
-                    tonormalize = tonormalize.replace(mr.group(), substring);
-                }
-            }
-            // replace sum, concatenation
-            for (MatchResult mr : Utils.findMatches(PATTERN_SUM, tonormalize)) {
-                int newValue = Integer.parseInt(mr.group(1)) + Integer.parseInt(mr.group(2));
-                tonormalize = tonormalize.replace(mr.group(), newValue + "");
-            }
-            // replace normalization function without group
-            for (MatchResult mr : Utils.findMatches(PATTERN_NORM_NO_GROUP, tonormalize)) {
-                tonormalize = tonormalize.replace(
-                        mr.group(),
-                        norm.getFromHmAllNormalization(mr.group(1)).get(mr.group(2))
-                );
-            }
-            // replace Chinese with Arabic numerals
-            for (MatchResult mr : Utils.findMatches(PATTERN_CHINESE_NORM, tonormalize)) {
-                StringBuilder outString = new StringBuilder();
-                for (int i = 0; i < mr.group(1).length(); i++) {
-                    String thisChar = mr.group(1).substring(i, i + 1);
-                    if (chineseNumerals.containsKey(thisChar)) {
-                        outString.append(chineseNumerals.get(thisChar));
-                    } else {
-                        System.out.println(chineseNumerals.entrySet());
-                        getLogger().error(
-                                "Found an error in the resources: {} contains a character that is not defined in the Chinese numerals map. Normalization may be mangled.",
-                                mr.group(1)
-                        );
-                        outString.append(thisChar);
+                        tonormalize = tonormalize.replace(mr.group(), "");
                     }
                 }
-                tonormalize = tonormalize.replace(mr.group(), outString.toString());
+                // replace other groups
+                for (MatchResult mr : Utils.findMatches(PATTERN_GROUP, tonormalize)) {
+                    getLogger().debug("-----------------------------------");
+                    getLogger().debug("DEBUGGING: tonormalize:" + tonormalize);
+                    getLogger().debug("DEBUGGING: mr.group():" + mr.group());
+                    getLogger().debug("DEBUGGING: mr.group(1):" + mr.group(1));
+                    getLogger().debug("DEBUGGING: m.group():" + m.group());
+                    getLogger().debug(
+                            "DEBUGGING: m.group(" +
+                                    Integer.parseInt(mr.group(1)) +
+                                    "):" +
+                                    m.group(Integer.parseInt(mr.group(1)))
+                    );
+                    getLogger().debug("-----------------------------------");
+
+                    tonormalize = tonormalize.replace(mr.group(), m.group(Integer.parseInt(mr.group(1))));
+                }
+                // replace substrings
+                for (MatchResult mr : Utils.findMatches(PATTERN_SUBSTRING, tonormalize)) {
+                    String substring = mr.group(1).substring(Integer.parseInt(mr.group(2)), Integer.parseInt(mr.group(3)));
+                    tonormalize = tonormalize.replace(mr.group(), substring);
+                }
+                if (language.getName().compareTo("arabic") != 0) {
+                    // replace lowercase
+                    for (MatchResult mr : Utils.findMatches(PATTERN_LOWERCASE, tonormalize)) {
+                        String substring = mr.group(1).toLowerCase();
+                        tonormalize = tonormalize.replace(mr.group(), substring);
+                    }
+
+                    // replace uppercase
+                    for (MatchResult mr : Utils.findMatches(PATTERN_UPPERCASE, tonormalize)) {
+                        String substring = mr.group(1).toUpperCase();
+                        tonormalize = tonormalize.replace(mr.group(), substring);
+                    }
+                }
+                // replace sum, concatenation
+                for (MatchResult mr : Utils.findMatches(PATTERN_SUM, tonormalize)) {
+                    int newValue = Integer.parseInt(mr.group(1)) + Integer.parseInt(mr.group(2));
+                    tonormalize = tonormalize.replace(mr.group(), newValue + "");
+                }
+                // replace normalization function without group
+                for (MatchResult mr : Utils.findMatches(PATTERN_NORM_NO_GROUP, tonormalize)) {
+                    String replacement = norm.getFromHmAllNormalization(mr.group(1)).get(mr.group(2));
+                    if (Objects.isNull(replacement)) {
+                        throw new NullPointerException("Normalization function " + mr.group(1) + " returned null for " + mr.group(2));
+                    }
+                    tonormalize = tonormalize.replace(mr.group(), replacement);
+                }
+                // replace Chinese with Arabic numerals
+                for (MatchResult mr : Utils.findMatches(PATTERN_CHINESE_NORM, tonormalize)) {
+                    StringBuilder outString = new StringBuilder();
+                    for (int i = 0; i < mr.group(1).length(); i++) {
+                        String thisChar = mr.group(1).substring(i, i + 1);
+                        if (chineseNumerals.containsKey(thisChar)) {
+                            outString.append(chineseNumerals.get(thisChar));
+                        } else {
+                            System.out.println(chineseNumerals.entrySet());
+                            getLogger().error(
+                                    "Found an error in the resources: {} contains a character that is not defined in the Chinese numerals map. Normalization may be mangled.",
+                                    mr.group(1)
+                            );
+                            outString.append(thisChar);
+                        }
+                    }
+                    tonormalize = tonormalize.replace(mr.group(), outString.toString());
+                }
             }
+            return tonormalize;
+        } catch (Exception e) {
+            getLogger().error("Caught exception while applying rule functions!", e);
+            return null;
         }
-        return tonormalize;
     }
 
     public record TimexAttributes(

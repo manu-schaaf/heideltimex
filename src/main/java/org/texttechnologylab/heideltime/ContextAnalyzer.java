@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
+import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
 import de.unihd.dbs.uima.annotator.heideltime.utilities.DateCalculator;
 import de.unihd.dbs.uima.annotator.heideltime.utilities.Logger;
 import de.unihd.dbs.uima.annotator.heideltime.utilities.Toolbox;
@@ -305,11 +306,14 @@ public class ContextAnalyzer {
         String longTense = "";
         if (lastTense.equals("PRESENTFUTURE")) {
             for (Integer tokEnd : tmToken.keySet()) {
+                Token token = tmToken.get(tokEnd);
+                POS thisPos = token.getPos();
+                String thisPosValue = thisPos == null ? "" : thisPos.getPosValue();
+
                 if (tokEnd < timex.getBegin()) {
-                    Token token = tmToken.get(tokEnd);
                     if (("VHZ".equals(prevPos)) || ("VBZ".equals(prevPos)) || ("VHP".equals(prevPos)) || ("VBP".equals(prevPos))
                             || (prevPos.equals("VER:pres"))) {
-                        if ("VVN".equals(token.getPos()) || "VER:pper".equals(token.getPos())) {
+                        if ("VVN".equals(thisPosValue) || "VER:pper".equals(thisPosValue)) {
                             if ((!(token.getCoveredText().equals("expected"))) && (!(token.getCoveredText().equals("scheduled")))) {
                                 lastTense = "PAST";
                                 longTense = "PAST";
@@ -317,14 +321,13 @@ public class ContextAnalyzer {
                             }
                         }
                     }
-                    prevPos = token.getPos().getPosValue();
+                    prevPos = thisPosValue;
                 }
                 if (longTense.equals("")) {
                     if (tokEnd > timex.getEnd()) {
-                        Token token = tmToken.get(tokEnd);
                         if (("VHZ".equals(prevPos)) || ("VBZ".equals(prevPos)) || ("VHP".equals(prevPos)) || ("VBP".equals(prevPos))
                                 || ("VER:pres".equals(prevPos))) {
-                            if ("VVN".equals(token.getPos()) || "VER:pper".equals(token.getPos())) {
+                            if ("VVN".equals(thisPosValue) || "VER:pper".equals(thisPosValue)) {
                                 if ((!(token.getCoveredText().equals("expected"))) && (!(token.getCoveredText().equals("scheduled")))) {
                                     lastTense = "PAST";
                                     longTense = "PAST";
@@ -332,7 +335,7 @@ public class ContextAnalyzer {
                                 }
                             }
                         }
-                        prevPos = token.getPos().getPosValue();
+                        prevPos = thisPosValue;
                     }
                 }
             }
@@ -340,29 +343,19 @@ public class ContextAnalyzer {
         // French: VER:pres VER:pper
         if (lastTense.equals("PAST")) {
             for (Integer tokEnd : tmToken.keySet()) {
-                if (tokEnd < timex.getBegin()) {
-                    Token token = tmToken.get(tokEnd);
-                    if (("VER:pres".equals(prevPos)) && ("VER:pper".equals(token.getPos()))) {
+                Token token = tmToken.get(tokEnd);
+                POS thisPos = token.getPos();
+                String thisPosValue = thisPos == null ? "" : thisPos.getPosValue();
+
+                if (tokEnd < timex.getBegin() || (longTense.isEmpty() && tokEnd > timex.getEnd())) {
+                    if (("VER:pres".equals(prevPos)) && ("VER:pper".equals(thisPosValue))) {
                         if (((token.getCoveredText().matches("^prévue?s?$"))) || ((token.getCoveredText().equals("^envisagée?s?$")))) {
                             lastTense = "FUTURE";
                             longTense = "FUTURE";
                             Logger.printDetail("this tense:" + lastTense);
                         }
                     }
-                    prevPos = token.getPos().getPosValue();
-                }
-                if (longTense.isEmpty()) {
-                    if (tokEnd > timex.getEnd()) {
-                        Token token = tmToken.get(tokEnd);
-                        if (("VER:pres".equals(prevPos)) && ("VER:pper".equals(token.getPos()))) {
-                            if (((token.getCoveredText().matches("^prévue?s?$"))) || ((token.getCoveredText().equals("^envisagée?s?$")))) {
-                                lastTense = "FUTURE";
-                                longTense = "FUTURE";
-                                Logger.printDetail("this tense:" + lastTense);
-                            }
-                        }
-                        prevPos = token.getPos().getPosValue();
-                    }
+                    prevPos = thisPosValue;
                 }
             }
         }
