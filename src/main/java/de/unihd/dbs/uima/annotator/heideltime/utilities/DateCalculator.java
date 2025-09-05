@@ -45,7 +45,10 @@ public class DateCalculator {
 			}
 		}
 		catch (ParseException e) {
-			e.printStackTrace();
+			Logger.printError(
+					DateCalculator.class,
+					"Caught ParseException in getXNextYear(\"%s\", %d): %s".formatted(date, x, e.getMessage())
+			);
 		}
 		return newDate;
 	}
@@ -83,7 +86,10 @@ public class DateCalculator {
 			}
 			
 		} catch (ParseException e) {
-			e.printStackTrace();
+			Logger.printError(
+					DateCalculator.class,
+					"Caught ParseException in getXNextDecade(\"%s\", %d): %s".formatted(date, x, e.getMessage())
+			);
 		}
 		return newDate;
 	}
@@ -134,7 +140,10 @@ public class DateCalculator {
 			}
 			
 		} catch (ParseException e) {
-			e.printStackTrace();
+			Logger.printError(
+					DateCalculator.class,
+					"Caught ParseException in getXNextCentury(\"%s\", %d): %s".formatted(date, x, e.getMessage())
+			);
 		}
 		return newDate;
 	}
@@ -156,7 +165,10 @@ public class DateCalculator {
 			c.getTime();
 			newDate = formatter.format(c.getTime());
 		} catch (ParseException e) {
-			e.printStackTrace();
+			Logger.printError(
+					DateCalculator.class,
+					"Caught ParseException in getXNextDay(\"%s\", %d): %s".formatted(date, x, e.getMessage())
+			);
 		}
 		return newDate;
 	}
@@ -199,7 +211,10 @@ public class DateCalculator {
 			
 		}
 		catch (ParseException e) {
-			e.printStackTrace();
+			Logger.printError(
+					DateCalculator.class,
+					"Caught ParseException in getXNextMonth(\"%s\", %d): %s".formatted(date, x, e.getMessage())
+			);
 		}
 		return newDate;
 	}
@@ -223,7 +238,10 @@ public class DateCalculator {
 			newDate = formatter.format(c.getTime());
 			newDate = newDate.substring(0,4)+"-W"+nm.getFromNormNumber(newDate.substring(5));
 		} catch (ParseException e) {
-			e.printStackTrace();
+			Logger.printError(
+					DateCalculator.class,
+					"Caught ParseException in getXNextWeek(\"%s\", %d, \"%s\"): %s".formatted(date, x, language, e.getMessage())
+			);
 		}
 		return newDate;
 	}
@@ -242,7 +260,10 @@ public class DateCalculator {
 			c.setTime(formatter.parse(date));
 			weekday = c.get(Calendar.DAY_OF_WEEK);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			Logger.printError(
+					DateCalculator.class,
+					"Caught ParseException in getWeekdayOfDate(\"%s\"): %s".formatted(date, e.getMessage())
+			);
 		}
 		return weekday;
 	}
@@ -262,7 +283,10 @@ public class DateCalculator {
 			c.setTime(formatter.parse(date));
 			week = c.get(Calendar.WEEK_OF_YEAR);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			Logger.printError(
+					DateCalculator.class,
+					"Caught ParseException in getWeekOfDate(\"%s\"): %s".formatted(date, e.getMessage())
+			);
 		}
 		return week;
 	}
@@ -274,7 +298,7 @@ public class DateCalculator {
 	 */
 	public static Locale getLocaleFromString(String locale) throws LocaleException {
 		for(Locale l : Locale.getAvailableLocales()) {
-			if(locale.toLowerCase().equals(l.toString().toLowerCase())) {
+			if(locale.equalsIgnoreCase(l.toString())) {
 				return l;
 			}
 		}
