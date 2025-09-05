@@ -1,0 +1,134 @@
+// author: Jannik Strötgen
+// email:  stroetgen@uni-hd.de
+// date:   2011-06-13
+// This file contains rules for the temporal expressions of the type duration: durationrules
+// RULENAME="",EXTRACTION="",NORM_VALUE=""(,OFFSET="")?(,POS_CONSTRAINT="")?(,NORM_MOD="")?(,NORM_QUANT="")?(,NORM_FREQ="")?
+
+////////////////////
+// POSITIVE RULES //
+////////////////////
+// BIOfid extension: added optional "lang"; extended reNumWord2d and normDurationNumber
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-12-14
+// duration_r1
+// EXAMPLE r1a_1: etwa fünf Tage
+// EXAMPLE r1b_1: etwa 20 Tage
+// EXAMPLE r1c_1: etwa fünf Stunden
+// EXAMPLE r1d_1: etwa 20 Stunden
+RULENAME="duration_r1a1",EXTRACTION="(%reApproximate )?(%reNumWord2D|%reNumWord1D) %reUnit( lang)?",NORM_VALUE="P%normDurationNumber(group(3))%normUnit4Duration(group(6))"
+RULENAME="duration_r1b1",EXTRACTION="(%reApproximate )?([\d]+) %reUnit( lang)?",NORM_VALUE="Pgroup(3)%normUnit4Duration(group(4))"
+RULENAME="duration_r1c1",EXTRACTION="(%reApproximate )?(%reNumWord2D|%reNumWord1D) (Minuten?|Stunden?)( lang)?",NORM_VALUE="PT%normDurationNumber(group(3))%normUnit4Duration(group(6))"
+RULENAME="duration_r1d1",EXTRACTION="(%reApproximate )?([\d]+) (Minuten?|Stunden?)( lang)?",NORM_VALUE="PTgroup(3)%normUnit4Duration(group(4))"
+RULENAME="duration_r1a2",EXTRACTION="(%reApproximate )?(%reNumWord2D|%reNumWord1D)%reAndOrTo(%reNumWord2D|%reNumWord1D) %reUnit( lang)?",NORM_VALUE="P%normDurationNumber(group(3))%normUnit4Duration(group(10))",OFFSET="group(0)-group(3)"
+RULENAME="duration_r1b2",EXTRACTION="(%reApproximate )?([\d]+)%reAndOrTo([\d]+) %reUnit( lang)?",NORM_VALUE="Pgroup(3)%normUnit4Duration(group(6))",OFFSET="group(0)-group(3)"
+RULENAME="duration_r1c2",EXTRACTION="(%reApproximate )?(%reNumWord2D|%reNumWord1D)%reAndOrTo(%reNumWord2D|%reNumWord1D) (Minuten?|Stunden?)( lang)?",NORM_VALUE="PT%normDurationNumber(group(3))%normUnit4Duration(group(10))"
+RULENAME="duration_r1d2",EXTRACTION="(%reApproximate )?([\d]+)%reAndOrTo([\d]+) (Minuten?|Stunden?)( lang)?",NORM_VALUE="PTgroup(3)%normUnit4Duration(group(6))"
+
+// duration_r2
+// EXAMPLE r2a_1: die nächsten zwanzig Tage
+// EXAMPLE r2b_1: die nächsten 20 Tage
+// EXAMPLE r2c_1: die nächsten paar Tage
+// EXAMPLE r2d_1: die nächsten zwanzig Minuten
+// EXAMPLE r2e_1: die nächsten 20 Minuten
+// EXAMPLE r2f_1: die nächsten paar Minuten
+RULENAME="duration_r2a",EXTRACTION="(%reApproximate )?die %reThisNextLast (%reNumWord2D|%reNumWord1D)( |-)%reUnit( oder so)?",NORM_VALUE="P%normDurationNumber(group(4))%normUnit4Duration(group(8))"
+RULENAME="duration_r2b",EXTRACTION="(%reApproximate )?die %reThisNextLast ([\d]+)( |-)%reUnit( oder so)?",NORM_VALUE="Pgroup(4)%normUnit4Duration(group(6))"
+RULENAME="duration_r2c",EXTRACTION="(%reApproximate )?die %reThisNextLast (paar|wenigen?|einigen?) %reUnit( oder so)?",NORM_VALUE="PX%normUnit4Duration(group(5))"
+RULENAME="duration_r2d",EXTRACTION="(%reApproximate )?die %reThisNextLast (%reNumWord2D|%reNumWord1D)( |-)(Minuten?|Stunden?)( oder so)?",NORM_VALUE="PT%normDurationNumber(group(4))%normUnit4Duration(group(8))"
+RULENAME="duration_r2e",EXTRACTION="(%reApproximate )?die %reThisNextLast ([\d]+)( |-)(Minuten?|Stunden?)( oder so)?",NORM_VALUE="PTgroup(4)%normUnit4Duration(group(6))"
+RULENAME="duration_r2f",EXTRACTION="(%reApproximate )?die %reThisNextLast (paar|wenigen?|einigen?) (Minuten?|Stunden?)( oder so)?",NORM_VALUE="PTX%normUnit4Duration(group(5))"
+
+// duration_r3
+// EXAMPLE r3a_1: ein Jahr
+// EXAMPLE r3b_1: eine Stunde
+// EXAMPLE r3c_1: 20-tägig
+// EXAMPLE r3d_1: 20-stündig
+RULENAME="duration_r3a",EXTRACTION="ein(|e|es|em|er|en)( |-)%reUnit",NORM_VALUE="P1%normUnit4Duration(group(3))"
+RULENAME="duration_r3b",EXTRACTION="einer?( |-)(Minuten?|Stunden?)",NORM_VALUE="PT1%normUnit4Duration(group(2))"
+RULENAME="duration_r3c",EXTRACTION="([\d]+)( |-)tägige?[ns]?",NORM_VALUE="PTgroup(1)D"
+RULENAME="duration_r3d",EXTRACTION="([\d]+)( |-)stündige?[ns]?",NORM_VALUE="PTgroup(1)D"
+
+// reUnitPlural
+RULENAME="duration_r4a",EXTRACTION="[Dd](ie|en) ([\S]+) %reUnitPlural",NORM_VALUE="PX%normUnit4Duration(group(3))","POS_CONSTRAINT="group(2):ADJA:"
+RULENAME="duration_r4b",EXTRACTION="[Dd](ie|en) %reUnitPlural",NORM_VALUE="PX%normUnit4Duration(group(2))"
+// REPLACED BY biofid_quantdur_r2:
+// RULENAME="duration_r4c",EXTRACTION="([Ee]inigen?|[Ww]enigen?|[Vv]ielen?) %reUnitPlural",NORM_VALUE="PX%normUnit4Duration(group(2))"
+RULENAME="duration_r4d",EXTRACTION="([Ss]eit) %reUnitPlural",NORM_VALUE="PX%normUnit4Duration(group(2))",OFFSET="group(2)-group(2)"
+
+////////////////////
+// NEGATIVE RULES //
+////////////////////
+// duration_r1
+// EXAMPLE r1a_negation_1: zwanzig Jahre alt
+// EXAMPLE r1b_negation_1: 20 Jahre alt
+// EXAMPLE r1c_negation_1: einige Jahre alt
+RULENAME="duration_r1a_negation",EXTRACTION="(%reApproximate )?(%reNumWord2D|%reNumWord1D) (%reUnit|Minuten?|Stunden?) (älter|jünger|alt|jung)",NORM_VALUE="REMOVE"
+RULENAME="duration_r1b_negation",EXTRACTION="(%reApproximate )?([\d]+) (%reUnit|Minuten?|Stunden?) (älter|jünger|alt|jung)",NORM_VALUE="REMOVE"
+RULENAME="duration_r1c_negation",EXTRACTION="(%reApproximate )?(einige) %reUnit (älter|jünger|alt|jung)",NORM_VALUE="REMOVE"
+
+
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-25 / 2021-10-28
+////////////////////
+// QUANT DURATION //
+////////////////////
+// EXAMPLE biofid_quantdur_r1: viele Sommer
+// EXAMPLE biofid_quantdur_r2: mehrere Quartale
+RULENAME="biofid_quantdur_r1",EXTRACTION="([Ff]ür )?%reQuantWords %reSeason(e?n?)( lang)?",NORM_VALUE="PX%normSeason(group(3))"
+// date:   2021-10-28
+RULENAME="biofid_quantdur_r2",EXTRACTION="([Ff]ür )?%reQuantWords %reUnitPlural( lang)?",NORM_VALUE="PX%normUnit4Duration(group(3))"
+
+// date:   2021-12-14
+// EXAMPLE biofid_quantdur_r3: paar Stunden
+RULENAME="biofid_quantdur_r3",EXTRACTION="([Ff]ür |[Ii]n )?([Ee]in )?%reQuantWords [Ss]tunden",NORM_VALUE="PTXH"
+RULENAME="biofid_quantdur_r4",EXTRACTION="([Ff]ür |[Ii]n )?([Ee]in )?%reQuantWords [Mm]inuten",NORM_VALUE="PTXM"
+
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-11-23
+////////////////////
+// UNIT DURATION //
+////////////////////
+// EXAMPLE biofid_unitdur_r1: halbes Quartal
+// EXAMPLE biofid_unitdur_r2: Vierteljahrhundert
+// EXAMPLE biofid_unitdur_r3_1: zweieinhalb Jahre
+// EXAMPLE biofid_unitdur_r3_2: 2-einhalb Jahre
+RULENAME="biofid_unitdur_r1_1",EXTRACTION="([Ee]ine?r?s?m? )?halbes?r?n? %reUnit( lang)?",NORM_VALUE="P0.5%normUnit4Duration(group(2))"
+RULENAME="biofid_unitdur_r1_2",EXTRACTION="([Ee]iner? )?halben? [Mn]inute( lang)?",NORM_VALUE="PT0.5M"
+RULENAME="biofid_unitdur_r1_3",EXTRACTION="([Ee]iner? )?halben? [Ss]tunde( lang)?",NORM_VALUE="PT0.5H"
+RULENAME="biofid_unitdur_r1_4",EXTRACTION="([Ee]iner? )?halben? [Ss]ekunde( lang)?",NORM_VALUE="PT0.5S"
+RULENAME="biofid_unitdur_r2_1",EXTRACTION="([Ee]ine?r?s?m? )?[Vv]iertel-?%reUnit( lang)?",NORM_VALUE="P0.25%normUnit4Duration(group(2))"
+RULENAME="biofid_unitdur_r2_2",EXTRACTION="([Ee]iner? )?[Vv]iertel-?[Ss]tunde( lang)?",NORM_VALUE="PT0.25H"
+RULENAME="biofid_unitdur_r2_3",EXTRACTION="([Ee]iner? )?[Vv]iertel-?[Ss]ekunde( lang)?",NORM_VALUE="PT0.25S"
+RULENAME="biofid_unitdur_r2_4",EXTRACTION="([Ee]iner? )?[Vv]iertel-?[Mm]inute( lang)?",NORM_VALUE="PT0.25M"
+RULENAME="biofid_unitdur_r3_1",EXTRACTION="([Ff]ür )?(%reNumWord2D|%reNumWord1D)-?[Ee]inhalb %reUnit( lang)?",NORM_VALUE="P%normDurationNumber(group(4)).5%normUnit4Duration(group(5))"
+RULENAME="biofid_unitdur_r3_2",EXTRACTION="([Ff]ür )?([\d]+)-?[Ee]inhalb %reUnit( lang)?",NORM_VALUE="Pgroup(2).5%normUnit4Duration(group(3))"
+RULENAME="biofid_unitdur_r3_3",EXTRACTION="([Ff]ür )?(%reNumWord2D|%reNumWord1D)-?[Ee]inhalb [Mm]inuten( lang)?",NORM_VALUE="PT%normDurationNumber(group(4)).5M"
+RULENAME="biofid_unitdur_r3_4",EXTRACTION="([Ff]ür )?([\d]+)-?[Ee]inhalb [Mm]inuten( lang)?",NORM_VALUE="PTgroup(2).5M"
+RULENAME="biofid_unitdur_r3_5",EXTRACTION="([Ff]ür )?(%reNumWord2D|%reNumWord1D)-?[Ee]inhalb [Ss]tunden( lang)?",NORM_VALUE="PT%normDurationNumber(group(4)).5H"
+RULENAME="biofid_unitdur_r3_6",EXTRACTION="([Ff]ür )?([\d]+)-?[Ee]inhalb [Ss]tunden( lang)?",NORM_VALUE="PTgroup(2).5H"
+RULENAME="biofid_unitdur_r3_7",EXTRACTION="([Ff]ür )?(%reNumWord2D|%reNumWord1D)-?[Ee]inhalb [Ss]ekunden( lang)?",NORM_VALUE="PT%normDurationNumber(group(4)).5S"
+RULENAME="biofid_unitdur_r3_8",EXTRACTION="([Ff]ür )?([\d]+)-?[Ee]inhalb [Ss]ekunden( lang)?",NORM_VALUE="PTgroup(2).5S"
+
+// BIOfid extension
+// author: Andy Lücking
+// email:  luecking@em.uni-frankfurt.de
+// date:   2021-10-27 / 2021-10-28 / 2021-11-23
+///////////////////////////////
+// COMPOUNDS WITH UNIT WORDs //
+///////////////////////////////
+// EXAMPLE biofid_unitdur_r1_a: zweistündig
+// EXAMPLE biofid_unitdur_r1_b: elfjährig
+// EXAMPLE biofid_unitdur_r2_a: 11-tägig
+// EXAMPLE biofid_unitdur_r2_b_1: ganztägig  | overgeneralises over UnitAdj
+// EXAMPLE biofid_unitdur_r2_b_1: ganzjährig
+RULENAME="biofid_unitdur_r1_a",EXTRACTION="%reNumWord1D-?%reUnitAdj(e)?(s)?(n)?(m)?",NORM_VALUE="P%normDurationNumber(group(1))%normUnitAdj4Duration(group(2))"
+RULENAME="biofid_unitdur_r1_b",EXTRACTION="%reNumWord2D-?%reUnitAdj(e)?(s)?(n)?(m)?",NORM_VALUE="P%normDurationNumber(group(1))%normUnitAdj4Duration(group(2))"
+RULENAME="biofid_unitdur_r2_a",EXTRACTION="([\d]+)-?%reUnitAdj(e)?(s)?(n)?(m)?",NORM_VALUE="Pgroup(1)%normUnitAdj4Duration(group(2))"
+RULENAME="biofid_unitdur_r2_b_1",EXTRACTION="([Gg]anz)-?%reUnitAdj(e)?(s)?(n)?(m)?",NORM_VALUE="P1%normUnitAdj4Duration(group(2))"
+RULENAME="biofid_unitdur_r2_b_2",EXTRACTION="([Hh]alb)-?%reUnitAdj(e)?(s)?(n)?(m)?",NORM_VALUE="P0.5%normUnitAdj4Duration(group(2))"
+RULENAME="biofid_unitdur_r2_b_3",EXTRACTION="([Vv]iertel)-?%reUnitAdj(e)?(s)?(n)?(m)?",NORM_VALUE="P0.25%normUnitAdj4Duration(group(2))"
