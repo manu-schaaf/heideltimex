@@ -4,6 +4,8 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.unihd.dbs.uima.annotator.heideltime.resources.Language;
 import de.unihd.dbs.uima.types.heideltime.Timex3;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.uima.analysis_engine.AnalysisEngine;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.cas.CASException;
@@ -19,10 +21,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -53,14 +52,15 @@ public class TestHeidelTimeXIntegration {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {
-            1000,
+    @ValueSource(strings = {
+            "13068230.txt.gz",
     })
-    public void testLeipzigWikipedia(int input) throws URISyntaxException, IOException {
-        URI fileUri = TestHeidelTimeXIntegration.class.getClassLoader().getResource("leizipg_wortschatz/deu_wikipedia_2021_10K-sentences.txt").toURI();
-        try (BufferedReader fr = new BufferedReader(new FileReader(new File(fileUri)))) {
-            List<String> lines = fr.lines().map(line -> line.substring(line.indexOf('\t') + 1).trim()).toList();
-            lines = lines.subList(0, input);
+    public void testBIOfid(String fileName) throws URISyntaxException, IOException {
+        URI fileUri = TestHeidelTimeXIntegration.class.getClassLoader().getResource(fileName).toURI();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new GzipCompressorInputStream(new FileInputStream(new File(fileUri))))
+        )) {
+            List<String> lines = reader.lines().filter(line -> !line.startsWith("#")).map(String::trim).toList();
 
             ArrayList<Integer> offsets = new ArrayList<>();
             offsets.add(0);
