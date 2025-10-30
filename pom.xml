@@ -4,7 +4,7 @@
 
     <groupId>org.texttechnologylab</groupId>
     <artifactId>heideltimex</artifactId>
-    <version>4.0.3-1</version>
+    <version>4.0.4</version>
 
     <name>HeidelTime</name>
     <description>HeidelTime is a multilingual cross-domain temporal tagger that extracts temporal expressions from
