@@ -33,7 +33,7 @@
 "[Ff]rühlingszeit","SP"
 "[Ff]rühjahre?szeit","SP"
 "[Hh]ochsommerzeit","SU"
-"[Ss]pätsommerszeit","SU"
+"[Ss]pätsommerzeit","SU"
 "[Ff]rühsommerzeit","SU"
 "[Ss]ommerzeit","SU"
 "[Ss]pätherbstzeit","FA"

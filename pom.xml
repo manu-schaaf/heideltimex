@@ -4,7 +4,7 @@
 
     <groupId>org.texttechnologylab</groupId>
     <artifactId>heideltimex</artifactId>
-    <version>4.0.2</version>
+    <version>4.0.3</version>
 
     <name>HeidelTime</name>
     <description>HeidelTime is a multilingual cross-domain temporal tagger that extracts temporal expressions from
@@ -330,6 +330,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.25</version>
             <scope>test</scope>
         </dependency>
         <dependency>

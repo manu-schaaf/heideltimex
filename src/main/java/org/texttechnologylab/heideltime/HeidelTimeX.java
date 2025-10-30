@@ -95,13 +95,14 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
     @ConfigurationParameter(name = PARAM_LOCALE, defaultValue = "de_DE")
     String requestedLocale;
 
-    // supported types (2012-05-19): news (english, german, dutch), narrative (english, german, dutch), colloquial
+    /// supported types (2012-05-19): news (english, german, dutch), narrative (english, german, dutch), colloquial
     public static final String PARAM_LANGUAGE = "languageString";
     @ConfigurationParameter(name = PARAM_LANGUAGE, defaultValue = "german")
     private String languageString;
 
     private Language language = Language.GERMAN;
 
+    /// Possible values: news, narrative or narratives, colloquial, and scientific
     public static final String PARAM_TYPE_TO_PROCESS = "typeToProcess";
     @ConfigurationParameter(name = PARAM_TYPE_TO_PROCESS, defaultValue = "news")
     private String typeToProcess;
@@ -304,7 +305,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
 
         try (ExecutorService threadPool = Executors.newCachedThreadPool()) {
             for (Sentence sentence : sentences) {
-                ContextAnalyzer.SentenceContainer container = ContextAnalyzer.SentenceContainer.fromSentence(jcas, sentence);
+                final ContextAnalyzer.SentenceContainer container = ContextAnalyzer.SentenceContainer.fromSentence(jcas, sentence);
                 boolean debugIteration = false;
                 do {
                     try {
@@ -334,7 +335,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                                             HeidleTimeX's execution has been interrupted by an exception that \
                                             is likely rooted in faulty normalization resource files. Please consider opening an issue \
                                             report containing the following information at our GitHub project issue tracker: \
-                                            https://github.com/HeidelTime/heideltime/issues - Thanks!
+                                            https://github.com/texttechnologylab/heideltime/issues - Thanks!
                                             Sentence [{}-{}]: {}
                                             Language: {}
                                             Stack Trace: {}""",
@@ -397,10 +398,12 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
         procMan.executeProcessors(jcas, Priority.POSTPROCESSING);
 
         timex_counter_global = timex_counter_global + timex_counter;
-        getLogger().debug(
-                "Number of Timexes added to CAS: {} (global: {})",
-                timex_counter, timex_counter_global
-        );
+
+        if (doDebug)
+            getLogger().debug(
+                    "Number of Timexes added to CAS: {} (global: {})",
+                    timex_counter, timex_counter_global
+            );
     }
 
     /**
@@ -472,24 +475,26 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
         timex3.addToIndexes();
         this.timex_counter++;
 
-        getLogger().debug(
-                "EXTRACTION PHASE:   " +
-                        timex3.getTimexId() +
-                        " found by:" +
-                        timex3.getFoundByRule() +
-                        " text:" +
-                        timex3.getCoveredText()
-        );
-        getLogger().debug(
-                "NORMALIZATION PHASE:" +
-                        timex3.getTimexId() +
-                        " found by:" +
-                        timex3.getFoundByRule() +
-                        " text:" +
-                        timex3.getCoveredText() +
-                        " value:" +
-                        timex3.getTimexValue()
-        );
+        if (doDebug) {
+            getLogger().debug(
+                    "EXTRACTION PHASE:   " +
+                            timex3.getTimexId() +
+                            " found by:" +
+                            timex3.getFoundByRule() +
+                            " text:" +
+                            timex3.getCoveredText()
+            );
+            getLogger().debug(
+                    "NORMALIZATION PHASE:" +
+                            timex3.getTimexId() +
+                            " found by:" +
+                            timex3.getFoundByRule() +
+                            " text:" +
+                            timex3.getCoveredText() +
+                            " value:" +
+                            timex3.getTimexValue()
+            );
+        }
     }
 
     /**
@@ -566,16 +571,17 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                                     } else {
                                         newValue = "BC" + value_i;
                                         change = true;
-                                        getLogger().debug(
-                                                "DisambiguateHistoricDates: " +
-                                                        value_i +
-                                                        " to " +
-                                                        newValue +
-                                                        ". Expression " +
-                                                        t_i.getCoveredText() +
-                                                        " due to " +
-                                                        linearDates.get(i - offset).getCoveredText()
-                                        );
+                                        if (doDebug)
+                                            getLogger().debug(
+                                                    "DisambiguateHistoricDates: " +
+                                                            value_i +
+                                                            " to " +
+                                                            newValue +
+                                                            ". Expression " +
+                                                            t_i.getCoveredText() +
+                                                            " due to " +
+                                                            linearDates.get(i - offset).getCoveredText()
+                                            );
                                     }
                                 }
                             }
@@ -593,7 +599,8 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
             }
             if (!(newValue.equals(value_i))) {
                 t_i.removeFromIndexes();
-                getLogger().debug("DisambiguateHistoricDates: value changed to BC");
+                if (doDebug)
+                    getLogger().debug("DisambiguateHistoricDates: value changed to BC");
 
                 t_i.setTimexValue(newValue);
                 t_i.addToIndexes();
@@ -616,16 +623,18 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                 .forEach(timex3 -> {
                             timex3.removeFromIndexes();
                             this.timex_counter--;
-                            getLogger().debug(
-                                    " REMOVING PHASE: " +
-                                            timex3.getTimexId() +
-                                            "found by:" +
-                                            timex3.getFoundByRule() +
-                                            " text:" +
-                                            timex3.getCoveredText() +
-                                            " value:" +
-                                            timex3.getTimexValue()
-                            );
+
+                            if (doDebug)
+                                getLogger().debug(
+                                        " REMOVING PHASE: " +
+                                                timex3.getTimexId() +
+                                                "found by:" +
+                                                timex3.getFoundByRule() +
+                                                " text:" +
+                                                timex3.getCoveredText() +
+                                                " value:" +
+                                                timex3.getTimexValue()
+                                );
                         }
                 );
     }
@@ -694,11 +703,13 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                 dctMonth = Integer.parseInt(dctValue.substring(4, 6));
                 dctDay = Integer.parseInt(dctValue.substring(6, 8));
 
-                getLogger().debug("dctCentury:" + dctCentury);
-                getLogger().debug("dctYear:" + dctYear);
-                getLogger().debug("dctDecade:" + dctDecade);
-                getLogger().debug("dctMonth:" + dctMonth);
-                getLogger().debug("dctDay:" + dctDay);
+                if (doDebug) {
+                    getLogger().debug("dctCentury:" + dctCentury);
+                    getLogger().debug("dctYear:" + dctYear);
+                    getLogger().debug("dctDecade:" + dctDecade);
+                    getLogger().debug("dctMonth:" + dctMonth);
+                    getLogger().debug("dctDay:" + dctDay);
+                }
             } else {
                 dctCentury = Integer.parseInt(dctValue.substring(0, 2));
                 dctYear = Integer.parseInt(dctValue.substring(0, 4));
@@ -706,11 +717,13 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                 dctMonth = Integer.parseInt(dctValue.substring(5, 7));
                 dctDay = Integer.parseInt(dctValue.substring(8, 10));
 
-                getLogger().debug("dctCentury:" + dctCentury);
-                getLogger().debug("dctYear:" + dctYear);
-                getLogger().debug("dctDecade:" + dctDecade);
-                getLogger().debug("dctMonth:" + dctMonth);
-                getLogger().debug("dctDay:" + dctDay);
+                if (doDebug) {
+                    getLogger().debug("dctCentury:" + dctCentury);
+                    getLogger().debug("dctYear:" + dctYear);
+                    getLogger().debug("dctDecade:" + dctDecade);
+                    getLogger().debug("dctMonth:" + dctMonth);
+                    getLogger().debug("dctDay:" + dctDay);
+                }
             }
             dctQuarter = "Q" + norm.getFromNormMonthInQuarter(norm.getFromNormNumber(dctMonth + ""));
             dctHalf = "H1";
@@ -727,12 +740,15 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                     dctYear + "-" + norm.getFromNormNumber(dctMonth + "") + "-" + norm.getFromNormNumber(dctDay + "")
             );
 
-            getLogger().debug("dctQuarter:" + dctQuarter);
-            getLogger().debug("dctSeason:" + dctSeason);
-            getLogger().debug("dctWeekday:" + dctWeekday);
-            getLogger().debug("dctWeek:" + dctWeek);
+            if (doDebug) {
+                getLogger().debug("dctQuarter:" + dctQuarter);
+                getLogger().debug("dctSeason:" + dctSeason);
+                getLogger().debug("dctWeekday:" + dctWeekday);
+                getLogger().debug("dctWeek:" + dctWeek);
+            }
         } else {
-            getLogger().debug("No DCT available...");
+            if (doDebug)
+                getLogger().debug("No DCT available...");
         }
 
         // check if value_i has month, day, season, week (otherwise no UNDEF-year is possible)
@@ -995,10 +1011,12 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
             ) {
                 int viThisDecade = Integer.parseInt(ambigString.substring(13, 14));
 
-                getLogger().debug("dctCentury" + dctCentury);
+                if (doDebug)
+                    getLogger().debug("dctCentury" + dctCentury);
 
                 newCenturyValue = dctCentury + "";
-                getLogger().debug("dctCentury" + dctCentury);
+                if (doDebug)
+                    getLogger().debug("dctCentury" + dctCentury);
 
                 //  Tense is FUTURE
                 if ((last_used_tense.equals("FUTURE")) || (last_used_tense.equals("PRESENTFUTURE"))) {
@@ -2422,7 +2440,9 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                                                 sentence, matchResult.start(), matchResult.end()
                                         ))
                                         .filter(matchResult -> rule.checkPosConstraint(sentence, matchResult))
-                                        .map(matchResult -> getTimexAttributes(rule, matchResult)).toList()
+                                        .map(matchResult -> getTimexAttributes(rule, matchResult))
+                                        .filter(Objects::nonNull)
+                                        .toList()
                         )
                 )
                 .sorted(Comparator.comparing(stage -> stage.rule().name()))
@@ -2451,7 +2471,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
         }
     }
 
-    public String applyRuleFunctions(String tonormalize, MatchResult m) {
+    public String applyRuleFunctions(String tonormalize, MatchResult m) throws NormalizationException {
         try {
             NormalizationManager norm = NormalizationManager.getInstance(language, find_temponyms);
 
@@ -2460,31 +2480,36 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
             while ((tonormalize.contains("%")) || (tonormalize.contains("group"))) {
                 // replace normalization functions
                 for (MatchResult mr : Utils.findMatches(PATTERN_NORM, tonormalize)) {
-                    getLogger().debug("-----------------------------------");
-                    getLogger().debug("DEBUGGING: tonormalize:" + tonormalize);
-                    getLogger().debug("DEBUGGING: mr.group():" + mr.group());
-                    getLogger().debug("DEBUGGING: mr.group(1):" + mr.group(1));
-                    getLogger().debug("DEBUGGING: mr.group(2):" + mr.group(2));
-                    getLogger().debug("DEBUGGING: m.group():" + m.group());
-                    getLogger().debug(
-                            "DEBUGGING: m.group(" +
-                                    Integer.parseInt(mr.group(2)) +
-                                    "):" +
-                                    m.group(Integer.parseInt(mr.group(2)))
-                    );
-                    getLogger().debug(
-                            "DEBUGGING: hmR...:" +
-                                    norm.getFromHmAllNormalization(mr.group(1)).get(m.group(Integer.parseInt(mr.group(2))))
-                    );
-                    getLogger().debug("-----------------------------------");
+                    if (doDebug) {
+                        getLogger().debug("-----------------------------------");
+                        getLogger().debug("DEBUGGING: tonormalize:" + tonormalize);
+                        getLogger().debug("DEBUGGING: mr.group():" + mr.group());
+                        getLogger().debug("DEBUGGING: mr.group(1):" + mr.group(1));
+                        getLogger().debug("DEBUGGING: mr.group(2):" + mr.group(2));
+                        getLogger().debug("DEBUGGING: m.group():" + m.group());
+                        getLogger().debug(
+                                "DEBUGGING: m.group(" +
+                                        Integer.parseInt(mr.group(2)) +
+                                        "):" +
+                                        m.group(Integer.parseInt(mr.group(2)))
+                        );
+                        getLogger().debug(
+                                "DEBUGGING: hmR...:" +
+                                        norm.getFromHmAllNormalization(mr.group(1)).get(m.group(Integer.parseInt(mr.group(2))))
+                        );
+                        getLogger().debug("-----------------------------------");
+                    }
 
                     if (!(m.group(Integer.parseInt(mr.group(2))) == null)) {
                         String partToReplace = m.group(Integer.parseInt(mr.group(2))).replaceAll("[\n\\s]+", " "); //.replace("+", "");
                         if (!(norm.getFromHmAllNormalization(mr.group(1)).containsKey(partToReplace))) {
-                            getLogger().debug("Maybe problem with normalization of the resource: " + mr.group(1));
-                            getLogger().debug("Maybe problem with part to replace? " + partToReplace);
+                            if (doDebug) {
+                                getLogger().debug("Maybe problem with normalization of the resource: " + mr.group(1));
+                                getLogger().debug("Maybe problem with part to replace? " + partToReplace);
+                            }
                             if (mr.group(1).contains("Temponym")) {
-                                getLogger().debug("Should be ok, as it's a temponyms.");
+                                if (doDebug)
+                                    getLogger().debug("Should be ok, as it's a temponyms.");
                                 return null;
                             }
                         } else {
@@ -2494,25 +2519,28 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                             );
                         }
                     } else {
-                        getLogger().debug("Empty part to normalize in " + mr.group(1));
+                        if (doDebug)
+                            getLogger().debug("Empty part to normalize in " + mr.group(1));
 
                         tonormalize = tonormalize.replace(mr.group(), "");
                     }
                 }
                 // replace other groups
                 for (MatchResult mr : Utils.findMatches(PATTERN_GROUP, tonormalize)) {
-                    getLogger().debug("-----------------------------------");
-                    getLogger().debug("DEBUGGING: tonormalize:" + tonormalize);
-                    getLogger().debug("DEBUGGING: mr.group():" + mr.group());
-                    getLogger().debug("DEBUGGING: mr.group(1):" + mr.group(1));
-                    getLogger().debug("DEBUGGING: m.group():" + m.group());
-                    getLogger().debug(
-                            "DEBUGGING: m.group(" +
-                                    Integer.parseInt(mr.group(1)) +
-                                    "):" +
-                                    m.group(Integer.parseInt(mr.group(1)))
-                    );
-                    getLogger().debug("-----------------------------------");
+                    if (doDebug) {
+                        getLogger().debug("-----------------------------------");
+                        getLogger().debug("DEBUGGING: tonormalize:" + tonormalize);
+                        getLogger().debug("DEBUGGING: mr.group():" + mr.group());
+                        getLogger().debug("DEBUGGING: mr.group(1):" + mr.group(1));
+                        getLogger().debug("DEBUGGING: m.group():" + m.group());
+                        getLogger().debug(
+                                "DEBUGGING: m.group(" +
+                                        Integer.parseInt(mr.group(1)) +
+                                        "):" +
+                                        m.group(Integer.parseInt(mr.group(1)))
+                        );
+                        getLogger().debug("-----------------------------------");
+                    }
 
                     tonormalize = tonormalize.replace(mr.group(), m.group(Integer.parseInt(mr.group(1))));
                 }
@@ -2543,7 +2571,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                 for (MatchResult mr : Utils.findMatches(PATTERN_NORM_NO_GROUP, tonormalize)) {
                     String replacement = norm.getFromHmAllNormalization(mr.group(1)).get(mr.group(2));
                     if (Objects.isNull(replacement)) {
-                        throw new NullPointerException("Normalization function " + mr.group(1) + " returned null for " + mr.group(2));
+                        throw new NormalizationException("Normalization function %s cannot resolve '%s'".formatted(mr.group(1), mr.group(2)));
                     }
                     tonormalize = tonormalize.replace(mr.group(), replacement);
                 }
@@ -2567,9 +2595,10 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                 }
             }
             return tonormalize;
+        } catch (NormalizationException ne) {
+            throw ne;
         } catch (Exception e) {
-            getLogger().error("Caught exception while applying rule functions!", e);
-            return null;
+            throw new NormalizationException("Caught exception while applying rule functions!", e);
         }
     }
 
@@ -2585,41 +2614,54 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
     }
 
     public HeidelTimeX.TimexAttributes getTimexAttributes(RuleManager.RuleInstance rule, MatchResult matchResult) {
-        // Normalize Value
-        String value = applyRuleFunctions(rule.normalization(), matchResult);
-        if (value == null) return null;
+        try {
+            // Normalize Value
+            String value = applyRuleFunctions(rule.normalization(), matchResult);
+            if (value == null) return null;
 
-        // For example "PT24H" -> "P1D"
-        if (group_gran) value = correctDurationValue(value);
+            // For example "PT24H" -> "P1D"
+            if (group_gran) value = correctDurationValue(value);
 
-        // get quant
-        String quant = "";
-        if (rule.quant() != null) {
-            quant = applyRuleFunctions(rule.quant(), matchResult);
+            // get quant
+            String quant = "";
+            if (rule.quant() != null) {
+                quant = applyRuleFunctions(rule.quant(), matchResult);
+            }
+
+            // get freq
+            String freq = "";
+            if (rule.freq() != null) {
+                freq = applyRuleFunctions(rule.freq(), matchResult);
+            }
+
+            // get mod
+            String mod = "";
+            if (rule.mod() != null) {
+                mod = applyRuleFunctions(rule.mod(), matchResult);
+            }
+
+            // get emptyValue
+            String emptyValue = "";
+            if (rule.empty() != null) {
+                emptyValue = applyRuleFunctions(rule.empty(), matchResult);
+                emptyValue = correctDurationValue(emptyValue);
+            }
+
+            RuleManager.Offset offset = rule.offset();
+
+            return new HeidelTimeX.TimexAttributes(
+                    matchResult.start(offset.start()),
+                    matchResult.end(offset.end()),
+                    value,
+                    quant,
+                    freq,
+                    mod,
+                    emptyValue
+            );
+        } catch (NormalizationException e) {
+            getLogger().error("Caught exception while applying rule functions for rule %s".formatted(rule.name()), e);
+            return null;
         }
-
-        // get freq
-        String freq = "";
-        if (rule.freq() != null) {
-            freq = applyRuleFunctions(rule.freq(), matchResult);
-        }
-
-        // get mod
-        String mod = "";
-        if (rule.mod() != null) {
-            mod = applyRuleFunctions(rule.mod(), matchResult);
-        }
-
-        // get emptyValue
-        String emptyValue = "";
-        if (rule.empty() != null) {
-            emptyValue = applyRuleFunctions(rule.empty(), matchResult);
-            emptyValue = correctDurationValue(emptyValue);
-        }
-
-        RuleManager.Offset offset = rule.offset();
-
-        return new HeidelTimeX.TimexAttributes(matchResult.start(offset.start()), matchResult.end(offset.end()), value, quant, freq, mod, emptyValue);
     }
 
     /**
