@@ -167,9 +167,9 @@ public class TestHeidelTimeX {
     public void test_german_daterules(String input) throws ResourceInitializationException, CASException, AnalysisEngineProcessException {
         runSingleSentence(input);
         Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
+        printAnnotations(timex3s);
         if (timex3s.isEmpty()) {
-            printAnnotations(timex3s);
-            Assertions.fail("Expected one Timex3 found for %s but got %d".formatted(input, timex3s.size()));
+            Assertions.fail("Expected at least one Timex3 for '%s' but got %d".formatted(input, timex3s.size()));
         }
     }
 
@@ -193,7 +193,7 @@ public class TestHeidelTimeX {
         Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
         if (!timex3s.isEmpty()) {
             printAnnotations(timex3s);
-            Assertions.fail("Expected no Timex3 for %s but found %d".formatted(input, timex3s.size()));
+            Assertions.fail("Expected no Timex3 for '%s' but found %d".formatted(input, timex3s.size()));
         }
     }
 
@@ -231,7 +231,7 @@ public class TestHeidelTimeX {
         Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
         if (timex3s.isEmpty()) {
             printAnnotations(timex3s);
-            Assertions.fail("Expected one Timex3 found for %s but got %d".formatted(input, timex3s.size()));
+            Assertions.fail("Expected at least one Timex3 for '%s' but got %d".formatted(input, timex3s.size()));
         }
     }
 
@@ -246,7 +246,7 @@ public class TestHeidelTimeX {
         Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
         if (!timex3s.isEmpty()) {
             printAnnotations(timex3s);
-            Assertions.fail("Expected no Timex3 for %s but found %d".formatted(input, timex3s.size()));
+            Assertions.fail("Expected no Timex3 for '%s' but found %d".formatted(input, timex3s.size()));
         }
     }
 
@@ -264,7 +264,7 @@ public class TestHeidelTimeX {
         Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
         if (timex3s.isEmpty()) {
             printAnnotations(timex3s);
-            Assertions.fail("Expected one Timex3 found for %s but got %d".formatted(input, timex3s.size()));
+            Assertions.fail("Expected at least one Timex3 for '%s' but got %d".formatted(input, timex3s.size()));
         }
     }
 
@@ -293,7 +293,7 @@ public class TestHeidelTimeX {
         Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
         if (timex3s.isEmpty()) {
             printAnnotations(timex3s);
-            Assertions.fail("Expected one Timex3 found for %s but got %d".formatted(input, timex3s.size()));
+            Assertions.fail("Expected at least one Timex3 for '%s' but got %d".formatted(input, timex3s.size()));
         }
     }
 
@@ -323,7 +323,7 @@ public class TestHeidelTimeX {
         Collection<Timex3> timex3s = JCasUtil.select(jCas, Timex3.class);
         if (timex3s.isEmpty()) {
             printAnnotations(timex3s);
-            Assertions.fail("Expected one Timex3 found for %s but got %d".formatted(input, timex3s.size()));
+            Assertions.fail("Expected at least one Timex3 for '%s' but got %d".formatted(input, timex3s.size()));
         }
     }
 
@@ -349,7 +349,7 @@ public class TestHeidelTimeX {
             StringBuffer stringBuffer = new StringBuffer();
             annotation.prettyPrint(0, 2, stringBuffer, true);
             System.out.print(stringBuffer);
-            System.out.println("\n  text: \"" + annotation.getCoveredText() + "\"\n");
+            System.out.printf("%n  text: \"%s\"%n", annotation.getCoveredText());
         }
     }
 
