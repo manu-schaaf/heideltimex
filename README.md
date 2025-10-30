@@ -1,49 +1,110 @@
 [![version](https://img.shields.io/github/license/texttechnologylab/heideltime)]()
+<a 
+  href="https://github.com/texttechnologylab/heideltime/releases/latest"><img 
+  alt="GitHub Latest Release"
+  src="https://img.shields.io/github/v/release/texttechnologylab/heideltime?link=https%3A%2F%2Fgithub.com%2Ftexttechnologylab%heideltime%2Freleases%2Flatest"></a>
+<a
+  href="https://github.com/texttechnologylab/heideltime/packages/2650783"><img
+  alt="Package"
+  src="https://img.shields.io/github/v/release/texttechnologylab/heideltime?label=Package&color=ab7df8"></a>
 [![](https://jitpack.io/v/texttechnologylab/heideltime.svg)](https://jitpack.io/#texttechnologylab/heideltime)
 [![paper](https://img.shields.io/badge/paper-ACL--anthology-B31B1B.svg)](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.505.pdf)
+
 
 ## About TTLab's Extension of HeidelTime
 HeidelTime is one of the most widespread and successful tools for detecting temporal expressions in texts. Since HeidelTime's pattern matching system is based on regular expression, it can be extended in a convenient way. We present such an extension for the German resources of HeidelTime: HeidelTimeext. The extension has been brought about by means of observing false negatives within real world texts and various time banks. The gain in coverage is 2.7 % or 8.5 %, depending on the admitted degree of potential overgeneralization. We describe the development of HeidelTimeext, its evaluation on text samples from various genres, and share some linguistic observations.
 
 ### How to Cite
 
- A. Lücking, M. Stoeckel, G. Abrami, and A. Mehler, "I still have Time(s): Extending HeidelTime for German Texts," in *Proceedings of the Language Resources and Evaluation Conference*, Marseille, France, 2022, pp. 4723-4728. 
-![[PDF]](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.505.pdf)
+> Andy Luecking, Manuel Stoeckel, Giuseppe Abrami, and Alexander Mehler. 2022. [I still have Time(s): Extending HeidelTime for German Texts](https://aclanthology.org/2022.lrec-1.505/). In _Proceedings of the Thirteenth Language Resources and Evaluation Conference_, pages 4723–4728, Marseille, France. European Language Resources Association. [[PDF]](https://aclanthology.org/2022.lrec-1.505.pdf)
 
 ### BibTex
 ```
-@InProceedings{Luecking:Stoeckel:Abrami:Mehler:2022,
-  Author         = {L\"{u}cking, Andy and Stoeckel, Manuel and Abrami, Giuseppe and Mehler, Alexander},
-  title     = {I still have Time(s): Extending HeidelTime for German Texts},
-  booktitle      = {Proceedings of the Language Resources and Evaluation Conference},
-  month          = {June},
-  year           = {2022},
-  address        = {Marseille, France},
-  publisher      = {European Language Resources Association},
-  pages     = {4723--4728},
-  abstract  = {HeidelTime is one of the most widespread and successful tools for detecting temporal expressions in texts. Since HeidelTime’s pattern matching system is based on regular expression, it can be extended in a convenient way. We present such an extension for the German resources of HeidelTime: HeidelTimeExt. The extension has been brought about by means of observing false negatives within real world texts and various time banks. The gain in coverage is 2.7 \% or 8.5 \%, depending on the admitted degree of potential overgeneralization. We describe the development of HeidelTimeExt, its evaluation on text samples from various genres, and share some linguistic observations. HeidelTimeExt can be obtained from https://github.com/texttechnologylab/heideltime.},
-  pdf    = {http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.505.pdf}
+@inproceedings{luecking-etal-2022-still,
+    title = "{I} still have Time(s): Extending {H}eidel{T}ime for {G}erman Texts",
+    author = "Luecking, Andy  and
+      Stoeckel, Manuel  and
+      Abrami, Giuseppe  and
+      Mehler, Alexander",
+    editor = "Calzolari, Nicoletta  and
+      B{\'e}chet, Fr{\'e}d{\'e}ric  and
+      Blache, Philippe  and
+      Choukri, Khalid  and
+      Cieri, Christopher  and
+      Declerck, Thierry  and
+      Goggi, Sara  and
+      Isahara, Hitoshi  and
+      Maegaard, Bente  and
+      Mariani, Joseph  and
+      Mazo, H{\'e}l{\`e}ne  and
+      Odijk, Jan  and
+      Piperidis, Stelios",
+    booktitle = "Proceedings of the Thirteenth Language Resources and Evaluation Conference",
+    month = jun,
+    year = "2022",
+    address = "Marseille, France",
+    publisher = "European Language Resources Association",
+    url = "https://aclanthology.org/2022.lrec-1.505/",
+    pages = "4723--4728",
+    abstract = "HeidelTime is one of the most widespread and successful tools for detecting temporal expressions in texts. Since HeidelTime{'}s pattern matching system is based on regular expression, it can be extended in a convenient way. We present such an extension for the German resources of HeidelTime: HeidelTimeExt. The extension has been brought about by means of observing false negatives within real world texts and various time banks. The gain in coverage is 2.7 {\%} or 8.5 {\%}, depending on the admitted degree of potential overgeneralization. We describe the development of HeidelTimeExt, its evaluation on text samples from various genres, and share some linguistic observations. HeidelTimeExt can be obtained from \url{https://github.com/texttechnologylab/heideltime}."
 }
 ```
 
 ## Maven
 
+
+### Via [GitHub Packages](https://docs.github.com/en/packages)
+
+Requires Maven to be set-up for [authentication with GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry#authenticating-to-github-packages).
+
+```xml
+<repositories>
+  <repository>
+    <id>github</id>
+    <url>https://maven.pkg.github.com/texttechnologylab/*</url>
+    <snapshots>
+      <enabled>true</enabled>
+    </snapshots>
+  </repository>
+</repositories>
+
+<dependencies>
+  <dependency>
+    <groupId>org.texttechnologylab</groupId>
+    <artifactId>heideltime</artifactId>
+    <version>4.0.4</version>
+  </dependency>
+</dependencies>
+
+<!-- Authentication can also be set-up in your ~/.m2/settings.xml file -->
+<servers>
+  <server>
+    <id>github</id>
+    <username>USERNAME</username>
+    <password>TOKEN</password>
+  </server>
+</servers>
+```
+
+### Via [JitPack](https://jitpack.io/)
+
 Add the JitPack repository and the dependency to your pom.xml:
 ```xml
 <repositories>
-	<repository>
-	    <id>jitpack.io</id>
-	    <url>https://jitpack.io</url>
-	</repository>
+  <repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+  </repository>
 </repositories>
 
-<dependency>
+<dependencies>
+  <dependency>
     <groupId>com.github.texttechnologylab</groupId>
     <artifactId>heideltime</artifactId>
-    <version>0d4f7cad13</version>
-</dependency>
+    <version>4.0.4</version>
+  </dependency>
+</dependencies>
 ```
-
 
 ## Original HeidelTime
 
