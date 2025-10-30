@@ -160,6 +160,8 @@ RULENAME="date_r11a",EXTRACTION="%reMonthLong %reThisNextLast Jahr[es]*",NORM_VA
 ////////////////////////
 // date_r12
 // EXAMPLE r12a_1: Sommer
+// EXAMPLE r12a_2: Sommerzeit
+// EXAMPLE r12a_3: Spätsommerzeit
 // EXAMPLE r12b_1: Sommer 2001
 // EXAMPLE r12c_1: Sommer 69
 RULENAME="date_r12a",EXTRACTION="%reSeason",NORM_VALUE="UNDEF-year-%normSeason(group(1))"
