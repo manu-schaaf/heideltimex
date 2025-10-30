@@ -6,14 +6,14 @@ name: Maven Package
 on:
   workflow_dispatch:
   release:
-    types: [created]
+    types: [ created ]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -28,6 +28,15 @@ jobs:
 
     - name: Build with Maven
       run: mvn -B -DskipTests=true package -P release --file pom.xml
+
+    - name: Add JARs to Release
+      uses: softprops/action-gh-release@v2
+      if: github.event_name == 'release'
+      with:
+        files: |
+          ${{ github.workspace }}/target/heideltimex-${{ github.ref_name }}.jar
+          ${{ github.workspace }}/target/heideltimex-${{ github.ref_name }}-javadoc.jar
+          ${{ github.workspace }}/target/heideltimex-${{ github.ref_name }}-sources.jar
 
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s ${{ github.workspace }}/settings.xml -DskipTests=true -P release
