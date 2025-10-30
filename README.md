@@ -8,7 +8,7 @@
   alt="Package"
   src="https://img.shields.io/github/v/release/texttechnologylab/heideltime?label=Package&color=ab7df8"></a>
 [![](https://jitpack.io/v/texttechnologylab/heideltime.svg)](https://jitpack.io/#texttechnologylab/heideltime)
-[![paper](https://img.shields.io/badge/paper-ACL--anthology-B31B1B.svg)](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.505.pdf)
+[![paper](https://img.shields.io/badge/paper-ACL--Anthology-B31B1B.svg)](https://aclanthology.org/2022.lrec-1.505/)
 
 
 ## About TTLab's Extension of HeidelTime
