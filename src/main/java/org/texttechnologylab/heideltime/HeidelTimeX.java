@@ -95,13 +95,14 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
     @ConfigurationParameter(name = PARAM_LOCALE, defaultValue = "de_DE")
     String requestedLocale;
 
-    // supported types (2012-05-19): news (english, german, dutch), narrative (english, german, dutch), colloquial
+    /// supported types (2012-05-19): news (english, german, dutch), narrative (english, german, dutch), colloquial
     public static final String PARAM_LANGUAGE = "languageString";
     @ConfigurationParameter(name = PARAM_LANGUAGE, defaultValue = "german")
     private String languageString;
 
     private Language language = Language.GERMAN;
 
+    /// Possible values: news, narrative or narratives, colloquial, and scientific
     public static final String PARAM_TYPE_TO_PROCESS = "typeToProcess";
     @ConfigurationParameter(name = PARAM_TYPE_TO_PROCESS, defaultValue = "news")
     private String typeToProcess;
@@ -304,7 +305,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
 
         try (ExecutorService threadPool = Executors.newCachedThreadPool()) {
             for (Sentence sentence : sentences) {
-                ContextAnalyzer.SentenceContainer container = ContextAnalyzer.SentenceContainer.fromSentence(jcas, sentence);
+                final ContextAnalyzer.SentenceContainer container = ContextAnalyzer.SentenceContainer.fromSentence(jcas, sentence);
                 boolean debugIteration = false;
                 do {
                     try {
@@ -334,7 +335,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                                             HeidleTimeX's execution has been interrupted by an exception that \
                                             is likely rooted in faulty normalization resource files. Please consider opening an issue \
                                             report containing the following information at our GitHub project issue tracker: \
-                                            https://github.com/HeidelTime/heideltime/issues - Thanks!
+                                            https://github.com/texttechnologylab/heideltime/issues - Thanks!
                                             Sentence [{}-{}]: {}
                                             Language: {}
                                             Stack Trace: {}""",
