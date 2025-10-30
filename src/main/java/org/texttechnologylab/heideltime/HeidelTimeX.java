@@ -2453,7 +2453,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
         }
     }
 
-    public String applyRuleFunctions(String tonormalize, MatchResult m) {
+    public String applyRuleFunctions(String tonormalize, MatchResult m) throws NormalizationException {
         try {
             NormalizationManager norm = NormalizationManager.getInstance(language, find_temponyms);
 
@@ -2545,7 +2545,7 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                 for (MatchResult mr : Utils.findMatches(PATTERN_NORM_NO_GROUP, tonormalize)) {
                     String replacement = norm.getFromHmAllNormalization(mr.group(1)).get(mr.group(2));
                     if (Objects.isNull(replacement)) {
-                        throw new NullPointerException("Normalization function " + mr.group(1) + " returned null for " + mr.group(2));
+                        throw new NormalizationException("Normalization function %s cannot resolve '%s'".formatted(mr.group(1), mr.group(2)));
                     }
                     tonormalize = tonormalize.replace(mr.group(), replacement);
                 }
@@ -2569,9 +2569,10 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
                 }
             }
             return tonormalize;
+        } catch (NormalizationException ne) {
+            throw ne;
         } catch (Exception e) {
-            getLogger().error("Caught exception while applying rule functions!", e);
-            return null;
+            throw new NormalizationException("Caught exception while applying rule functions!", e);
         }
     }
 
@@ -2587,41 +2588,54 @@ public class HeidelTimeX extends JCasAnnotator_ImplBase {
     }
 
     public HeidelTimeX.TimexAttributes getTimexAttributes(RuleManager.RuleInstance rule, MatchResult matchResult) {
-        // Normalize Value
-        String value = applyRuleFunctions(rule.normalization(), matchResult);
-        if (value == null) return null;
+        try {
+            // Normalize Value
+            String value = applyRuleFunctions(rule.normalization(), matchResult);
+            if (value == null) return null;
 
-        // For example "PT24H" -> "P1D"
-        if (group_gran) value = correctDurationValue(value);
+            // For example "PT24H" -> "P1D"
+            if (group_gran) value = correctDurationValue(value);
 
-        // get quant
-        String quant = "";
-        if (rule.quant() != null) {
-            quant = applyRuleFunctions(rule.quant(), matchResult);
+            // get quant
+            String quant = "";
+            if (rule.quant() != null) {
+                quant = applyRuleFunctions(rule.quant(), matchResult);
+            }
+
+            // get freq
+            String freq = "";
+            if (rule.freq() != null) {
+                freq = applyRuleFunctions(rule.freq(), matchResult);
+            }
+
+            // get mod
+            String mod = "";
+            if (rule.mod() != null) {
+                mod = applyRuleFunctions(rule.mod(), matchResult);
+            }
+
+            // get emptyValue
+            String emptyValue = "";
+            if (rule.empty() != null) {
+                emptyValue = applyRuleFunctions(rule.empty(), matchResult);
+                emptyValue = correctDurationValue(emptyValue);
+            }
+
+            RuleManager.Offset offset = rule.offset();
+
+            return new HeidelTimeX.TimexAttributes(
+                    matchResult.start(offset.start()),
+                    matchResult.end(offset.end()),
+                    value,
+                    quant,
+                    freq,
+                    mod,
+                    emptyValue
+            );
+        } catch (NormalizationException e) {
+            getLogger().error("Caught exception while applying rule functions for rule %s".formatted(rule.name()), e);
+            return null;
         }
-
-        // get freq
-        String freq = "";
-        if (rule.freq() != null) {
-            freq = applyRuleFunctions(rule.freq(), matchResult);
-        }
-
-        // get mod
-        String mod = "";
-        if (rule.mod() != null) {
-            mod = applyRuleFunctions(rule.mod(), matchResult);
-        }
-
-        // get emptyValue
-        String emptyValue = "";
-        if (rule.empty() != null) {
-            emptyValue = applyRuleFunctions(rule.empty(), matchResult);
-            emptyValue = correctDurationValue(emptyValue);
-        }
-
-        RuleManager.Offset offset = rule.offset();
-
-        return new HeidelTimeX.TimexAttributes(matchResult.start(offset.start()), matchResult.end(offset.end()), value, quant, freq, mod, emptyValue);
     }
 
     /**
