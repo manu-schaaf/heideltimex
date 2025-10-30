@@ -96,6 +96,8 @@ public class TestHeidelTimeX {
             "Mai and Juni 2011", // EXAMPLE r10b_1: (find Mai 2001)
             "November diesen Jahres", // EXAMPLE r11a_1
             "Sommer", // EXAMPLE r12a_1
+            "Sommerzeit", // EXAMPLE r12a_2
+            "Spätsommerzeit", // EXAMPLE r12a_3
             "Sommer 2001", // EXAMPLE r12b_1
             "Sommer 69", // EXAMPLE r12c_1
             "das erste Quartal 2001", // EXAMPLE r13a_1
