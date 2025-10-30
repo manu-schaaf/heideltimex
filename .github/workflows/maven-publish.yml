@@ -34,9 +34,7 @@ jobs:
       if: github.event_name == 'release'
       with:
         files: |
-          ${{ github.workspace }}/target/heideltimex-${{ github.ref_name }}.jar
-          ${{ github.workspace }}/target/heideltimex-${{ github.ref_name }}-javadoc.jar
-          ${{ github.workspace }}/target/heideltimex-${{ github.ref_name }}-sources.jar
+          ${{ github.workspace }}/target/heideltimex-*.jar
 
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s ${{ github.workspace }}/settings.xml -DskipTests=true -P release
