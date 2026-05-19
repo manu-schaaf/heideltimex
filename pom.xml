@@ -125,6 +125,7 @@
                 <directory>${basedir}</directory>
                 <includes>
                     <include>desc/**/*.xml</include>
+                    <include>META-INF/org.apache.uima.fit/types.txt</include>
                 </includes>
             </resource>
             <resource>
@@ -177,13 +178,6 @@
             <url>https://maven.pkg.github.com/texttechnologylab/heideltime</url>
         </repository>
     </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
 
     <dependencyManagement>
         <dependencies>
