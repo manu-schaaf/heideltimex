@@ -174,9 +174,9 @@ RULENAME="date_r12c",EXTRACTION="%reSeason( des Jahres | )%reYear2Digit",NORM_VA
 // date_r13
 // EXAMPLE r13a_1: das erste Quartal 2001
 // EXAMPLE r13a_1: das erste Quartal
-RULENAME="date_r13a",EXTRACTION="([Dd]as |[Dd]er |[Dd]ie )?%rePartOfYear (des Jahres )?%reYear4Digit",NORM_VALUE="group(4)-%normPartOfYear(group(2))"
+RULENAME="date_r13a",EXTRACTION="([Dd]as |[Dd]er |[Dd]ie )?%rePartOfYear (?:des %reUnitYear )?%reYear4Digit",NORM_VALUE="group(4)-%normPartOfYear(group(2))"
 RULENAME="date_r13b",EXTRACTION="([Dd]as |[Dd]er |[Dd]ie )?%rePartOfYear",NORM_VALUE="UNDEF-year-%normPartOfYear(group(2))"
-RULENAME="date_r13c",EXTRACTION="([Dd]as |[Dd]er |[Dd]ie )?%rePartOfYear des Vorjahres",NORM_VALUE="UNDEF-REF-year-MINUS-1%normPartOfYear(group(2))"
+RULENAME="date_r13c",EXTRACTION="([Dd]as |[Dd]er |[Dd]ie )?%rePartOfYear des %reUnitYear",NORM_VALUE="UNDEF-REF-year-MINUS-1%normPartOfYear(group(2))"
 
 //////////////////////
 // Year Granularity //
@@ -184,7 +184,8 @@ RULENAME="date_r13c",EXTRACTION="([Dd]as |[Dd]er |[Dd]ie )?%rePartOfYear des Vor
 // date_r14
 // EXAMPLE r14a_1: 2009
 // EXAMPLE r14a_2: Jahr 2009
-RULENAME="date_r14a",EXTRACTION="(Jahr[es]* )?%reYear4Digit",NORM_VALUE="group(2)"
+// RULENAME="date_r14a",EXTRACTION="(Jahr[es]* )?%reYear4Digit",NORM_VALUE="group(2)"
+RULENAME="date_r14b",EXTRACTION="%reUnitYear %reYear4Digit",NORM_VALUE="group(2)"
 
 //date_r15
 // EXAMPLE r15a_1: 1850-58 | find: 1858

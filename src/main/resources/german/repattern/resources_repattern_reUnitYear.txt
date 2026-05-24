@@ -2,17 +2,13 @@
 // author: Andy Lücking
 // email:  luecking@em.uni-frankfurt.de
 // date:   2021-10-29
-[Jj]ahres
-[Gg]eschäftsjahr
-[Gg]eschäftsjahre
-[Gg]eschäftsjahren
-[Gg]eschäftsjahrs
-[Gg]eschäftsjahres
-[Ss]teuerjahr
-[Ss]teuerjahre
-[Ss]teuerjahren
-[Ss]teuerjahrs
-[Ss]teuerjahres
-[Jj]ahren
-[Jj]ahre
-[Jj]ahr
+[Jj]ahr(?:e|s|en|es)
+[Gg]eschäftsjahr(?:e|s|en|es)
+[Ss]teuerjahr(?:e|s|en|es)
+// Further extension
+// author: Manuel Schaaf
+// date:   2026-05-24
+[Hh]albjahr(?:e|s|en|es)
+[Vv]ierteljahr(?:e|s|en|es)
+[Dd]dreivierteljahr(?:e|s|en|es)
+[Vv]orjahr(?:e|s|en|es)
