@@ -16,6 +16,7 @@ package org.texttechnologylab.heideltime;
 
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.unihd.dbs.uima.annotator.heideltime.HeidelTime;
 import de.unihd.dbs.uima.annotator.heideltime.ProcessorManager;
 import de.unihd.dbs.uima.annotator.heideltime.ProcessorManager.Priority;
@@ -39,10 +40,7 @@ import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.util.Level;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -127,45 +125,41 @@ public class HeidelTimeX extends HeidelTime {
         }
 
         try (ExecutorService threadPool = Executors.newVirtualThreadPerTaskExecutor()) {
+            ArrayList<CompletableFuture<Void>> futures = new ArrayList<>();
             for (Sentence sentence : sentences) {
-                final ContextAnalyzer.SentenceContainer container = ContextAnalyzer.SentenceContainer.fromSentence(jcas, sentence);
-                try {
-                    ArrayList<Future<Optional<HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes>>>> futures = new ArrayList<>();
-                    if (find_dates) {
-                        ruleSet.dates().values().forEach(rule -> futures.add(threadPool.submit(() -> findTimexes(rule, container))));
+                CompletableFuture<ContextAnalyzer.SentenceContainer> containerFuture = CompletableFuture.supplyAsync(
+                        () -> ContextAnalyzer.SentenceContainer.fromSentence(jcas, sentence),
+                        threadPool
+                );
+
+                if (find_dates) {
+                    for (RuleManager.RuleInstance rule : ruleSet.dates().values()) {
+                        futures.add(findTimexInVirtualThread(jcas, rule, containerFuture, threadPool));
                     }
-                    if (find_times) {
-                        ruleSet.times().values().forEach(rule -> futures.add(threadPool.submit(() -> findTimexes(rule, container))));
-                    }
-                    if (find_sets) {
-                        ruleSet.sets().values().forEach(rule -> futures.add(threadPool.submit(() -> findTimexes(rule, container))));
-                    }
-                    if (find_durations) {
-                        ruleSet.durations().values().forEach(rule -> futures.add(threadPool.submit(() -> findTimexes(rule, container))));
-                    }
-                    if (find_temponyms) {
-                        ruleSet.temponyms().values().forEach(rule -> futures.add(threadPool.submit(() -> findTimexes(rule, container))));
-                    }
-                    for (Future<Optional<HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes>>> future : futures) {
-                        future.get().ifPresent(ruleMatch -> addTimexAnnotationsToJCas(jcas, container, ruleMatch));
-                    }
-                } catch (NullPointerException npe) {
-                    getLogger().error(
-                            """
-                                    HeidleTimeX's execution has been interrupted by an exception that \
-                                    is likely rooted in faulty normalization resource files. Please consider opening an issue \
-                                    report containing the following information at our GitHub project issue tracker: \
-                                    https://github.com/texttechnologylab/heideltime/issues - Thanks!
-                                    Sentence [{}-{}]: {}
-                                    Language: {}
-                                    Stack Trace: {}""",
-                            sentence.getBegin(),
-                            sentence.getEnd(),
-                            sentence.getCoveredText(),
-                            language,
-                            npe.fillInStackTrace().getMessage()
-                    );
                 }
+                if (find_times) {
+                    for (RuleManager.RuleInstance rule : ruleSet.times().values()) {
+                        futures.add(findTimexInVirtualThread(jcas, rule, containerFuture, threadPool));
+                    }
+                }
+                if (find_sets) {
+                    for (RuleManager.RuleInstance rule : ruleSet.sets().values()) {
+                        futures.add(findTimexInVirtualThread(jcas, rule, containerFuture, threadPool));
+                    }
+                }
+                if (find_durations) {
+                    for (RuleManager.RuleInstance rule : ruleSet.durations().values()) {
+                        futures.add(findTimexInVirtualThread(jcas, rule, containerFuture, threadPool));
+                    }
+                }
+                if (find_temponyms) {
+                    for (RuleManager.RuleInstance rule : ruleSet.temponyms().values()) {
+                        futures.add(findTimexInVirtualThread(jcas, rule, containerFuture, threadPool));
+                    }
+                }
+            }
+            for (CompletableFuture<Void> future : futures) {
+                future.get();
             }
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -209,6 +203,35 @@ public class HeidelTimeX extends HeidelTime {
         procMan.executeProcessors(jcas, Priority.POSTPROCESSING);
     }
 
+    private CompletableFuture<Void> findTimexInVirtualThread(JCas jcas, RuleManager.RuleInstance rule, CompletableFuture<ContextAnalyzer.SentenceContainer> containerFuture, ExecutorService threadPool) {
+        return containerFuture
+                .thenApplyAsync(container -> findTimexes(rule, container), threadPool)
+                .thenAcceptBoth(
+                        containerFuture,
+                        (maybeRuleMatch, container) -> {
+                            try {
+                                maybeRuleMatch.ifPresent(ruleMatch -> addTimexAnnotationsToJCas(jcas, container, ruleMatch));
+                            } catch (NullPointerException npe) {
+                                getLogger().error(
+                                        """
+                                                HeidleTimeX's execution has been interrupted by an exception that \
+                                                is likely rooted in faulty normalization resource files. Please consider opening an issue \
+                                                report containing the following information at our GitHub project issue tracker: \
+                                                https://github.com/texttechnologylab/heideltime/issues - Thanks!
+                                                Sentence [{}-{}]: {}
+                                                Language: {}
+                                                Stack Trace: {}""",
+                                        container.begin(),
+                                        container.end(),
+                                        container.text(),
+                                        language,
+                                        npe.fillInStackTrace().getMessage()
+                                );
+                            }
+                        }
+                );
+    }
+
     /**
      * Add timex annotation to CAS object.
      */
@@ -227,22 +250,22 @@ public class HeidelTimeX extends HeidelTime {
         timex3.setEnd(end);
 
 //        timex3.setFilename(sentence.getFilename());
-//        timex3.setSentId(sentence.getSentenceId());
+        timex3.setSentId(sentence.id());
 
         timex3.setEmptyValue(attributes.emptyValue());
 
-//        StringBuilder allTokIds = new StringBuilder();
-//        for (Annotation annotation : sentence.tokens()) {
-//            Token tok = (Token) annotation;
-//            if (tok.getBegin() <= begin && tok.getEnd() > begin) {
-//                timex3.setFirstTokId(tok.getTokenId());
-//                allTokIds = new StringBuilder("BEGIN<-->" + tok.getTokenId());
-//            }
-//            if ((tok.getBegin() > begin) && (tok.getEnd() <= end)) {
-//                allTokIds.append("<-->").append(tok.getTokenId());
-//            }
-//        }
-//        timex3.setAllTokIds(allTokIds.toString());
+        StringBuilder allTokIds = new StringBuilder();
+        for (Token tok : sentence.tokens()) {
+            if (tok.getBegin() <= begin && tok.getEnd() > begin) {
+                timex3.setFirstTokId(tok._id());
+                allTokIds = new StringBuilder("BEGIN<-->" + tok._id());
+            } else if ((tok.getBegin() > begin) && (tok.getEnd() <= end)) {
+                allTokIds.append("<-->").append(tok._id());
+            } else if (tok.getBegin() > end) {
+                break;
+            }
+        }
+        timex3.setAllTokIds(allTokIds.toString());
 
         timex3.setTimexType(timexType);
         timex3.setTimexValue(attributes.value());
@@ -299,7 +322,7 @@ public class HeidelTimeX extends HeidelTime {
         }
     }
 
-    public static record RuleMatches<T>(RuleManager.RuleInstance rule, List<T> results) {
+    public record RuleMatches<T>(RuleManager.RuleInstance rule, List<T> results) {
         public boolean isEmpty() {
             return results.isEmpty();
         }
@@ -335,19 +358,19 @@ public class HeidelTimeX extends HeidelTime {
     }
 
     private synchronized void addTimexAnnotationsToJCas(JCas jCas, ContextAnalyzer.SentenceContainer sentence, HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes> ruleMatch) {
-            RuleManager.RuleInstance rule = ruleMatch.rule();
-            for (HeidelTimeX.TimexAttributes attributes : ruleMatch.results()) {
-                addTimexAnnotation(
-                        rule.type(),
-                        attributes.start() + sentence.begin(),
-                        attributes.end() + sentence.begin(),
-                        sentence,
-                        attributes,
-                        "t" + timexID++,
-                        rule.name(),
-                        jCas
-                );
-            }
+        RuleManager.RuleInstance rule = ruleMatch.rule();
+        for (HeidelTimeX.TimexAttributes attributes : ruleMatch.results()) {
+            addTimexAnnotation(
+                    rule.type(),
+                    attributes.start() + sentence.begin(),
+                    attributes.end() + sentence.begin(),
+                    sentence,
+                    attributes,
+                    "t" + timexID++,
+                    rule.name(),
+                    jCas
+            );
+        }
     }
 
     public record TimexAttributes(

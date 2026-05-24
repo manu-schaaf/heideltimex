@@ -364,7 +364,7 @@ public class ContextAnalyzer {
         return lastTense;
     }
 
-    public record SentenceContainer(String text, int begin, int end, List<Token> tokens) {
+    public record SentenceContainer(int id, String text, int begin, int end, List<Token> tokens) {
         public static SentenceContainer fromSentence(JCas jCas, Sentence sentence) {
             FSIterator<Annotation> subiterator = jCas.getAnnotationIndex(Token.type).subiterator(sentence);
             ArrayList<Token> tokens = new ArrayList<>();
@@ -372,6 +372,7 @@ public class ContextAnalyzer {
                 tokens.add((Token) subiterator.next());
             }
             return new ContextAnalyzer.SentenceContainer(
+                    sentence._id(),
                     sentence.getCoveredText(),
                     sentence.getBegin(),
                     sentence.getEnd(),
