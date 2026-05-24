@@ -17,10 +17,7 @@ import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.apache.uima.util.Level;
-import org.texttechnologylab.heideltime.ContextAnalyzer;
-import org.texttechnologylab.heideltime.NormalizationException;
-import org.texttechnologylab.heideltime.RuleManager;
-import org.texttechnologylab.heideltime.Utils;
+import org.texttechnologylab.heideltime.*;
 
 import java.util.*;
 import java.util.regex.MatchResult;
@@ -2047,12 +2044,17 @@ abstract public class HeidelTime extends JCasAnnotator_ImplBase {
         }
     }
 
+
     protected void deleteOverlappedTimexesPreprocessing(JCas jcas) {
+        List<Timex3> timex3List = JCasUtil.select(jcas, Timex3.class).stream()
+                .sorted(Comparator.comparing(Timex3::getSentId).thenComparing(Timex3::getBegin).thenComparing(Timex3::getFoundByRule))
+                .toList();
         HashSet<Timex3> hsTimexesToRemove = new HashSet<Timex3>();
-        for (Annotation a1 : jcas.getAnnotationIndex(Timex3.type)) {
-            Timex3 t1 = (Timex3) a1;
-            for (Annotation a2 : jcas.getAnnotationIndex(Timex3.type)) {
-                Timex3 t2 = (Timex3) a2;
+        int size = timex3List.size();
+        for (int i = 0; i < size; i++) {
+            Timex3 t1 = timex3List.get(i);
+            for (int j = i + 1; j < size; j++) {
+                Timex3 t2 = timex3List.get(j);
                 if (
                         ((t1.getBegin() >= t2.getBegin()) && (t1.getEnd() < t2.getEnd())) || // t1 starts inside or with t2 and ends before t2 -> remove t1
                                 ((t1.getBegin() > t2.getBegin()) && (t1.getEnd() <= t2.getEnd()))
@@ -2111,8 +2113,13 @@ abstract public class HeidelTime extends JCasAnnotator_ImplBase {
         }
     }
 
-    public void deleteOverlappedTimexesPostprocessing(JCas jcas) {
+    private static Set<Timex3> getTimexSet(Timex3 t) {
+        HashSet<Timex3> hashSet = HashSet.newHashSet(1);
+        hashSet.add(t);
+        return hashSet;
+    }
 
+    public void deleteOverlappedTimexesPostprocessing(JCas jcas) {
         HashSet<Set<Timex3>> effectivelyToInspect = new HashSet<>();
         HashSet<Timex3> allTimexesToInspect = new HashSet<>();
 
@@ -2120,8 +2127,8 @@ abstract public class HeidelTime extends JCasAnnotator_ImplBase {
                 .filter(t -> !t.getTimexType().equals("TEMPONYM") && !t.getTimexValue().equals("REMOVE"))
                 .toList();
         Utils.MergeSets<Timex3> mergeSets = new Utils.MergeSets<>();
-        TreeMap<Integer, Set<Timex3>> beginTreeMap = timex3s.stream().collect(Collectors.toMap(Timex3::getBegin, Collections::singleton, mergeSets, TreeMap::new));
-        TreeMap<Integer, Set<Timex3>> endTreeMap = timex3s.stream().collect(Collectors.toMap(Timex3::getEnd, Collections::singleton, mergeSets, TreeMap::new));
+        TreeMap<Integer, Set<Timex3>> beginTreeMap = timex3s.stream().collect(Collectors.toMap(Timex3::getBegin, HeidelTime::getTimexSet, mergeSets, TreeMap::new));
+        TreeMap<Integer, Set<Timex3>> endTreeMap = timex3s.stream().collect(Collectors.toMap(Timex3::getEnd, HeidelTime::getTimexSet, mergeSets, TreeMap::new));
         for (Timex3 outer : timex3s) {
             if (outer.getTimexType().equals("TEMPONYM")) {
                 continue;
@@ -2312,8 +2319,7 @@ abstract public class HeidelTime extends JCasAnnotator_ImplBase {
 
             if (dctVal == null) return false;
 
-            return PATTERN_DCT_D8.matcher(dctVal).matches() ||
-                    PATTERN_DCT_D422.matcher(dctVal).matches();
+            return PATTERN_DCT_D8.matcher(dctVal).matches() || PATTERN_DCT_D422.matcher(dctVal).matches();
         }
     }
 }
