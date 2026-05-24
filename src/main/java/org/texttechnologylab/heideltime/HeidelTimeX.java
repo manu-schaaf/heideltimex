@@ -126,58 +126,46 @@ public class HeidelTimeX extends HeidelTime {
             );
         }
 
-        try (ExecutorService threadPool = Executors.newCachedThreadPool()) {
+        try (ExecutorService threadPool = Executors.newVirtualThreadPerTaskExecutor()) {
             for (Sentence sentence : sentences) {
                 final ContextAnalyzer.SentenceContainer container = ContextAnalyzer.SentenceContainer.fromSentence(jcas, sentence);
-                boolean debugIteration = false;
-                do {
-                    try {
-                        ArrayList<Future<List<HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes>>>> futures = new ArrayList<>();
-                        if (find_dates) {
-                            futures.add(threadPool.submit(() -> findTimexes(ruleSet.dates(), container)));
-                        }
-                        if (find_times) {
-                            futures.add(threadPool.submit(() -> findTimexes(ruleSet.times(), container)));
-                        }
-                        if (find_sets) {
-                            futures.add(threadPool.submit(() -> findTimexes(ruleSet.sets(), container)));
-                        }
-                        if (find_durations) {
-                            futures.add(threadPool.submit(() -> findTimexes(ruleSet.durations(), container)));
-                        }
-                        if (find_temponyms) {
-                            futures.add(threadPool.submit(() -> findTimexes(ruleSet.temponyms(), container)));
-                        }
-                        for (Future<List<HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes>>> future : futures) {
-                            addTimexAnnotationsToJCas(jcas, container, future.get());
-                        }
-                    } catch (NullPointerException npe) {
-                        if (!debugIteration) {
-                            getLogger().error(
-                                    """
-                                            HeidleTimeX's execution has been interrupted by an exception that \
-                                            is likely rooted in faulty normalization resource files. Please consider opening an issue \
-                                            report containing the following information at our GitHub project issue tracker: \
-                                            https://github.com/texttechnologylab/heideltime/issues - Thanks!
-                                            Sentence [{}-{}]: {}
-                                            Language: {}
-                                            Stack Trace: {}""",
-                                    sentence.getBegin(),
-                                    sentence.getEnd(),
-                                    sentence.getCoveredText(),
-                                    language,
-                                    npe.fillInStackTrace().getMessage()
-                            );
-                            if (doDebug) {
-                                getLogger().debug("Re-running this sentence with DEBUGGING enabled...");
-                                debugIteration = true;
-                            }
-                        } else {
-                            getLogger().info("Execution will now resume.");
-                            break;
-                        }
+                try {
+                    ArrayList<Future<Optional<HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes>>>> futures = new ArrayList<>();
+                    if (find_dates) {
+                        ruleSet.dates().values().forEach(rule -> futures.add(threadPool.submit(() -> findTimexes(rule, container))));
                     }
-                } while (doDebug && debugIteration);
+                    if (find_times) {
+                        ruleSet.times().values().forEach(rule -> futures.add(threadPool.submit(() -> findTimexes(rule, container))));
+                    }
+                    if (find_sets) {
+                        ruleSet.sets().values().forEach(rule -> futures.add(threadPool.submit(() -> findTimexes(rule, container))));
+                    }
+                    if (find_durations) {
+                        ruleSet.durations().values().forEach(rule -> futures.add(threadPool.submit(() -> findTimexes(rule, container))));
+                    }
+                    if (find_temponyms) {
+                        ruleSet.temponyms().values().forEach(rule -> futures.add(threadPool.submit(() -> findTimexes(rule, container))));
+                    }
+                    for (Future<Optional<HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes>>> future : futures) {
+                        future.get().ifPresent(ruleMatch -> addTimexAnnotationsToJCas(jcas, container, ruleMatch));
+                    }
+                } catch (NullPointerException npe) {
+                    getLogger().error(
+                            """
+                                    HeidleTimeX's execution has been interrupted by an exception that \
+                                    is likely rooted in faulty normalization resource files. Please consider opening an issue \
+                                    report containing the following information at our GitHub project issue tracker: \
+                                    https://github.com/texttechnologylab/heideltime/issues - Thanks!
+                                    Sentence [{}-{}]: {}
+                                    Language: {}
+                                    Stack Trace: {}""",
+                            sentence.getBegin(),
+                            sentence.getEnd(),
+                            sentence.getCoveredText(),
+                            language,
+                            npe.fillInStackTrace().getMessage()
+                    );
+                }
             }
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -324,35 +312,29 @@ public class HeidelTimeX extends HeidelTime {
     /**
      * Apply the extraction rules, normalization rules
      */
-    protected List<HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes>> findTimexes(
-            TreeMap<String, RuleManager.RuleInstance> rules,
+    protected Optional<HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes>> findTimexes(
+            RuleManager.RuleInstance rule,
             ContextAnalyzer.SentenceContainer sentence
     ) {
-        return rules.values().stream().parallel()
-                .filter(rule -> rule.fastCheck(sentence.text()))
-                .map(rule ->
-                        new HeidelTimeX.RuleMatches<>(
-                                rule,
-                                Utils.findMatches(rule.pattern(), sentence.text()).stream()
-                                        .filter(matchResult -> ContextAnalyzer.checkSentenceMatch(
-                                                sentence, matchResult.start(), matchResult.end()
-                                        ))
-                                        .filter(matchResult -> rule.checkPosConstraint(sentence, matchResult))
-                                        .map(matchResult -> getTimexAttributes(rule, matchResult))
-                                        .filter(Objects::nonNull)
-                                        .toList()
-                        )
-                )
-                .sorted(Comparator.comparing(stage -> stage.rule().name()))
-                .toList();
+        if (!rule.fastCheck(sentence.text())) {
+            return Optional.empty();
+        } else {
+            return
+                    Optional.of(new HeidelTimeX.RuleMatches<>(
+                            rule,
+                            Utils.findMatches(rule.pattern(), sentence.text()).stream()
+                                    .filter(matchResult -> ContextAnalyzer.checkSentenceMatch(
+                                            sentence, matchResult.start(), matchResult.end()
+                                    ))
+                                    .filter(matchResult -> rule.checkPosConstraint(sentence, matchResult))
+                                    .map(matchResult -> getTimexAttributes(rule, matchResult))
+                                    .filter(Objects::nonNull)
+                                    .toList()
+                    ));
+        }
     }
 
-    private void addTimexAnnotationsToJCas(JCas jCas, ContextAnalyzer.SentenceContainer sentence, List<HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes>> ruleMatches) {
-        // Iterator over the rules by sorted by the name of the rules
-        // this is important since later, the timexId will be used to
-        // decide which of two expressions shall be removed if both
-        // have the same offset
-        for (HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes> ruleMatch : ruleMatches) {
+    private synchronized void addTimexAnnotationsToJCas(JCas jCas, ContextAnalyzer.SentenceContainer sentence, HeidelTimeX.RuleMatches<HeidelTimeX.TimexAttributes> ruleMatch) {
             RuleManager.RuleInstance rule = ruleMatch.rule();
             for (HeidelTimeX.TimexAttributes attributes : ruleMatch.results()) {
                 addTimexAnnotation(
@@ -366,7 +348,6 @@ public class HeidelTimeX extends HeidelTime {
                         jCas
                 );
             }
-        }
     }
 
     public record TimexAttributes(
